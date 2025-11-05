@@ -23,7 +23,23 @@ with open(QUERIES_PATH, "r", encoding="utf-8") as f:
 with open(TABLES_PATH, "r", encoding="utf-8") as f:
     tables = json.load(f)
 
-#Just first query for now
+#Just first five queries for now
+for i, query_item in enumerate(queries[:5], start=1):
+    db_id = query_item["db_id"]
+    gold_query = (
+        query_item.get("query")
+        or query_item.get("SQL")
+        or query_item.get("SQL_query")
+        or query_item.get("sql")
+    )
+    question = query_item.get("question", "<no question text found>")
+    
+    print(f"\n--- Query {i} ---")
+    print("Natural language question:", question)
+    print("SQL query:", gold_query)
+    print("Database ID:", db_id)
+
+# Use the first one for downstream testing
 first_query = queries[0]
 db_id = first_query["db_id"]
 gold_query = (
@@ -33,10 +49,6 @@ gold_query = (
     or first_query.get("sql")
 )
 question = first_query.get("question", "<no question text found>")
-
-print("Natural language question:", question)
-print("SQL query:", gold_query)
-print("Database ID:", db_id)
 
 #Schema extraction/formatting
 schema_entry = next((t for t in tables if t["db_id"] == db_id), None)
@@ -59,8 +71,6 @@ if not query_tables:
     query_tables = table_names
 
 schema_snippet = json.dumps({t: schema_map[t] for t in query_tables}, indent=2)
-print("\nSchema snippet extracted from dev_tables.json:")
-print(schema_snippet)
 
 def extract_query_info(sql_query: str):
     """Extracts columns, constants, and operators from SQL."""
@@ -243,7 +253,56 @@ def auto_generate_and_validate(schema_snippet, gold_query, query_tables, schema_
 
 
 # -------------------------------------------------------------------
-# ADDED SECTION: Run self-validation automatically
+# ADDED SECTION: Run self-validation automatically for first 5 queries
 # -------------------------------------------------------------------
-print("\nRunning self-validation to ensure gold query success...")
-auto_generate_and_validate(schema_snippet, gold_query, query_tables, schema_map)
+print("\nRunning self-validation to ensure gold query success for first 5 queries...")
+
+for i, query_item in enumerate(queries[:5], start=1):
+    db_id = query_item["db_id"]
+    gold_query = (
+        query_item.get("query")
+        or query_item.get("SQL")
+        or query_item.get("SQL_query")
+        or query_item.get("sql")
+    )
+    question = query_item.get("question", "<no question text found>")
+
+    print(f"\n==========================")
+    print(f"🔎 Processing Query {i}")
+    print("==========================")
+    print("Natural language question:", question)
+    print("SQL query:", gold_query)
+    print("Database ID:", db_id)
+
+    # Extract schema for this db_id
+    schema_entry = next((t for t in tables if t["db_id"] == db_id), None)
+    if not schema_entry:
+        print(f"❌ No schema found for database ID: {db_id}")
+        continue
+
+    table_names = schema_entry["table_names_original"]
+    columns = schema_entry["column_names_original"]
+    column_types = schema_entry["column_types"]
+
+    schema_map = {name: [] for name in table_names}
+    for (table_id, col_name), col_type in zip(columns, column_types):
+        if table_id != -1:
+            schema_map[table_names[table_id]].append((col_name, col_type))
+
+    query_tables = [
+        t for t in table_names if any(t.lower() in gold_query.lower() for t in [t, f"`{t}`"])
+    ]
+    if not query_tables:
+        query_tables = table_names
+
+    schema_snippet = json.dumps({t: schema_map[t] for t in query_tables}, indent=2)
+
+    # Run self-validating generation pipeline for this query
+    df_generated, result = auto_generate_and_validate(schema_snippet, gold_query, query_tables, schema_map)
+
+    if result is not None:
+        print(f"\n✅ Query {i} completed successfully.")
+        print(result)
+    else:
+        print(f"\n⚠️ Query {i} failed to produce a valid output after retries.")
+
