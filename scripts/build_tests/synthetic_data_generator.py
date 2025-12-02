@@ -110,6 +110,18 @@ def generate_synthetic_dataset(
     scenario: Optional[Dict[str, Any]] = None,
     match_ratio: float = 0.25,
 ) -> Dict[str, pd.DataFrame]:
+    
+    def is_numeric_dtype(dtype: str) -> bool:
+        t = dtype.lower()
+        return ("int" in t) or ("real" in t) or ("float" in t) or ("double" in t)
+
+    # NEW — detect whether this scenario is deterministic (no mutation fn)
+    is_deterministic = not scenario or ("inject" not in scenario or scenario["inject"] is None)
+
+    # NEW — if deterministic, try to preserve REAL values from schema_map
+    original_examples = {
+        tbl: list(cols.keys()) for tbl, cols in schema_map.items()
+    }
 
     # =============================================================
     # Normalize input: constraints comes as {required_equals,...}
@@ -255,40 +267,66 @@ def generate_synthetic_dataset(
         rows: List[Dict[str, Any]] = []
 
         # ---------------------------------------------------------
-        # 3A: Guaranteed WHERE-matching + join-matching rows
+        # 3A: Guaranteed WHERE-matching AND join-matching row
         # ---------------------------------------------------------
-        if table_required_eq or any((table_name, col) in forced_join_values for col in columns):
+        # A forced row must satisfy BOTH required_equals AND join_keys
+        must_force = (
+            bool(table_required_eq)
+            or any((table_name, col) in forced_join_values for col in columns)
+        )
 
+        if must_force:
             forced_row = {}
+
             for col, dtype in columns.items():
-                # WHERE constraint
+
+                key = (table_name, col)
+
+                # 1. WHERE constraints override everything
                 if col in table_required_eq:
-                    forced_row[col] = _coerce_value_for_dtype(table_required_eq[col], dtype)
+                    forced_row[col] = _coerce_value_for_dtype(
+                        table_required_eq[col], dtype
+                    )
                     continue
 
-                # Forced join key
-                if (table_name, col) in forced_join_values:
-                    forced_row[col] = _coerce_value_for_dtype(forced_join_values[(table_name, col)], dtype)
+                # 2. Forced join key value (must override random)
+                if key in forced_join_values:
+                    forced_row[col] = _coerce_value_for_dtype(
+                        forced_join_values[key], dtype
+                    )
                     continue
 
-                # Normal join propagation
-                jk = (table_name, col)
-                if jk in global_join_values:
-                    forced_row[col] = _coerce_value_for_dtype(global_join_values[jk], dtype)
+                # 3. Normal join-propagation
+                if key in global_join_values:
+                    forced_row[col] = _coerce_value_for_dtype(
+                        global_join_values[key], dtype
+                    )
                     continue
 
-                # Random fallback
+                # 4. Otherwise: normal random fallback
                 t = dtype.lower()
+
+                # NEW: deterministic scenarios use stable deterministic string instead of random
+                if is_deterministic:
+                    if is_numeric_dtype(dtype):
+                        forced_row[col] = _random_numeric()
+                    else:
+                        forced_row[col] = f"orig_{col}"
+                    continue
+
+                # otherwise original random behavior:
                 if "char" in t or "text" in t:
                     forced_row[col] = _random_string("txt")
-                elif "int" in t or "float" in t or "real" in t or "double" in t:
+                elif any(x in t for x in ("int", "float", "real", "double")):
                     forced_row[col] = _random_numeric()
                 elif "date" in t:
                     forced_row[col] = "2005-01-01"
                 else:
                     forced_row[col] = _random_string("v")
 
+            # IMPORTANT: add this BEFORE match rows
             rows.append(forced_row)
+
 
         # ---------------------------------------------------------
         # 3B: Normal rows (matching + non-matching)
@@ -308,6 +346,13 @@ def generate_synthetic_dataset(
                     continue
 
                 t = dtype.lower()
+                if is_deterministic:
+                    if is_numeric_dtype(dtype):
+                        row[col] = _random_numeric()
+                    else:
+                        row[col] = f"orig_{col}"
+                    continue
+
                 if "char" in t or "text" in t:
                     row[col] = _random_string("match")
                 elif "int" in t or "float" in t or "real" in t or "double" in t:
@@ -329,6 +374,13 @@ def generate_synthetic_dataset(
                     continue
 
                 t = dtype.lower()
+                if is_deterministic:
+                    if is_numeric_dtype(dtype):
+                        row[col] = _random_numeric()
+                    else:
+                        row[col] = f"orig_{col}"
+                    continue
+
                 if "char" in t or "text" in t:
                     row[col] = _random_string("s")
                 elif "int" in t or "float" in t or "real" in t or "double" in t:

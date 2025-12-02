@@ -70,13 +70,15 @@ def run_gold_on_data(dataset: dict, gold_sql: str):
     Returns a pandas DataFrame or None.
     """
 
+    import re
+
     # Make a new DuckDB connection
     con = duckdb.connect()
 
     # Register each synthetic table
     for table_name, df in dataset.items():
         try:
-            con.register(table_name, df)
+            con.register(table_name.lower(), df)
         except Exception as e:
             print(f"[run_gold_on_data] Failed to register table {table_name}: {e}")
             return None
@@ -84,6 +86,36 @@ def run_gold_on_data(dataset: dict, gold_sql: str):
     # Replace BIRD-style backticks with DuckDB double quotes
     sql_clean = gold_sql.replace("`", '"')
 
+    # ================================================================
+    # NEW: Register SQL aliases so that "frpm AS T1" and "schools T2"
+    #      correctly map back to the underlying tables.
+    # ================================================================
+
+    # Pattern matches:
+    #   frpm AS T1
+    #   frpm T1
+    #   schools AS T2
+    #   schools T2
+    alias_pattern = r'\b([a-zA-Z0-9_]+)\s+(?:AS\s+)?([a-zA-Z0-9_]+)\b'
+
+    for base, alias in re.findall(alias_pattern, sql_clean, flags=re.IGNORECASE):
+        base_l = base.lower()
+        alias_l = alias.lower()
+
+        # Only create alias if:
+        #  - base table exists in dataset
+        #  - alias is not already registered
+        if base_l in dataset and alias_l not in dataset:
+            try:
+                con.register(alias_l, dataset[base_l])
+                # Debug:
+                # print(f"[run_gold_on_data] Registered alias {alias_l} -> {base_l}")
+            except Exception as e:
+                print(f"[run_gold_on_data] Failed to register alias {alias_l} for base {base_l}: {e}")
+
+    # =================================================================
+    # Now execute the SQL
+    # =================================================================
     try:
         result = con.execute(sql_clean).df()
         con.close()

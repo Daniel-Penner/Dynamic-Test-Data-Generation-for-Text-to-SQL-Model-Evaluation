@@ -5,157 +5,145 @@ from collections import defaultdict
 
 def parse_constraints(sql: str, schema_map: dict):
     """
-    Extract equality, inequality, null tests, and join keys from SQL.
+    Extract equality constraints, inequality constraints, NULL tests,
+    and JOIN keys, with correct handling of table aliases.
 
-    FIXED:
-    - Unqualified columns ("County Name") now mapped to the correct table automatically.
-    - Constraints stored as (table, column) pairs to avoid ambiguity.
+    Output format:
+        {
+            "required_equals": { (table, col) : value },
+            "required_not_equals": { (table, col) : value },
+            "required_is_null": set( (table, col) ),
+            "required_not_null": set( (table, col) ),
+            "join_keys": set( (t1, c1, t2, c2) )
+        }
     """
 
     constraints = {
-        "required_equals": {},         # (table, col) -> value
-        "required_not_equals": {},     # (table, col) -> value
-        "required_is_null": set(),     # (table, col)
-        "required_not_null": set(),    # (table, col)
-        "join_keys": set(),            # ((t1,c1), (t2,c2))
+        "required_equals": {},
+        "required_not_equals": {},
+        "required_is_null": set(),
+        "required_not_null": set(),
+        "join_keys": set(),
     }
 
-    # --------------------------------------------------------------
-    # Extract WHERE clause
-    # --------------------------------------------------------------
+    # ----------------------------------------------------------------------
+    # STEP 1 — Extract alias map (T1 → frpm, T2 → schools)
+    # ----------------------------------------------------------------------
+    alias_map = {}
+
+    alias_regex = re.compile(
+        r'(FROM|JOIN)\s+([a-zA-Z0-9_]+)\s+(?:AS\s+)?([a-zA-Z0-9_]+)',
+        re.IGNORECASE
+    )
+
+    for m in alias_regex.finditer(sql):
+        _, real_table, alias = m.groups()
+        alias_map[alias.lower()] = real_table.lower()
+
+    # Also map real table names to themselves
+    for tbl in schema_map:
+        alias_map.setdefault(tbl.lower(), tbl.lower())
+
+    # ----------------------------------------------------------------------
+    # STEP 2 — Locate WHERE clause
+    # ----------------------------------------------------------------------
     sql_upper = sql.upper()
     where_index = sql_upper.find(" WHERE ")
-
     if where_index == -1:
-        return constraints
+        # SQL with no WHERE clause still may have JOINs
+        pass
+    else:
+        # Full WHERE → end before ORDER BY / LIMIT if present
+        where_section = sql[where_index + 7:]
 
-    where_section = sql[where_index + 7:]
+        for kw in [" ORDER BY ", " LIMIT "]:
+            idx = where_section.upper().find(kw)
+            if idx != -1:
+                where_section = where_section[:idx]
 
-    # Trim ORDER BY / LIMIT
-    for keyword in [" ORDER BY ", " LIMIT "]:
-        idx = where_section.upper().find(keyword)
-        if idx != -1:
-            where_section = where_section[:idx]
+        predicates = [p.strip() for p in where_section.split("AND")]
+    # If no WHERE found:
+    if where_index == -1:
+        predicates = []
 
-    predicates = [p.strip() for p in where_section.split("AND")]
-
-    # --------------------------------------------------------------
-    # Regex: table.col op value
-    # Handles:
-    #   col = 'X'
-    #   table.col = 'X'
-    #   `County Name` = 'Alameda'
-    # --------------------------------------------------------------
-    pattern = re.compile(
+    # ----------------------------------------------------------------------
+    # STEP 3 — Regex for equality/inequality/NULL predicates
+    # ----------------------------------------------------------------------
+    pred_pattern = re.compile(
         r'(?P<table>[a-zA-Z0-9_]+)?\.?'
         r'(?P<column>`[^`]+`|[a-zA-Z0-9_]+)\s*'
         r'(?P<op>=|!=|<>|IS|IS NOT)\s*'
         r'(?P<value>.+)$'
     )
 
-    # --------------------------------------------------------------
-    # Helper: resolve which table owns an unqualified column
-    # --------------------------------------------------------------
-    def resolve_table_for_column(col_name):
-        col_lower = col_name.lower()
+    # Resolve table for an unqualified column
+    def resolve_unqualified(col):
+        col_l = col.lower()
         matches = []
-        for table, cols in schema_map.items():
+        for t, cols in schema_map.items():
             for c in cols:
-                if c.lower() == col_lower:
-                    matches.append((table, c))
+                if c.lower() == col_l:
+                    matches.append((t, c))
         return matches
 
-    # --------------------------------------------------------------
-    # EXTRACT SIMPLE PREDICATES
-    # --------------------------------------------------------------
+    # ----------------------------------------------------------------------
+    # STEP 4 — Process each WHERE predicate
+    # ----------------------------------------------------------------------
     for pred in predicates:
-        pred = pred.strip()
-        match = pattern.search(pred)
-        if not match:
+        m = pred_pattern.search(pred)
+        if not m:
             continue
 
-        table = match.group("table")
-        col = match.group("column").strip("`")
-        op = match.group("op").upper()
-        raw_val = match.group("value").strip()
+        table = m.group("table")
+        col = m.group("column").strip("`")
+        op = m.group("op").upper()
+        raw = m.group("value").strip()
 
-        # clean `'value'` or `"value"`
-        val = raw_val.strip().strip("'").strip('"')
+        # Clean literal value
+        val = raw.strip().strip("'").strip('"')
 
-        # ----------------------------------------------------------
-        # If table is missing, resolve column across schema
-        # ----------------------------------------------------------
-        if table is None:
-            matches = resolve_table_for_column(col)
+        # Alias → real table
+        if table:
+            table = alias_map.get(table.lower(), table.lower())
+        else:
+            # No table specified → resolve
+            matches = resolve_unqualified(col)
             if len(matches) == 1:
-                table, col = matches[0]   # resolved correctly
+                table, col = matches[0]
             else:
-                # Ambiguous — skip
-                continue
+                continue  # ambiguous or not found
 
-        # Ensure table exists
         if table not in schema_map:
             continue
 
         key = (table, col)
 
-        # ----------------------------------------------------------
-        # Save constraint
-        # ----------------------------------------------------------
         if op == "=":
             constraints["required_equals"][key] = val
-
         elif op in ("!=", "<>"):
             constraints["required_not_equals"][key] = val
-
         elif op == "IS":
             if val.upper() == "NULL":
                 constraints["required_is_null"].add(key)
-
         elif op == "IS NOT":
             if val.upper() == "NULL":
                 constraints["required_not_null"].add(key)
 
-    # --------------------------------------------------------------
-    # Extract JOIN KEYS
-    # --------------------------------------------------------------
+    # ----------------------------------------------------------------------
+    # STEP 5 — Extract JOIN KEYS (with alias resolution)
+    # ----------------------------------------------------------------------
     join_pattern = re.compile(
         r'([a-zA-Z0-9_]+)\.`?([^`]+)`?\s*=\s*([a-zA-Z0-9_]+)\.`?([^`]+)`?',
         re.IGNORECASE
     )
 
-    # Build alias → real table map (e.g., "t1"→"frpm")
-    alias_map = {}
-
-    # Look for FROM / JOIN aliases
-    # Handles e.g. "FROM frpm AS T1" or "JOIN schools T2"
-    alias_assign = re.compile(
-        r'FROM\s+([a-zA-Z0-9_]+)\s+(?:AS\s+)?([a-zA-Z0-9_]+)|'
-        r'JOIN\s+([a-zA-Z0-9_]+)\s+(?:AS\s+)?([a-zA-Z0-9_]+)',
-        re.IGNORECASE
-    )
-
-    for m in alias_assign.finditer(sql):
-        t_real_1, alias_1, t_real_2, alias_2 = m.groups()
-
-        if t_real_1 and alias_1:
-            alias_map[alias_1.lower()] = t_real_1.lower()
-
-        if t_real_2 and alias_2:
-            alias_map[alias_2.lower()] = t_real_2.lower()
-
-    # --------------------------------------------------------------
-    # Now parse join conditions
-    # --------------------------------------------------------------
     for m in join_pattern.finditer(sql):
         t1, c1, t2, c2 = m.groups()
 
-        # normalize/resolve aliases
-        t1_norm = alias_map.get(t1.lower(), t1.lower())
-        t2_norm = alias_map.get(t2.lower(), t2.lower())
+        t1 = alias_map.get(t1.lower(), t1.lower())
+        t2 = alias_map.get(t2.lower(), t2.lower())
 
-        constraints["join_keys"].add(
-            (t1_norm, c1, t2_norm, c2)
-        )
+        if t1 in schema_map and t2 in schema_map:
+            constraints["join_keys"].add((t1, c1, t2, c2))
 
     return constraints
