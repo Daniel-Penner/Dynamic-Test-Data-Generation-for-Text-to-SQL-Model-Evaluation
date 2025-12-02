@@ -110,17 +110,12 @@ def generate_synthetic_dataset(
     match_ratio: float = 0.25,
 ) -> Dict[str, pd.DataFrame]:
 
-    print("\n[DEBUG constraints input]:", constraints, type(constraints))
-
     # =============================================================
-    # FIX: Normalize GLOBAL constraint dict → per-table constraints
+    # Normalize input: constraints comes as {required_equals,...}
+    # or as a Constraints object
     # =============================================================
-    if isinstance(constraints, Constraints):
-        c = constraints
-
-    elif isinstance(constraints, dict):
-
-        # Build an empty per-table structure
+    if not isinstance(constraints, Constraints):
+        # Build per-table constraint layout
         per_table = {
             tbl: {
                 "required_equals": {},
@@ -132,7 +127,7 @@ def generate_synthetic_dataset(
             for tbl in schema_map.keys()
         }
 
-        # required_equals: { (table, col): val }
+        # required_equals
         for (tbl, col), val in constraints.get("required_equals", {}).items():
             per_table[tbl]["required_equals"][col] = val
 
@@ -148,92 +143,160 @@ def generate_synthetic_dataset(
         for (tbl, col) in constraints.get("required_not_null", set()):
             per_table[tbl]["required_not_null"].add(col)
 
-        # join keys: stored as (table, col, other_table, other_col)
-        for item in constraints.get("join_keys", set()):
-            table, col, other_table, other_col = item
-            per_table[table]["join_keys"].add((col, other_table, other_col))
-            per_table[other_table]["join_keys"].add((other_col, table, col))
+        # join keys come as 4-tuples: (t1,c1,t2,c2)
+        for (t1, c1, t2, c2) in constraints.get("join_keys", set()):
+            per_table[t1]["join_keys"].add((c1, t2, c2))
+            per_table[t2]["join_keys"].add((c2, t1, c1))
 
-        c = Constraints(per_table)
+        constraints = Constraints(per_table)
 
-    else:
-        raise TypeError(
-            f"constraints must be dict or Constraints, got {type(constraints)}"
-        )
+    c = constraints
 
     # =============================================================
-    # Build lookup maps
+    # Extract direct required-equals for easy lookup
     # =============================================================
-    dataset: Dict[str, pd.DataFrame] = {}
-
     required_eq_by_table: Dict[str, Dict[str, Any]] = {}
     for (tbl, col), val in c.required_equals.items():
         required_eq_by_table.setdefault(tbl, {})[col] = val
 
-    # join key → shared value
+    # =============================================================
+    # Resolve all join edges into canonical pairs
+    # =============================================================
+    join_edges = set()
+    for table, join_set in c.join_keys_by_table.items():
+        for (col, other_table, other_col) in join_set:
+            edge = tuple(sorted([(table, col), (other_table, other_col)]))
+            if len(edge) == 2:
+                (t1, c1), (t2, c2) = edge
+                join_edges.add((t1, c1, t2, c2))
+
+    # =============================================================
+    # STEP 1: Identify which table has WHERE constraints
+    #         and create forced join rows to guarantee matches
+    # =============================================================
+    forced_join_values: Dict[Tuple[str, str], Any] = {}
+
+    for (t1, c1, t2, c2) in join_edges:
+        left_has_constraints = bool(required_eq_by_table.get(t1, {}))
+
+        if left_has_constraints:
+            shared_val = _random_string("join")
+            forced_join_values[(t1, c1)] = shared_val
+            forced_join_values[(t2, c2)] = shared_val
+
+        right_has_constraints = bool(required_eq_by_table.get(t2, {}))
+        if right_has_constraints:
+            shared_val = _random_string("join")
+            forced_join_values[(t1, c1)] = shared_val
+            forced_join_values[(t2, c2)] = shared_val
+
+    # =============================================================
+    # STEP 2: Build normal global join propagation map
+    #         (for rows NOT used in forced join pairs)
+    # =============================================================
     global_join_values: Dict[Tuple[str, str], Any] = {}
 
-    for table, join_set in c.join_keys_by_table.items():
-        for col, other_table, other_col in join_set:
-            k1 = (table, col)
-            k2 = (other_table, other_col)
+    for (t1, c1, t2, c2) in join_edges:
+        k1 = (t1, c1)
+        k2 = (t2, c2)
 
-            if k1 in global_join_values:
-                v = global_join_values[k1]
-                global_join_values[k2] = v
-            elif k2 in global_join_values:
-                v = global_join_values[k2]
-                global_join_values[k1] = v
-            else:
-                v = _random_string("key")
-                global_join_values[k1] = v
-                global_join_values[k2] = v
+        if k1 in forced_join_values:
+            val = forced_join_values[k1]
+            global_join_values[k2] = val
+            continue
+
+        if k2 in forced_join_values:
+            val = forced_join_values[k2]
+            global_join_values[k1] = val
+            continue
+
+        # Otherwise: free random join cluster
+        if k1 in global_join_values:
+            v = global_join_values[k1]
+            global_join_values[k2] = v
+        elif k2 in global_join_values:
+            v = global_join_values[k2]
+            global_join_values[k1] = v
+        else:
+            v = _random_string("key")
+            global_join_values[k1] = v
+            global_join_values[k2] = v
 
     # =============================================================
-    # Generate tables
+    # STEP 3: Generate data table-by-table
     # =============================================================
+    dataset: Dict[str, pd.DataFrame] = {}
+
     for table_name, columns in schema_map.items():
 
+        table_required_eq = required_eq_by_table.get(table_name, {})
         rows: List[Dict[str, Any]] = []
 
-        table_required_eq = required_eq_by_table.get(table_name, {})
-        match_count = max(1, int(n_rows_per_table * match_ratio))
+        # ---------------------------------------------------------
+        # 3A: Guaranteed WHERE-matching + join-matching rows
+        # ---------------------------------------------------------
+        if table_required_eq or any((table_name, col) in forced_join_values for col in columns):
+
+            forced_row = {}
+            for col, dtype in columns.items():
+                # WHERE constraint
+                if col in table_required_eq:
+                    forced_row[col] = _coerce_value_for_dtype(table_required_eq[col], dtype)
+                    continue
+
+                # Forced join key
+                if (table_name, col) in forced_join_values:
+                    forced_row[col] = _coerce_value_for_dtype(forced_join_values[(table_name, col)], dtype)
+                    continue
+
+                # Normal join propagation
+                jk = (table_name, col)
+                if jk in global_join_values:
+                    forced_row[col] = _coerce_value_for_dtype(global_join_values[jk], dtype)
+                    continue
+
+                # Random fallback
+                t = dtype.lower()
+                if "char" in t or "text" in t:
+                    forced_row[col] = _random_string("txt")
+                elif "int" in t or "float" in t or "real" in t or "double" in t:
+                    forced_row[col] = _random_numeric()
+                elif "date" in t:
+                    forced_row[col] = "2005-01-01"
+                else:
+                    forced_row[col] = _random_string("v")
+
+            rows.append(forced_row)
 
         # ---------------------------------------------------------
-        # Matching rows
+        # 3B: Normal rows (matching + non-matching)
         # ---------------------------------------------------------
+        match_count = max(1, int(n_rows_per_table * match_ratio))
+
         for _ in range(match_count):
             row = {}
             for col, dtype in columns.items():
 
-                # WHERE equality
                 if col in table_required_eq:
-                    raw_val = table_required_eq[col]
-                    row[col] = _coerce_value_for_dtype(raw_val, dtype)
+                    row[col] = _coerce_value_for_dtype(table_required_eq[col], dtype)
                     continue
 
-                # join keys
-                jk = (table_name, col)
-                if jk in global_join_values:
-                    row[col] = _coerce_value_for_dtype(global_join_values[jk], dtype)
+                if (table_name, col) in global_join_values:
+                    row[col] = _coerce_value_for_dtype(global_join_values[(table_name, col)], dtype)
                     continue
 
-                # random fallback
                 t = dtype.lower()
-                if "char" in t or "text" in t or "varchar" in t:
+                if "char" in t or "text" in t:
                     row[col] = _random_string("match")
+                elif "int" in t or "float" in t or "real" in t or "double" in t:
+                    row[col] = _random_numeric()
                 elif "date" in t:
                     row[col] = "2005-01-01"
-                elif "int" in t or "real" in t or "float" in t or "double" in t:
-                    row[col] = _random_numeric()
                 else:
                     row[col] = _random_string("v")
 
             rows.append(row)
 
-        # ---------------------------------------------------------
-        # Non-matching rows
-        # ---------------------------------------------------------
         for _ in range(n_rows_per_table - match_count):
             row = {}
             for col, dtype in columns.items():
@@ -244,12 +307,12 @@ def generate_synthetic_dataset(
                     continue
 
                 t = dtype.lower()
-                if "char" in t or "text" in t or "varchar" in t:
+                if "char" in t or "text" in t:
                     row[col] = _random_string("s")
+                elif "int" in t or "float" in t or "real" in t or "double" in t:
+                    row[col] = _random_numeric()
                 elif "date" in t:
                     row[col] = "2005-01-01"
-                elif "int" in t or "real" in t or "float" in t or "double":
-                    row[col] = _random_numeric()
                 else:
                     row[col] = _random_string("v")
 
@@ -257,11 +320,11 @@ def generate_synthetic_dataset(
 
         df = pd.DataFrame(rows)
 
-        # Scenario mutations
+        # Apply scenario mutation
         if scenario and scenario.get("inject"):
             df = scenario["inject"](df)
 
-        # NOT NULL enforcement
+        # Apply NOT NULL constraints
         for (tbl, col) in c.required_not_null:
             if tbl == table_name and col in df.columns:
                 df[col] = df[col].fillna(_random_numeric())

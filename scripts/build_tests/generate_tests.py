@@ -4,11 +4,11 @@ from pathlib import Path
 import duckdb
 import pandas as pd
 
-from unit_test import SQLUnitTest
-from extract_sql_constraints import parse_constraints
-from synthetic_data_generator import generate_synthetic_dataset
-from scenario_definitions import build_scenarios
-from parse_order_limit import parse_order_limit
+from scripts.build_tests.unit_test import SQLUnitTest
+from scripts.build_tests.extract_sql_constraints import parse_constraints
+from scripts.build_tests.synthetic_data_generator import generate_synthetic_dataset
+from scripts.build_tests.scenario_definitions import build_scenarios
+from scripts.build_tests.parse_order_limit import parse_order_limit
 
 def generate_tests_for_query(
     db_id: str,
@@ -57,7 +57,6 @@ def generate_tests_for_query(
         ).to_json(path)
 
         saved += 1
-        print("WRITING TO:", str(path.resolve()))
 
     if saved == 0:
         print(f"⚠ No tests produced for query #{query_index}")
@@ -68,9 +67,6 @@ def run_gold_on_data(dataset: dict, gold_sql: str):
     Execute a gold SQL query on the synthetic dataset.
     Returns a pandas DataFrame or None.
     """
-
-    # Debug print
-    print("\n[run_gold_on_data] Running SQL on dataset tables:", list(dataset.keys()))
 
     # Make a new DuckDB connection
     con = duckdb.connect()
@@ -85,9 +81,6 @@ def run_gold_on_data(dataset: dict, gold_sql: str):
 
     # Replace BIRD-style backticks with DuckDB double quotes
     sql_clean = gold_sql.replace("`", '"')
-
-    # Debug print:
-    print("\nSQL sent to DuckDB:\n", sql_clean, "\n")
 
     try:
         result = con.execute(sql_clean).df()

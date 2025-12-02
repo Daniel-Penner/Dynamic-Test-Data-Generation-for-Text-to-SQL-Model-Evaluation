@@ -120,11 +120,42 @@ def parse_constraints(sql: str, schema_map: dict):
     # Extract JOIN KEYS
     # --------------------------------------------------------------
     join_pattern = re.compile(
-        r'([a-zA-Z0-9_]+)\.`?([a-zA-Z0-9_]+)`?\s*=\s*([a-zA-Z0-9_]+)\.`?([a-zA-Z0-9_]+)`?'
+        r'([a-zA-Z0-9_]+)\.`?([^`]+)`?\s*=\s*([a-zA-Z0-9_]+)\.`?([^`]+)`?',
+        re.IGNORECASE
     )
 
+    # Build alias → real table map (e.g., "t1"→"frpm")
+    alias_map = {}
+
+    # Look for FROM / JOIN aliases
+    # Handles e.g. "FROM frpm AS T1" or "JOIN schools T2"
+    alias_assign = re.compile(
+        r'FROM\s+([a-zA-Z0-9_]+)\s+(?:AS\s+)?([a-zA-Z0-9_]+)|'
+        r'JOIN\s+([a-zA-Z0-9_]+)\s+(?:AS\s+)?([a-zA-Z0-9_]+)',
+        re.IGNORECASE
+    )
+
+    for m in alias_assign.finditer(sql):
+        t_real_1, alias_1, t_real_2, alias_2 = m.groups()
+
+        if t_real_1 and alias_1:
+            alias_map[alias_1.lower()] = t_real_1.lower()
+
+        if t_real_2 and alias_2:
+            alias_map[alias_2.lower()] = t_real_2.lower()
+
+    # --------------------------------------------------------------
+    # Now parse join conditions
+    # --------------------------------------------------------------
     for m in join_pattern.finditer(sql):
         t1, c1, t2, c2 = m.groups()
-        constraints["join_keys"].add(((t1, c1), (t2, c2)))
+
+        # normalize/resolve aliases
+        t1_norm = alias_map.get(t1.lower(), t1.lower())
+        t2_norm = alias_map.get(t2.lower(), t2.lower())
+
+        constraints["join_keys"].add(
+            (t1_norm, c1, t2_norm, c2)
+        )
 
     return constraints
