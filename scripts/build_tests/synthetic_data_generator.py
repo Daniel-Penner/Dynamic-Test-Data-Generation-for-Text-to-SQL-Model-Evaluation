@@ -52,6 +52,9 @@ def _coerce_value_for_dtype(val: Any, dtype: str) -> Any:
 
     return val
 
+def generate_join_keys(n: int, prefix: str = "jk") -> list[str]:
+    """Generate join keys that match across tables but vary by row."""
+    return [f"{prefix}_{i:05d}" for i in range(n)]
 
 # =====================================================================
 # Constraints wrapper
@@ -114,6 +117,34 @@ def generate_synthetic_dataset(
     def is_numeric_dtype(dtype: str) -> bool:
         t = dtype.lower()
         return ("int" in t) or ("real" in t) or ("float" in t) or ("double" in t)
+
+    def enforce_join_alignment(dataset):
+        """
+        Ensure all tables share the same join key values BEFORE any mutation.
+        This runs ONCE per synthetic dataset.
+        """
+
+        import pandas as pd
+
+        # Identify join column
+        join_cols = ["CDSCode", "cdscode", "id"]
+        join_col = None
+        for col in join_cols:
+            if all(col in df.columns for df in dataset.values()):
+                join_col = col
+                break
+        if join_col is None:
+            return dataset
+
+        # Determine n rows to align
+        n = min(len(df) for df in dataset.values())
+        keys = [f"JOINKEY_{i}" for i in range(n)]
+
+        # Assign matching join keys
+        for tname, df in dataset.items():
+            df.loc[:n-1, join_col] = keys
+
+        return dataset
 
     # NEW — detect whether this scenario is deterministic (no mutation fn)
     is_deterministic = not scenario or ("inject" not in scenario or scenario["inject"] is None)
@@ -404,5 +435,7 @@ def generate_synthetic_dataset(
                 df[col] = df[col].fillna(_random_numeric())
 
         dataset[table_name] = df
+
+        dataset = enforce_join_alignment(dataset)
 
     return dataset

@@ -10,21 +10,21 @@ from openai import OpenAI
 from dotenv import load_dotenv
 load_dotenv()
 
-# NEW — your edge case registry
 from scripts.build_tests.edge_case_mutations import SCENARIO_REGISTRY
 
-# --------------------------------------------------------------------
-# LLM Client
-# --------------------------------------------------------------------
 
-client = OpenAI()  # uses OPENAI_API_KEY
+# =====================================================================
+# LLM CLIENT
+# =====================================================================
+client = OpenAI()
 
 
-# --------------------------------------------------------------------
-# JSON Extraction (unchanged)
-# --------------------------------------------------------------------
+# =====================================================================
+# JSON EXTRACTION
+# =====================================================================
 
 def extract_json_from_text(text: str) -> dict:
+    """Extract JSON from messy LLM output."""
     try:
         return json.loads(text)
     except:
@@ -36,6 +36,7 @@ def extract_json_from_text(text: str) -> dict:
 
     block = match.group(0)
 
+    # Cleanup
     block = re.sub(r"[\x00-\x1F\x7F]", "", block)
     block = re.sub(r",\s*([}\]])", r"\1", block)
     block = block.replace("“", "\"").replace("”", "\"")
@@ -43,13 +44,77 @@ def extract_json_from_text(text: str) -> dict:
     return json.loads(block)
 
 
-# --------------------------------------------------------------------
-# Deterministic Scenarios
-# --------------------------------------------------------------------
+# =====================================================================
+# MULTI-TABLE MUTATION HELPERS
+# =====================================================================
+
+def generate_join_keys(n: int, prefix: str = "jk") -> list[str]:
+    """Generate matching join keys with row-level variation."""
+    return [f"{prefix}_{i:05d}" for i in range(n)]
+
+
+def mutate_join_only(dataset):
+    """
+    Deterministic scenario:
+    - Ensures at least one table-to-table join produces real matches.
+    - Works even though generator passes one DF at a time (then we no-op).
+    """
+
+    # --- CASE 1: Called on a single table (DataFrame) -> NO-OP ---
+    # The synthetic generator applies inject(df) for each table individually.
+    import pandas as pd
+
+    if isinstance(dataset, pd.DataFrame):
+        # Skip — join logic needs the full dataset, handled at top-level
+        return dataset
+
+    # --- CASE 2: Called on full dataset (dict of tables) ---
+    # This happens only when generate_tests.py applies scenario
+    if not isinstance(dataset, dict):
+        return dataset
+
+    # Deep copy
+    new = {k: v.copy() for k, v in dataset.items()}
+
+    # Need at least two tables
+    if len(new) < 2:
+        return new
+
+    # Try common join columns
+    join_candidates = ["CDSCode", "cdscode", "id"]
+
+    join_col = None
+    for col in join_candidates:
+        if all(col in df.columns for df in new.values()):
+            join_col = col
+            break
+
+    if join_col is None:
+        return new
+
+    # Generate matching keys
+    n = min(len(df) for df in new.values())
+    keys = [f"join_{i:05d}" for i in range(n)]
+
+    # Assign matching join keys
+    for table, df in new.items():
+        df.loc[:n-1, join_col] = keys
+
+    return new
+
+
+# =====================================================================
+# DETERMINISTIC SCENARIOS
+# =====================================================================
 
 def _deterministic_scenarios(limit: int | None) -> List[Dict[str, Any]]:
+    """
+    These are scenario *structures*.
+    They do not mutate data until applied inside generate_tests.py.
+    """
     scenarios = []
 
+    # Only scenarios dependent on LIMIT
     if limit:
         scenarios.extend([
             {"name": "happy_path", "positive_count": limit + 2, "ordering": "correct"},
@@ -58,45 +123,46 @@ def _deterministic_scenarios(limit: int | None) -> List[Dict[str, Any]]:
             {"name": "reverse_order", "positive_count": limit + 2, "ordering": "reverse"},
         ])
 
+    # No-match scenario
     scenarios.append({"name": "no_match", "positive_count": 0})
-    scenarios.append({"name": "join_only", "positive_count": 0, "force_join_match": True})
+
+    # JOIN scenario — NOW has real mutation function
+    scenarios.append({
+        "name": "join_only",
+        "positive_count": 0,
+        "inject": mutate_join_only
+    })
 
     return scenarios
 
 
-# --------------------------------------------------------------------
-# LLM Prompt – NOW INCLUDES THE EDGE CASE LIBRARY
-# --------------------------------------------------------------------
+# =====================================================================
+# LLM PROMPT FOR EDGE-CASE SCENARIOS
+# =====================================================================
 
-EDGE_CASE_LIST = "\n".join(
-    f"- {name}" for name in sorted(SCENARIO_REGISTRY.keys())
-)
+EDGE_CASE_LIST = "\n".join(f"- {name}" for name in sorted(SCENARIO_REGISTRY.keys()))
 
 LLM_PROMPT_TEMPLATE = f"""
-Your task is to choose the **most relevant edge-case data mutation scenarios**
-from the following master library:
+Your task is to choose 2–4 **edge-case data mutation scenarios**
+from the following library:
 
 {EDGE_CASE_LIST}
 
-These represent powerful test-case generators (data mutation functions)
-that distort synthetic datasets to expose SQL query weaknesses.
-
-You must output JSON of the form:
+Output **only JSON**:
 
 {{
   "selected_edge_cases": [
       "edge_case_name_1",
-      "edge_case_name_2",
-      ...
+      "edge_case_name_2"
   ]
 }}
 
 RULES:
-- Only use names from the list above.
-- Select 2–4 high-value edge cases.
-- Do NOT use deterministic baseline scenarios:
+- Use only names shown above.
+- Select 2–4 high-value cases.
+- Do NOT use deterministic scenarios:
   ["happy_path", "exact_limit", "under_limit", "reverse_order", "no_match", "join_only"].
-- Only output JSON, no explanations.
+- No explanation, only JSON.
 
 SQL QUERY TO ANALYZE:
 """
@@ -109,7 +175,7 @@ def _query_llm_for_edge_cases(sql: str) -> List[str]:
         resp = client.chat.completions.create(
             model="gpt-4o",
             temperature=0,
-            max_tokens=500,
+            max_tokens=300,
             messages=[{"role": "user", "content": prompt}]
         )
 
@@ -117,7 +183,6 @@ def _query_llm_for_edge_cases(sql: str) -> List[str]:
         obj = extract_json_from_text(raw)
         names = obj.get("selected_edge_cases", [])
 
-        # keep only names that exist in the registry
         return [n for n in names if n in SCENARIO_REGISTRY]
 
     except Exception as e:
@@ -125,40 +190,41 @@ def _query_llm_for_edge_cases(sql: str) -> List[str]:
         return []
 
 
-# --------------------------------------------------------------------
-# Combine Deterministic + LLM Edge-Case Scenarios
-# --------------------------------------------------------------------
+# =====================================================================
+# COMBINE DETERMINISTIC + LLM EDGE-CASES
+# =====================================================================
 
 def build_scenarios(sql: str, limit: int | None):
     """
-    Build deterministic + LLM-selected edge-case scenarios.
-    Ensures that each edge-case registry entry returns only its mutate() function.
+    Returns a list like:
+    [
+        {name:"happy_path", positive_count:X, ...},
+        {name:"join_only", inject:<fn>},
+        {name:"large_numbers", inject:<fn>},
+        ...
+    ]
     """
+    # Deterministic baseline scenarios
+    scenarios = _deterministic_scenarios(limit)
 
-    # 1. Deterministic scenarios (limit-based, ordering, NULL injections, etc.)
-    base = _deterministic_scenarios(limit)
+    # LLM-selected high-value mutations
+    chosen = _query_llm_for_edge_cases(sql)
 
-    # 2. GPT chooses appropriate edge-case labels
-    chosen_edge_cases = _query_llm_for_edge_cases(sql)
+    print(f"[Scenario Planner] Deterministic={len(scenarios)}, LLM edge-cases={len(chosen)}")
 
-    print(f"[Scenario Planner] Deterministic={len(base)}, LLM edge-cases={len(chosen_edge_cases)}")
-
-    # 3. Convert edge-case labels → fully functional scenario objects
-    for name in chosen_edge_cases:
-        registry_entry = SCENARIO_REGISTRY.get(name)
-
-        if registry_entry is None:
-            print(f"[Scenario Planner] ⚠ Unknown edge-case name '{name}', skipping.")
+    # Convert to executable scenario objects
+    for name in chosen:
+        entry = SCENARIO_REGISTRY.get(name)
+        if not entry:
             continue
 
-        mutate_fn = registry_entry.get("mutate")
-        if mutate_fn is None:
-            print(f"[Scenario Planner] ⚠ Edge-case '{name}' has no 'mutate' function, skipping.")
+        mutate_fn = entry.get("mutate")
+        if not mutate_fn:
             continue
 
-        base.append({
+        scenarios.append({
             "name": name,
-            "inject": mutate_fn      # ✓ FIXED
+            "inject": mutate_fn
         })
 
-    return base
+    return scenarios
