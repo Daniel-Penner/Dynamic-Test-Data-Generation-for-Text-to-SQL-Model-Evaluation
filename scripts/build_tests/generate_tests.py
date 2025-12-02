@@ -34,10 +34,12 @@ def generate_tests_for_query(
         dataset = generate_synthetic_dataset(
             schema_map=schema_map,
             constraints=constraints,
+            sql=gold_query,
             order_info=order_info,
             n_rows_per_table=n_rows_per_table,
             scenario=sc,
         )
+
 
         expected = run_gold_on_data(dataset, gold_query)
         if expected is None:

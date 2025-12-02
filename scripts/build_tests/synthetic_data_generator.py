@@ -4,11 +4,11 @@ from __future__ import annotations
 
 import random
 import string
+import re
 from dataclasses import dataclass, field
 from typing import Any, Dict, Tuple, Set, List, Optional
 
 import pandas as pd
-
 
 # =====================================================================
 # Helper random generators
@@ -104,6 +104,7 @@ class Constraints:
 def generate_synthetic_dataset(
     schema_map: Dict[str, Dict[str, str]],
     constraints: Any,
+    sql: str,
     order_info: Optional[Any] = None,
     n_rows_per_table: int = 40,
     scenario: Optional[Dict[str, Any]] = None,
@@ -151,6 +152,24 @@ def generate_synthetic_dataset(
         constraints = Constraints(per_table)
 
     c = constraints
+
+    used_tables: set[str] = set()
+    if sql:
+        # Normalize whitespace and strip backticks so `frpm` → frpm
+        s = " ".join(sql.replace("\n", " ").split())
+        s = s.replace("`", "")
+
+        # FROM <table>
+        for m in re.finditer(r"\bFROM\s+([a-zA-Z0-9_]+)", s, re.IGNORECASE):
+            used_tables.add(m.group(1).lower())
+
+        # JOIN <table>
+        for m in re.finditer(r"\bJOIN\s+([a-zA-Z0-9_]+)", s, re.IGNORECASE):
+            used_tables.add(m.group(1).lower())
+
+    # If parsing somehow failed, fall back to "all tables"
+    if not used_tables:
+        used_tables = set(schema_map.keys())
 
     # =============================================================
     # Extract direct required-equals for easy lookup
@@ -228,6 +247,9 @@ def generate_synthetic_dataset(
     dataset: Dict[str, pd.DataFrame] = {}
 
     for table_name, columns in schema_map.items():
+        # Skip tables not referenced in the SQL query
+        if table_name.lower() not in used_tables:
+            continue
 
         table_required_eq = required_eq_by_table.get(table_name, {})
         rows: List[Dict[str, Any]] = []
