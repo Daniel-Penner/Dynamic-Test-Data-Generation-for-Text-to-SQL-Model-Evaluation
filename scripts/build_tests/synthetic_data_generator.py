@@ -362,7 +362,12 @@ def generate_synthetic_dataset(
         # ---------------------------------------------------------
         # 3B: Normal rows (matching + non-matching)
         # ---------------------------------------------------------
-        match_count = max(1, int(n_rows_per_table * match_ratio))
+        # If scenario defines positive_count, use that
+        if scenario and "positive_count" in scenario:
+            match_count = scenario["positive_count"]
+        else:
+            match_count = max(1, int(n_rows_per_table * match_ratio))
+
 
         for _ in range(match_count):
             row = {}
