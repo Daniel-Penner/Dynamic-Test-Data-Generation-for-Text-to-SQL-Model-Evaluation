@@ -1,0 +1,1693 @@
+[
+  {
+    "query_id": 0,
+    "strict_accuracy": 0,
+    "fractional_accuracy": 0.0,
+    "scenarios": [
+      {
+        "scenario": "exact_limit",
+        "gold_sql": "SELECT \"Free Meal Count (K-12)\" / \"Enrollment (K-12)\" FROM frpm WHERE \"County Name\" = 'Alameda' ORDER BY (CAST(\"Free Meal Count (K-12)\" AS REAL) / \"Enrollment (K-12)\") DESC LIMIT 1",
+        "prediction_sql": "SELECT MAX(\"Percent (%) Eligible Free (K-12)\") FROM frpm WHERE \"County Name\" = 'Alameda'",
+        "passed": false,
+        "predicted": [
+          {
+            "max(\"Percent (%) Eligible Free (K-12)\")": 776.0
+          }
+        ],
+        "gold": [
+          {
+            "(\"Free Meal Count (K-12)\" / \"Enrollment (K-12)\")": 0.5751295336787565
+          }
+        ],
+        "error_pred": null,
+        "error_gold": null
+      },
+      {
+        "scenario": "extreme_ratios",
+        "gold_sql": "SELECT \"Free Meal Count (K-12)\" / \"Enrollment (K-12)\" FROM frpm WHERE \"County Name\" = 'Alameda' ORDER BY (CAST(\"Free Meal Count (K-12)\" AS REAL) / \"Enrollment (K-12)\") DESC LIMIT 1",
+        "prediction_sql": "SELECT MAX(\"Percent (%) Eligible Free (K-12)\") FROM frpm WHERE \"County Name\" = 'Alameda'",
+        "passed": false,
+        "predicted": [
+          {
+            "max(\"Percent (%) Eligible Free (K-12)\")": 789.0
+          }
+        ],
+        "gold": [
+          {
+            "(\"Free Meal Count (K-12)\" / \"Enrollment (K-12)\")": 11.183673469387756
+          }
+        ],
+        "error_pred": null,
+        "error_gold": null
+      },
+      {
+        "scenario": "full_match",
+        "gold_sql": "SELECT \"Free Meal Count (K-12)\" / \"Enrollment (K-12)\" FROM frpm WHERE \"County Name\" = 'Alameda' ORDER BY (CAST(\"Free Meal Count (K-12)\" AS REAL) / \"Enrollment (K-12)\") DESC LIMIT 1",
+        "prediction_sql": "SELECT MAX(\"Percent (%) Eligible Free (K-12)\") FROM frpm WHERE \"County Name\" = 'Alameda'",
+        "passed": false,
+        "predicted": [
+          {
+            "max(\"Percent (%) Eligible Free (K-12)\")": 785.0
+          }
+        ],
+        "gold": [
+          {
+            "(\"Free Meal Count (K-12)\" / \"Enrollment (K-12)\")": 3.38
+          }
+        ],
+        "error_pred": null,
+        "error_gold": null
+      },
+      {
+        "scenario": "happy_path",
+        "gold_sql": "SELECT \"Free Meal Count (K-12)\" / \"Enrollment (K-12)\" FROM frpm WHERE \"County Name\" = 'Alameda' ORDER BY (CAST(\"Free Meal Count (K-12)\" AS REAL) / \"Enrollment (K-12)\") DESC LIMIT 1",
+        "prediction_sql": "SELECT MAX(\"Percent (%) Eligible Free (K-12)\") FROM frpm WHERE \"County Name\" = 'Alameda'",
+        "passed": false,
+        "predicted": [
+          {
+            "max(\"Percent (%) Eligible Free (K-12)\")": 773.0
+          }
+        ],
+        "gold": [
+          {
+            "(\"Free Meal Count (K-12)\" / \"Enrollment (K-12)\")": 3.8874458874458875
+          }
+        ],
+        "error_pred": null,
+        "error_gold": null
+      },
+      {
+        "scenario": "join_only",
+        "gold_sql": "SELECT \"Free Meal Count (K-12)\" / \"Enrollment (K-12)\" FROM frpm WHERE \"County Name\" = 'Alameda' ORDER BY (CAST(\"Free Meal Count (K-12)\" AS REAL) / \"Enrollment (K-12)\") DESC LIMIT 1",
+        "prediction_sql": "SELECT MAX(\"Percent (%) Eligible Free (K-12)\") FROM frpm WHERE \"County Name\" = 'Alameda'",
+        "passed": false,
+        "predicted": [
+          {
+            "max(\"Percent (%) Eligible Free (K-12)\")": 447.0
+          }
+        ],
+        "gold": [
+          {
+            "(\"Free Meal Count (K-12)\" / \"Enrollment (K-12)\")": 0.8795811518324608
+          }
+        ],
+        "error_pred": null,
+        "error_gold": null
+      },
+      {
+        "scenario": "multi_match",
+        "gold_sql": "SELECT \"Free Meal Count (K-12)\" / \"Enrollment (K-12)\" FROM frpm WHERE \"County Name\" = 'Alameda' ORDER BY (CAST(\"Free Meal Count (K-12)\" AS REAL) / \"Enrollment (K-12)\") DESC LIMIT 1",
+        "prediction_sql": "SELECT MAX(\"Percent (%) Eligible Free (K-12)\") FROM frpm WHERE \"County Name\" = 'Alameda'",
+        "passed": false,
+        "predicted": [
+          {
+            "max(\"Percent (%) Eligible Free (K-12)\")": 617.0
+          }
+        ],
+        "gold": [
+          {
+            "(\"Free Meal Count (K-12)\" / \"Enrollment (K-12)\")": 3.0528301886792453
+          }
+        ],
+        "error_pred": null,
+        "error_gold": null
+      },
+      {
+        "scenario": "nan_values",
+        "gold_sql": "SELECT \"Free Meal Count (K-12)\" / \"Enrollment (K-12)\" FROM frpm WHERE \"County Name\" = 'Alameda' ORDER BY (CAST(\"Free Meal Count (K-12)\" AS REAL) / \"Enrollment (K-12)\") DESC LIMIT 1",
+        "prediction_sql": "SELECT MAX(\"Percent (%) Eligible Free (K-12)\") FROM frpm WHERE \"County Name\" = 'Alameda'",
+        "passed": false,
+        "predicted": [
+          {
+            "max(\"Percent (%) Eligible Free (K-12)\")": 975.0
+          }
+        ],
+        "gold": [
+          {
+            "(\"Free Meal Count (K-12)\" / \"Enrollment (K-12)\")": 9.761904761904763
+          }
+        ],
+        "error_pred": null,
+        "error_gold": null
+      },
+      {
+        "scenario": "no_match",
+        "gold_sql": "SELECT \"Free Meal Count (K-12)\" / \"Enrollment (K-12)\" FROM frpm WHERE \"County Name\" = 'Alameda' ORDER BY (CAST(\"Free Meal Count (K-12)\" AS REAL) / \"Enrollment (K-12)\") DESC LIMIT 1",
+        "prediction_sql": "SELECT MAX(\"Percent (%) Eligible Free (K-12)\") FROM frpm WHERE \"County Name\" = 'Alameda'",
+        "passed": false,
+        "predicted": [
+          {
+            "max(\"Percent (%) Eligible Free (K-12)\")": 514.0
+          }
+        ],
+        "gold": [
+          {
+            "(\"Free Meal Count (K-12)\" / \"Enrollment (K-12)\")": 1.0213270142180095
+          }
+        ],
+        "error_pred": null,
+        "error_gold": null
+      },
+      {
+        "scenario": "reverse_order",
+        "gold_sql": "SELECT \"Free Meal Count (K-12)\" / \"Enrollment (K-12)\" FROM frpm WHERE \"County Name\" = 'Alameda' ORDER BY (CAST(\"Free Meal Count (K-12)\" AS REAL) / \"Enrollment (K-12)\") DESC LIMIT 1",
+        "prediction_sql": "SELECT MAX(\"Percent (%) Eligible Free (K-12)\") FROM frpm WHERE \"County Name\" = 'Alameda'",
+        "passed": false,
+        "predicted": [
+          {
+            "max(\"Percent (%) Eligible Free (K-12)\")": 611.0
+          }
+        ],
+        "gold": [
+          {
+            "(\"Free Meal Count (K-12)\" / \"Enrollment (K-12)\")": 2.668032786885246
+          }
+        ],
+        "error_pred": null,
+        "error_gold": null
+      },
+      {
+        "scenario": "single_match",
+        "gold_sql": "SELECT \"Free Meal Count (K-12)\" / \"Enrollment (K-12)\" FROM frpm WHERE \"County Name\" = 'Alameda' ORDER BY (CAST(\"Free Meal Count (K-12)\" AS REAL) / \"Enrollment (K-12)\") DESC LIMIT 1",
+        "prediction_sql": "SELECT MAX(\"Percent (%) Eligible Free (K-12)\") FROM frpm WHERE \"County Name\" = 'Alameda'",
+        "passed": false,
+        "predicted": [
+          {
+            "max(\"Percent (%) Eligible Free (K-12)\")": 303.0
+          }
+        ],
+        "gold": [
+          {
+            "(\"Free Meal Count (K-12)\" / \"Enrollment (K-12)\")": 0.8155197657393851
+          }
+        ],
+        "error_pred": null,
+        "error_gold": null
+      },
+      {
+        "scenario": "under_limit",
+        "gold_sql": "SELECT \"Free Meal Count (K-12)\" / \"Enrollment (K-12)\" FROM frpm WHERE \"County Name\" = 'Alameda' ORDER BY (CAST(\"Free Meal Count (K-12)\" AS REAL) / \"Enrollment (K-12)\") DESC LIMIT 1",
+        "prediction_sql": "SELECT MAX(\"Percent (%) Eligible Free (K-12)\") FROM frpm WHERE \"County Name\" = 'Alameda'",
+        "passed": false,
+        "predicted": [
+          {
+            "max(\"Percent (%) Eligible Free (K-12)\")": 657.0
+          }
+        ],
+        "gold": [
+          {
+            "(\"Free Meal Count (K-12)\" / \"Enrollment (K-12)\")": 1.6456043956043955
+          }
+        ],
+        "error_pred": null,
+        "error_gold": null
+      },
+      {
+        "scenario": "zero_values",
+        "gold_sql": "SELECT \"Free Meal Count (K-12)\" / \"Enrollment (K-12)\" FROM frpm WHERE \"County Name\" = 'Alameda' ORDER BY (CAST(\"Free Meal Count (K-12)\" AS REAL) / \"Enrollment (K-12)\") DESC LIMIT 1",
+        "prediction_sql": "SELECT MAX(\"Percent (%) Eligible Free (K-12)\") FROM frpm WHERE \"County Name\" = 'Alameda'",
+        "passed": false,
+        "predicted": [
+          {
+            "max(\"Percent (%) Eligible Free (K-12)\")": 685.0
+          }
+        ],
+        "gold": [
+          {
+            "(\"Free Meal Count (K-12)\" / \"Enrollment (K-12)\")": Infinity
+          }
+        ],
+        "error_pred": null,
+        "error_gold": null
+      }
+    ]
+  },
+  {
+    "query_id": 1,
+    "strict_accuracy": 0,
+    "fractional_accuracy": 0.0,
+    "scenarios": [
+      {
+        "scenario": "exact_limit",
+        "gold_sql": "SELECT \"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\" FROM frpm WHERE \"Educational Option Type\" = 'Continuation School' AND \"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\" IS NOT NULL ORDER BY \"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\" ASC LIMIT 3",
+        "prediction_sql": "SELECT \"School Name\", \"Percent (%) Eligible Free (Ages 5-17)\" FROM frpm JOIN satscores ON frpm.CDSCode = satscores.cds JOIN schools ON schools.CDSCode = satscores.cds WHERE \"District Type\" = 'Continuation High School' AND rtype = 'S' AND \"Percent (%) Eligible Free (Ages 5-17)\" IS NOT NULL ORDER BY \"Percent (%) Eligible Free (Ages 5-17)\" ASC LIMIT 3",
+        "passed": false,
+        "predicted": null,
+        "gold": [
+          {
+            "(\"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\")": 0.08921933085501858
+          },
+          {
+            "(\"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\")": 0.20588235294117646
+          },
+          {
+            "(\"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\")": 0.49377593360995853
+          }
+        ],
+        "error_pred": "Catalog Error: Table with name satscores does not exist!\nDid you mean \"pg_attrdef\"?\n\nLINE 1: ... Name\", \"Percent (%) Eligible Free (Ages 5-17)\" FROM frpm JOIN satscores ON frpm.CDSCode = satscores.cds JOIN schools ON...\n                                                                          ^",
+        "error_gold": null
+      },
+      {
+        "scenario": "extreme_ratios",
+        "gold_sql": "SELECT \"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\" FROM frpm WHERE \"Educational Option Type\" = 'Continuation School' AND \"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\" IS NOT NULL ORDER BY \"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\" ASC LIMIT 3",
+        "prediction_sql": "SELECT \"School Name\", \"Percent (%) Eligible Free (Ages 5-17)\" FROM frpm JOIN satscores ON frpm.CDSCode = satscores.cds JOIN schools ON schools.CDSCode = satscores.cds WHERE \"District Type\" = 'Continuation High School' AND rtype = 'S' AND \"Percent (%) Eligible Free (Ages 5-17)\" IS NOT NULL ORDER BY \"Percent (%) Eligible Free (Ages 5-17)\" ASC LIMIT 3",
+        "passed": false,
+        "predicted": null,
+        "gold": [
+          {
+            "(\"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\")": 0.3504380475594493
+          },
+          {
+            "(\"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\")": 0.5883940620782726
+          },
+          {
+            "(\"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\")": 0.9404255319148936
+          }
+        ],
+        "error_pred": "Catalog Error: Table with name satscores does not exist!\nDid you mean \"pg_attrdef\"?\n\nLINE 1: ... Name\", \"Percent (%) Eligible Free (Ages 5-17)\" FROM frpm JOIN satscores ON frpm.CDSCode = satscores.cds JOIN schools ON...\n                                                                          ^",
+        "error_gold": null
+      },
+      {
+        "scenario": "full_match",
+        "gold_sql": "SELECT \"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\" FROM frpm WHERE \"Educational Option Type\" = 'Continuation School' AND \"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\" IS NOT NULL ORDER BY \"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\" ASC LIMIT 3",
+        "prediction_sql": "SELECT \"School Name\", \"Percent (%) Eligible Free (Ages 5-17)\" FROM frpm JOIN satscores ON frpm.CDSCode = satscores.cds JOIN schools ON schools.CDSCode = satscores.cds WHERE \"District Type\" = 'Continuation High School' AND rtype = 'S' AND \"Percent (%) Eligible Free (Ages 5-17)\" IS NOT NULL ORDER BY \"Percent (%) Eligible Free (Ages 5-17)\" ASC LIMIT 3",
+        "passed": false,
+        "predicted": null,
+        "gold": [
+          {
+            "(\"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\")": 0.5954285714285714
+          },
+          {
+            "(\"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\")": 0.7257019438444925
+          },
+          {
+            "(\"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\")": 0.7642487046632125
+          }
+        ],
+        "error_pred": "Catalog Error: Table with name satscores does not exist!\nDid you mean \"pg_attrdef\"?\n\nLINE 1: ... Name\", \"Percent (%) Eligible Free (Ages 5-17)\" FROM frpm JOIN satscores ON frpm.CDSCode = satscores.cds JOIN schools ON...\n                                                                          ^",
+        "error_gold": null
+      },
+      {
+        "scenario": "happy_path",
+        "gold_sql": "SELECT \"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\" FROM frpm WHERE \"Educational Option Type\" = 'Continuation School' AND \"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\" IS NOT NULL ORDER BY \"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\" ASC LIMIT 3",
+        "prediction_sql": "SELECT \"School Name\", \"Percent (%) Eligible Free (Ages 5-17)\" FROM frpm JOIN satscores ON frpm.CDSCode = satscores.cds JOIN schools ON schools.CDSCode = satscores.cds WHERE \"District Type\" = 'Continuation High School' AND rtype = 'S' AND \"Percent (%) Eligible Free (Ages 5-17)\" IS NOT NULL ORDER BY \"Percent (%) Eligible Free (Ages 5-17)\" ASC LIMIT 3",
+        "passed": false,
+        "predicted": null,
+        "gold": [
+          {
+            "(\"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\")": 0.21764705882352942
+          },
+          {
+            "(\"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\")": 0.6407657657657657
+          },
+          {
+            "(\"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\")": 1.2228571428571429
+          }
+        ],
+        "error_pred": "Catalog Error: Table with name satscores does not exist!\nDid you mean \"pg_attrdef\"?\n\nLINE 1: ... Name\", \"Percent (%) Eligible Free (Ages 5-17)\" FROM frpm JOIN satscores ON frpm.CDSCode = satscores.cds JOIN schools ON...\n                                                                          ^",
+        "error_gold": null
+      },
+      {
+        "scenario": "join_only",
+        "gold_sql": "SELECT \"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\" FROM frpm WHERE \"Educational Option Type\" = 'Continuation School' AND \"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\" IS NOT NULL ORDER BY \"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\" ASC LIMIT 3",
+        "prediction_sql": "SELECT \"School Name\", \"Percent (%) Eligible Free (Ages 5-17)\" FROM frpm JOIN satscores ON frpm.CDSCode = satscores.cds JOIN schools ON schools.CDSCode = satscores.cds WHERE \"District Type\" = 'Continuation High School' AND rtype = 'S' AND \"Percent (%) Eligible Free (Ages 5-17)\" IS NOT NULL ORDER BY \"Percent (%) Eligible Free (Ages 5-17)\" ASC LIMIT 3",
+        "passed": false,
+        "predicted": null,
+        "gold": [
+          {
+            "(\"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\")": 0.7205882352941176
+          }
+        ],
+        "error_pred": "Catalog Error: Table with name satscores does not exist!\nDid you mean \"pg_attrdef\"?\n\nLINE 1: ... Name\", \"Percent (%) Eligible Free (Ages 5-17)\" FROM frpm JOIN satscores ON frpm.CDSCode = satscores.cds JOIN schools ON...\n                                                                          ^",
+        "error_gold": null
+      },
+      {
+        "scenario": "large_numbers",
+        "gold_sql": "SELECT \"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\" FROM frpm WHERE \"Educational Option Type\" = 'Continuation School' AND \"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\" IS NOT NULL ORDER BY \"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\" ASC LIMIT 3",
+        "prediction_sql": "SELECT \"School Name\", \"Percent (%) Eligible Free (Ages 5-17)\" FROM frpm JOIN satscores ON frpm.CDSCode = satscores.cds JOIN schools ON schools.CDSCode = satscores.cds WHERE \"District Type\" = 'Continuation High School' AND rtype = 'S' AND \"Percent (%) Eligible Free (Ages 5-17)\" IS NOT NULL ORDER BY \"Percent (%) Eligible Free (Ages 5-17)\" ASC LIMIT 3",
+        "passed": false,
+        "predicted": null,
+        "gold": [
+          {
+            "(\"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\")": 0.2614091597741616
+          },
+          {
+            "(\"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\")": 0.31710840580111155
+          },
+          {
+            "(\"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\")": 0.6276445596229395
+          }
+        ],
+        "error_pred": "Catalog Error: Table with name satscores does not exist!\nDid you mean \"pg_attrdef\"?\n\nLINE 1: ... Name\", \"Percent (%) Eligible Free (Ages 5-17)\" FROM frpm JOIN satscores ON frpm.CDSCode = satscores.cds JOIN schools ON...\n                                                                          ^",
+        "error_gold": null
+      },
+      {
+        "scenario": "multi_match",
+        "gold_sql": "SELECT \"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\" FROM frpm WHERE \"Educational Option Type\" = 'Continuation School' AND \"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\" IS NOT NULL ORDER BY \"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\" ASC LIMIT 3",
+        "prediction_sql": "SELECT \"School Name\", \"Percent (%) Eligible Free (Ages 5-17)\" FROM frpm JOIN satscores ON frpm.CDSCode = satscores.cds JOIN schools ON schools.CDSCode = satscores.cds WHERE \"District Type\" = 'Continuation High School' AND rtype = 'S' AND \"Percent (%) Eligible Free (Ages 5-17)\" IS NOT NULL ORDER BY \"Percent (%) Eligible Free (Ages 5-17)\" ASC LIMIT 3",
+        "passed": false,
+        "predicted": null,
+        "gold": [
+          {
+            "(\"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\")": 0.48580121703853957
+          },
+          {
+            "(\"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\")": 1.0617283950617284
+          },
+          {
+            "(\"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\")": 3.4054982817869415
+          }
+        ],
+        "error_pred": "Catalog Error: Table with name satscores does not exist!\nDid you mean \"pg_attrdef\"?\n\nLINE 1: ... Name\", \"Percent (%) Eligible Free (Ages 5-17)\" FROM frpm JOIN satscores ON frpm.CDSCode = satscores.cds JOIN schools ON...\n                                                                          ^",
+        "error_gold": null
+      },
+      {
+        "scenario": "nan_values",
+        "gold_sql": "SELECT \"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\" FROM frpm WHERE \"Educational Option Type\" = 'Continuation School' AND \"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\" IS NOT NULL ORDER BY \"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\" ASC LIMIT 3",
+        "prediction_sql": "SELECT \"School Name\", \"Percent (%) Eligible Free (Ages 5-17)\" FROM frpm JOIN satscores ON frpm.CDSCode = satscores.cds JOIN schools ON schools.CDSCode = satscores.cds WHERE \"District Type\" = 'Continuation High School' AND rtype = 'S' AND \"Percent (%) Eligible Free (Ages 5-17)\" IS NOT NULL ORDER BY \"Percent (%) Eligible Free (Ages 5-17)\" ASC LIMIT 3",
+        "passed": false,
+        "predicted": null,
+        "gold": [
+          {
+            "(\"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\")": 0.10317460317460317
+          },
+          {
+            "(\"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\")": 0.9310344827586207
+          },
+          {
+            "(\"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\")": 0.991578947368421
+          }
+        ],
+        "error_pred": "Catalog Error: Table with name satscores does not exist!\nDid you mean \"pg_attrdef\"?\n\nLINE 1: ... Name\", \"Percent (%) Eligible Free (Ages 5-17)\" FROM frpm JOIN satscores ON frpm.CDSCode = satscores.cds JOIN schools ON...\n                                                                          ^",
+        "error_gold": null
+      },
+      {
+        "scenario": "no_match",
+        "gold_sql": "SELECT \"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\" FROM frpm WHERE \"Educational Option Type\" = 'Continuation School' AND \"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\" IS NOT NULL ORDER BY \"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\" ASC LIMIT 3",
+        "prediction_sql": "SELECT \"School Name\", \"Percent (%) Eligible Free (Ages 5-17)\" FROM frpm JOIN satscores ON frpm.CDSCode = satscores.cds JOIN schools ON schools.CDSCode = satscores.cds WHERE \"District Type\" = 'Continuation High School' AND rtype = 'S' AND \"Percent (%) Eligible Free (Ages 5-17)\" IS NOT NULL ORDER BY \"Percent (%) Eligible Free (Ages 5-17)\" ASC LIMIT 3",
+        "passed": false,
+        "predicted": null,
+        "gold": [
+          {
+            "(\"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\")": 0.6189839572192514
+          }
+        ],
+        "error_pred": "Catalog Error: Table with name satscores does not exist!\nDid you mean \"pg_attrdef\"?\n\nLINE 1: ... Name\", \"Percent (%) Eligible Free (Ages 5-17)\" FROM frpm JOIN satscores ON frpm.CDSCode = satscores.cds JOIN schools ON...\n                                                                          ^",
+        "error_gold": null
+      },
+      {
+        "scenario": "reverse_order",
+        "gold_sql": "SELECT \"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\" FROM frpm WHERE \"Educational Option Type\" = 'Continuation School' AND \"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\" IS NOT NULL ORDER BY \"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\" ASC LIMIT 3",
+        "prediction_sql": "SELECT \"School Name\", \"Percent (%) Eligible Free (Ages 5-17)\" FROM frpm JOIN satscores ON frpm.CDSCode = satscores.cds JOIN schools ON schools.CDSCode = satscores.cds WHERE \"District Type\" = 'Continuation High School' AND rtype = 'S' AND \"Percent (%) Eligible Free (Ages 5-17)\" IS NOT NULL ORDER BY \"Percent (%) Eligible Free (Ages 5-17)\" ASC LIMIT 3",
+        "passed": false,
+        "predicted": null,
+        "gold": [
+          {
+            "(\"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\")": 0.024734982332155476
+          },
+          {
+            "(\"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\")": 0.6527093596059114
+          },
+          {
+            "(\"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\")": 0.7824143070044709
+          }
+        ],
+        "error_pred": "Catalog Error: Table with name satscores does not exist!\nDid you mean \"pg_attrdef\"?\n\nLINE 1: ... Name\", \"Percent (%) Eligible Free (Ages 5-17)\" FROM frpm JOIN satscores ON frpm.CDSCode = satscores.cds JOIN schools ON...\n                                                                          ^",
+        "error_gold": null
+      },
+      {
+        "scenario": "single_match",
+        "gold_sql": "SELECT \"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\" FROM frpm WHERE \"Educational Option Type\" = 'Continuation School' AND \"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\" IS NOT NULL ORDER BY \"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\" ASC LIMIT 3",
+        "prediction_sql": "SELECT \"School Name\", \"Percent (%) Eligible Free (Ages 5-17)\" FROM frpm JOIN satscores ON frpm.CDSCode = satscores.cds JOIN schools ON schools.CDSCode = satscores.cds WHERE \"District Type\" = 'Continuation High School' AND rtype = 'S' AND \"Percent (%) Eligible Free (Ages 5-17)\" IS NOT NULL ORDER BY \"Percent (%) Eligible Free (Ages 5-17)\" ASC LIMIT 3",
+        "passed": false,
+        "predicted": null,
+        "gold": [
+          {
+            "(\"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\")": 2.4433333333333334
+          },
+          {
+            "(\"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\")": 23.41176470588235
+          }
+        ],
+        "error_pred": "Catalog Error: Table with name satscores does not exist!\nDid you mean \"pg_attrdef\"?\n\nLINE 1: ... Name\", \"Percent (%) Eligible Free (Ages 5-17)\" FROM frpm JOIN satscores ON frpm.CDSCode = satscores.cds JOIN schools ON...\n                                                                          ^",
+        "error_gold": null
+      },
+      {
+        "scenario": "under_limit",
+        "gold_sql": "SELECT \"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\" FROM frpm WHERE \"Educational Option Type\" = 'Continuation School' AND \"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\" IS NOT NULL ORDER BY \"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\" ASC LIMIT 3",
+        "prediction_sql": "SELECT \"School Name\", \"Percent (%) Eligible Free (Ages 5-17)\" FROM frpm JOIN satscores ON frpm.CDSCode = satscores.cds JOIN schools ON schools.CDSCode = satscores.cds WHERE \"District Type\" = 'Continuation High School' AND rtype = 'S' AND \"Percent (%) Eligible Free (Ages 5-17)\" IS NOT NULL ORDER BY \"Percent (%) Eligible Free (Ages 5-17)\" ASC LIMIT 3",
+        "passed": false,
+        "predicted": null,
+        "gold": [
+          {
+            "(\"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\")": 0.22184684684684686
+          },
+          {
+            "(\"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\")": 1.106631989596879
+          },
+          {
+            "(\"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\")": 1.2965986394557822
+          }
+        ],
+        "error_pred": "Catalog Error: Table with name satscores does not exist!\nDid you mean \"pg_attrdef\"?\n\nLINE 1: ... Name\", \"Percent (%) Eligible Free (Ages 5-17)\" FROM frpm JOIN satscores ON frpm.CDSCode = satscores.cds JOIN schools ON...\n                                                                          ^",
+        "error_gold": null
+      }
+    ]
+  },
+  {
+    "query_id": 2,
+    "strict_accuracy": 0,
+    "fractional_accuracy": 0.0,
+    "scenarios": [
+      {
+        "scenario": "duplicate_join_keys",
+        "gold_sql": "SELECT T2.Zip FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode WHERE T1.\"District Name\" = 'Fresno County Office of Education' AND T1.\"Charter School (Y/N)\" = 1",
+        "prediction_sql": "SELECT Zip FROM schools WHERE County = 'Fresno' AND Charter = 1",
+        "passed": false,
+        "predicted": [],
+        "gold": [
+          {
+            "Zip": "match_669924"
+          },
+          {
+            "Zip": "match_606353"
+          },
+          {
+            "Zip": "match_506912"
+          },
+          {
+            "Zip": "s_617513"
+          }
+        ],
+        "error_pred": null,
+        "error_gold": null
+      },
+      {
+        "scenario": "full_match",
+        "gold_sql": "SELECT T2.Zip FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode WHERE T1.\"District Name\" = 'Fresno County Office of Education' AND T1.\"Charter School (Y/N)\" = 1",
+        "prediction_sql": "SELECT Zip FROM schools WHERE County = 'Fresno' AND Charter = 1",
+        "passed": false,
+        "predicted": [],
+        "gold": [
+          {
+            "Zip": "Zip_0"
+          },
+          {
+            "Zip": "Zip_1"
+          },
+          {
+            "Zip": "Zip_2"
+          },
+          {
+            "Zip": "Zip_3"
+          },
+          {
+            "Zip": "Zip_4"
+          },
+          {
+            "Zip": "Zip_5"
+          }
+        ],
+        "error_pred": null,
+        "error_gold": null
+      },
+      {
+        "scenario": "inconsistent_categories",
+        "gold_sql": "SELECT T2.Zip FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode WHERE T1.\"District Name\" = 'Fresno County Office of Education' AND T1.\"Charter School (Y/N)\" = 1",
+        "prediction_sql": "SELECT Zip FROM schools WHERE County = 'Fresno' AND Charter = 1",
+        "passed": false,
+        "predicted": [],
+        "gold": [
+          {
+            "Zip": "match_674669"
+          },
+          {
+            "Zip": "Other"
+          },
+          {
+            "Zip": "match_118671"
+          },
+          {
+            "Zip": "s_494817"
+          }
+        ],
+        "error_pred": null,
+        "error_gold": null
+      },
+      {
+        "scenario": "join_key_nulls",
+        "gold_sql": "SELECT T2.Zip FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode WHERE T1.\"District Name\" = 'Fresno County Office of Education' AND T1.\"Charter School (Y/N)\" = 1",
+        "prediction_sql": "SELECT Zip FROM schools WHERE County = 'Fresno' AND Charter = 1",
+        "passed": false,
+        "predicted": [],
+        "gold": [
+          {
+            "Zip": "match_772587"
+          },
+          {
+            "Zip": "match_896631"
+          },
+          {
+            "Zip": "match_422140"
+          },
+          {
+            "Zip": "s_422475"
+          }
+        ],
+        "error_pred": null,
+        "error_gold": null
+      },
+      {
+        "scenario": "join_only",
+        "gold_sql": "SELECT T2.Zip FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode WHERE T1.\"District Name\" = 'Fresno County Office of Education' AND T1.\"Charter School (Y/N)\" = 1",
+        "prediction_sql": "SELECT Zip FROM schools WHERE County = 'Fresno' AND Charter = 1",
+        "passed": false,
+        "predicted": [],
+        "gold": [
+          {
+            "Zip": "s_304646"
+          }
+        ],
+        "error_pred": null,
+        "error_gold": null
+      },
+      {
+        "scenario": "multi_match",
+        "gold_sql": "SELECT T2.Zip FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode WHERE T1.\"District Name\" = 'Fresno County Office of Education' AND T1.\"Charter School (Y/N)\" = 1",
+        "prediction_sql": "SELECT Zip FROM schools WHERE County = 'Fresno' AND Charter = 1",
+        "passed": false,
+        "predicted": [],
+        "gold": [
+          {
+            "Zip": "Zip_0"
+          },
+          {
+            "Zip": "Zip_1"
+          },
+          {
+            "Zip": "Zip_2"
+          },
+          {
+            "Zip": "Zip_3"
+          }
+        ],
+        "error_pred": null,
+        "error_gold": null
+      },
+      {
+        "scenario": "no_match",
+        "gold_sql": "SELECT T2.Zip FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode WHERE T1.\"District Name\" = 'Fresno County Office of Education' AND T1.\"Charter School (Y/N)\" = 1",
+        "prediction_sql": "SELECT Zip FROM schools WHERE County = 'Fresno' AND Charter = 1",
+        "passed": false,
+        "predicted": [],
+        "gold": [
+          {
+            "Zip": "Zip_0"
+          }
+        ],
+        "error_pred": null,
+        "error_gold": null
+      },
+      {
+        "scenario": "single_match",
+        "gold_sql": "SELECT T2.Zip FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode WHERE T1.\"District Name\" = 'Fresno County Office of Education' AND T1.\"Charter School (Y/N)\" = 1",
+        "prediction_sql": "SELECT Zip FROM schools WHERE County = 'Fresno' AND Charter = 1",
+        "passed": false,
+        "predicted": [],
+        "gold": [
+          {
+            "Zip": "Zip_0"
+          },
+          {
+            "Zip": "Zip_1"
+          }
+        ],
+        "error_pred": null,
+        "error_gold": null
+      }
+    ]
+  },
+  {
+    "query_id": 3,
+    "strict_accuracy": 0,
+    "fractional_accuracy": 0.0,
+    "scenarios": [
+      {
+        "scenario": "duplicate_join_keys",
+        "gold_sql": "SELECT T2.MailStreet FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode ORDER BY T1.\"FRPM Count (K-12)\" DESC LIMIT 1",
+        "prediction_sql": "SELECT MailStreet || ' ' || MailCity || ' ' || MailState || ' ' || MailZip FROM schools WHERE CDSCode = (SELECT CDSCode FROM frpm ORDER BY \"FRPM Count (K-12)\" DESC LIMIT 1)",
+        "passed": false,
+        "predicted": [
+          {
+            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "s_553857 s_387136 s_303649 s_338787"
+          }
+        ],
+        "gold": [
+          {
+            "MailStreet": "s_553857"
+          }
+        ],
+        "error_pred": null,
+        "error_gold": null
+      },
+      {
+        "scenario": "exact_limit",
+        "gold_sql": "SELECT T2.MailStreet FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode ORDER BY T1.\"FRPM Count (K-12)\" DESC LIMIT 1",
+        "prediction_sql": "SELECT MailStreet || ' ' || MailCity || ' ' || MailState || ' ' || MailZip FROM schools WHERE CDSCode = (SELECT CDSCode FROM frpm ORDER BY \"FRPM Count (K-12)\" DESC LIMIT 1)",
+        "passed": false,
+        "predicted": [
+          {
+            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "MailStreet_11 MailCity_11 MailState_11 MailZip_11"
+          }
+        ],
+        "gold": [
+          {
+            "MailStreet": "MailStreet_11"
+          }
+        ],
+        "error_pred": null,
+        "error_gold": null
+      },
+      {
+        "scenario": "full_match",
+        "gold_sql": "SELECT T2.MailStreet FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode ORDER BY T1.\"FRPM Count (K-12)\" DESC LIMIT 1",
+        "prediction_sql": "SELECT MailStreet || ' ' || MailCity || ' ' || MailState || ' ' || MailZip FROM schools WHERE CDSCode = (SELECT CDSCode FROM frpm ORDER BY \"FRPM Count (K-12)\" DESC LIMIT 1)",
+        "passed": false,
+        "predicted": [
+          {
+            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "MailStreet_2 MailCity_2 MailState_2 MailZip_2"
+          }
+        ],
+        "gold": [
+          {
+            "MailStreet": "MailStreet_2"
+          }
+        ],
+        "error_pred": null,
+        "error_gold": null
+      },
+      {
+        "scenario": "happy_path",
+        "gold_sql": "SELECT T2.MailStreet FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode ORDER BY T1.\"FRPM Count (K-12)\" DESC LIMIT 1",
+        "prediction_sql": "SELECT MailStreet || ' ' || MailCity || ' ' || MailState || ' ' || MailZip FROM schools WHERE CDSCode = (SELECT CDSCode FROM frpm ORDER BY \"FRPM Count (K-12)\" DESC LIMIT 1)",
+        "passed": false,
+        "predicted": [
+          {
+            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "MailStreet_9 MailCity_9 MailState_9 MailZip_9"
+          }
+        ],
+        "gold": [
+          {
+            "MailStreet": "MailStreet_9"
+          }
+        ],
+        "error_pred": null,
+        "error_gold": null
+      },
+      {
+        "scenario": "inconsistent_categories",
+        "gold_sql": "SELECT T2.MailStreet FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode ORDER BY T1.\"FRPM Count (K-12)\" DESC LIMIT 1",
+        "prediction_sql": "SELECT MailStreet || ' ' || MailCity || ' ' || MailState || ' ' || MailZip FROM schools WHERE CDSCode = (SELECT CDSCode FROM frpm ORDER BY \"FRPM Count (K-12)\" DESC LIMIT 1)",
+        "passed": false,
+        "predicted": [
+          {
+            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "s_124182 UNKNOWN s_049637 Other"
+          }
+        ],
+        "gold": [
+          {
+            "MailStreet": "s_124182"
+          }
+        ],
+        "error_pred": null,
+        "error_gold": null
+      },
+      {
+        "scenario": "join_key_nulls",
+        "gold_sql": "SELECT T2.MailStreet FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode ORDER BY T1.\"FRPM Count (K-12)\" DESC LIMIT 1",
+        "prediction_sql": "SELECT MailStreet || ' ' || MailCity || ' ' || MailState || ' ' || MailZip FROM schools WHERE CDSCode = (SELECT CDSCode FROM frpm ORDER BY \"FRPM Count (K-12)\" DESC LIMIT 1)",
+        "passed": false,
+        "predicted": [
+          {
+            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "s_342175 s_620676 s_198827 s_837240"
+          }
+        ],
+        "gold": [
+          {
+            "MailStreet": "s_342175"
+          }
+        ],
+        "error_pred": null,
+        "error_gold": null
+      },
+      {
+        "scenario": "join_only",
+        "gold_sql": "SELECT T2.MailStreet FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode ORDER BY T1.\"FRPM Count (K-12)\" DESC LIMIT 1",
+        "prediction_sql": "SELECT MailStreet || ' ' || MailCity || ' ' || MailState || ' ' || MailZip FROM schools WHERE CDSCode = (SELECT CDSCode FROM frpm ORDER BY \"FRPM Count (K-12)\" DESC LIMIT 1)",
+        "passed": false,
+        "predicted": [
+          {
+            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "s_722495 s_040787 s_298405 s_502435"
+          }
+        ],
+        "gold": [
+          {
+            "MailStreet": "s_722495"
+          }
+        ],
+        "error_pred": null,
+        "error_gold": null
+      },
+      {
+        "scenario": "multi_match",
+        "gold_sql": "SELECT T2.MailStreet FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode ORDER BY T1.\"FRPM Count (K-12)\" DESC LIMIT 1",
+        "prediction_sql": "SELECT MailStreet || ' ' || MailCity || ' ' || MailState || ' ' || MailZip FROM schools WHERE CDSCode = (SELECT CDSCode FROM frpm ORDER BY \"FRPM Count (K-12)\" DESC LIMIT 1)",
+        "passed": false,
+        "predicted": [
+          {
+            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "MailStreet_9 MailCity_9 MailState_9 MailZip_9"
+          }
+        ],
+        "gold": [
+          {
+            "MailStreet": "MailStreet_9"
+          }
+        ],
+        "error_pred": null,
+        "error_gold": null
+      },
+      {
+        "scenario": "no_match",
+        "gold_sql": "SELECT T2.MailStreet FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode ORDER BY T1.\"FRPM Count (K-12)\" DESC LIMIT 1",
+        "prediction_sql": "SELECT MailStreet || ' ' || MailCity || ' ' || MailState || ' ' || MailZip FROM schools WHERE CDSCode = (SELECT CDSCode FROM frpm ORDER BY \"FRPM Count (K-12)\" DESC LIMIT 1)",
+        "passed": false,
+        "predicted": [
+          {
+            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "MailStreet_11 MailCity_11 MailState_11 MailZip_11"
+          }
+        ],
+        "gold": [
+          {
+            "MailStreet": "MailStreet_11"
+          }
+        ],
+        "error_pred": null,
+        "error_gold": null
+      },
+      {
+        "scenario": "reverse_order",
+        "gold_sql": "SELECT T2.MailStreet FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode ORDER BY T1.\"FRPM Count (K-12)\" DESC LIMIT 1",
+        "prediction_sql": "SELECT MailStreet || ' ' || MailCity || ' ' || MailState || ' ' || MailZip FROM schools WHERE CDSCode = (SELECT CDSCode FROM frpm ORDER BY \"FRPM Count (K-12)\" DESC LIMIT 1)",
+        "passed": false,
+        "predicted": [
+          {
+            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "MailStreet_10 MailCity_10 MailState_10 MailZip_10"
+          }
+        ],
+        "gold": [
+          {
+            "MailStreet": "MailStreet_10"
+          }
+        ],
+        "error_pred": null,
+        "error_gold": null
+      },
+      {
+        "scenario": "single_match",
+        "gold_sql": "SELECT T2.MailStreet FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode ORDER BY T1.\"FRPM Count (K-12)\" DESC LIMIT 1",
+        "prediction_sql": "SELECT MailStreet || ' ' || MailCity || ' ' || MailState || ' ' || MailZip FROM schools WHERE CDSCode = (SELECT CDSCode FROM frpm ORDER BY \"FRPM Count (K-12)\" DESC LIMIT 1)",
+        "passed": false,
+        "predicted": [
+          {
+            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "MailStreet_2 MailCity_2 MailState_2 MailZip_2"
+          }
+        ],
+        "gold": [
+          {
+            "MailStreet": "MailStreet_2"
+          }
+        ],
+        "error_pred": null,
+        "error_gold": null
+      },
+      {
+        "scenario": "under_limit",
+        "gold_sql": "SELECT T2.MailStreet FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode ORDER BY T1.\"FRPM Count (K-12)\" DESC LIMIT 1",
+        "prediction_sql": "SELECT MailStreet || ' ' || MailCity || ' ' || MailState || ' ' || MailZip FROM schools WHERE CDSCode = (SELECT CDSCode FROM frpm ORDER BY \"FRPM Count (K-12)\" DESC LIMIT 1)",
+        "passed": false,
+        "predicted": [
+          {
+            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "MailStreet_5 MailCity_5 MailState_5 MailZip_5"
+          }
+        ],
+        "gold": [
+          {
+            "MailStreet": "MailStreet_5"
+          }
+        ],
+        "error_pred": null,
+        "error_gold": null
+      }
+    ]
+  },
+  {
+    "query_id": 4,
+    "strict_accuracy": 0,
+    "fractional_accuracy": 0.0,
+    "scenarios": [
+      {
+        "scenario": "duplicate_join_keys",
+        "gold_sql": "SELECT T2.Phone FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode WHERE T1.\"Charter Funding Type\" = 'Directly funded' AND T1.\"Charter School (Y/N)\" = 1 AND T2.OpenDate > '2000-01-01'",
+        "prediction_sql": "SELECT Phone FROM schools WHERE Charter = 1 AND OpenDate > '2000-01-01'",
+        "passed": false,
+        "predicted": [],
+        "gold": [
+          {
+            "Phone": "match_055138"
+          },
+          {
+            "Phone": "match_756577"
+          },
+          {
+            "Phone": "match_209275"
+          },
+          {
+            "Phone": "s_457314"
+          }
+        ],
+        "error_pred": null,
+        "error_gold": null
+      },
+      {
+        "scenario": "full_match",
+        "gold_sql": "SELECT T2.Phone FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode WHERE T1.\"Charter Funding Type\" = 'Directly funded' AND T1.\"Charter School (Y/N)\" = 1 AND T2.OpenDate > '2000-01-01'",
+        "prediction_sql": "SELECT Phone FROM schools WHERE Charter = 1 AND OpenDate > '2000-01-01'",
+        "passed": false,
+        "predicted": [],
+        "gold": [
+          {
+            "Phone": "Phone_0"
+          },
+          {
+            "Phone": "Phone_1"
+          },
+          {
+            "Phone": "Phone_2"
+          },
+          {
+            "Phone": "Phone_3"
+          },
+          {
+            "Phone": "Phone_4"
+          },
+          {
+            "Phone": "Phone_5"
+          }
+        ],
+        "error_pred": null,
+        "error_gold": null
+      },
+      {
+        "scenario": "invalid_dates",
+        "gold_sql": "SELECT T2.Phone FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode WHERE T1.\"Charter Funding Type\" = 'Directly funded' AND T1.\"Charter School (Y/N)\" = 1 AND T2.OpenDate > '2000-01-01'",
+        "prediction_sql": "SELECT Phone FROM schools WHERE Charter = 1 AND OpenDate > '2000-01-01'",
+        "passed": false,
+        "predicted": [],
+        "gold": [
+          {
+            "Phone": "match_353456"
+          },
+          {
+            "Phone": "match_246271"
+          },
+          {
+            "Phone": "match_704182"
+          },
+          {
+            "Phone": "s_157476"
+          }
+        ],
+        "error_pred": null,
+        "error_gold": null
+      },
+      {
+        "scenario": "join_key_nulls",
+        "gold_sql": "SELECT T2.Phone FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode WHERE T1.\"Charter Funding Type\" = 'Directly funded' AND T1.\"Charter School (Y/N)\" = 1 AND T2.OpenDate > '2000-01-01'",
+        "prediction_sql": "SELECT Phone FROM schools WHERE Charter = 1 AND OpenDate > '2000-01-01'",
+        "passed": false,
+        "predicted": [],
+        "gold": [
+          {
+            "Phone": "match_769831"
+          },
+          {
+            "Phone": "match_096079"
+          },
+          {
+            "Phone": "match_211256"
+          },
+          {
+            "Phone": "s_983523"
+          }
+        ],
+        "error_pred": null,
+        "error_gold": null
+      },
+      {
+        "scenario": "join_only",
+        "gold_sql": "SELECT T2.Phone FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode WHERE T1.\"Charter Funding Type\" = 'Directly funded' AND T1.\"Charter School (Y/N)\" = 1 AND T2.OpenDate > '2000-01-01'",
+        "prediction_sql": "SELECT Phone FROM schools WHERE Charter = 1 AND OpenDate > '2000-01-01'",
+        "passed": false,
+        "predicted": [],
+        "gold": [
+          {
+            "Phone": "s_867331"
+          }
+        ],
+        "error_pred": null,
+        "error_gold": null
+      },
+      {
+        "scenario": "multi_match",
+        "gold_sql": "SELECT T2.Phone FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode WHERE T1.\"Charter Funding Type\" = 'Directly funded' AND T1.\"Charter School (Y/N)\" = 1 AND T2.OpenDate > '2000-01-01'",
+        "prediction_sql": "SELECT Phone FROM schools WHERE Charter = 1 AND OpenDate > '2000-01-01'",
+        "passed": false,
+        "predicted": [],
+        "gold": [
+          {
+            "Phone": "Phone_0"
+          },
+          {
+            "Phone": "Phone_1"
+          },
+          {
+            "Phone": "Phone_2"
+          },
+          {
+            "Phone": "Phone_3"
+          }
+        ],
+        "error_pred": null,
+        "error_gold": null
+      },
+      {
+        "scenario": "no_match",
+        "gold_sql": "SELECT T2.Phone FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode WHERE T1.\"Charter Funding Type\" = 'Directly funded' AND T1.\"Charter School (Y/N)\" = 1 AND T2.OpenDate > '2000-01-01'",
+        "prediction_sql": "SELECT Phone FROM schools WHERE Charter = 1 AND OpenDate > '2000-01-01'",
+        "passed": false,
+        "predicted": [],
+        "gold": [
+          {
+            "Phone": "Phone_0"
+          }
+        ],
+        "error_pred": null,
+        "error_gold": null
+      },
+      {
+        "scenario": "single_match",
+        "gold_sql": "SELECT T2.Phone FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode WHERE T1.\"Charter Funding Type\" = 'Directly funded' AND T1.\"Charter School (Y/N)\" = 1 AND T2.OpenDate > '2000-01-01'",
+        "prediction_sql": "SELECT Phone FROM schools WHERE Charter = 1 AND OpenDate > '2000-01-01'",
+        "passed": false,
+        "predicted": [],
+        "gold": [
+          {
+            "Phone": "Phone_0"
+          },
+          {
+            "Phone": "Phone_1"
+          }
+        ],
+        "error_pred": null,
+        "error_gold": null
+      }
+    ]
+  },
+  {
+    "query_id": 5,
+    "strict_accuracy": 0,
+    "fractional_accuracy": 0.0,
+    "scenarios": [
+      {
+        "scenario": "duplicate_join_keys",
+        "gold_sql": "SELECT COUNT(DISTINCT T2.School) FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode WHERE T2.Virtual = 'F' AND T1.AvgScrMath > 400",
+        "prediction_sql": "SELECT COUNT(*) FROM schools WHERE CDSCode IN (SELECT cds FROM satscores WHERE AvgScrMath < 400) AND Virtual = 'Yes'",
+        "passed": false,
+        "predicted": [
+          {
+            "count_star()": 0
+          }
+        ],
+        "gold": [
+          {
+            "count(DISTINCT T2.School)": 0
+          }
+        ],
+        "error_pred": null,
+        "error_gold": null
+      },
+      {
+        "scenario": "full_match",
+        "gold_sql": "SELECT COUNT(DISTINCT T2.School) FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode WHERE T2.Virtual = 'F' AND T1.AvgScrMath > 400",
+        "prediction_sql": "SELECT COUNT(*) FROM schools WHERE CDSCode IN (SELECT cds FROM satscores WHERE AvgScrMath < 400) AND Virtual = 'Yes'",
+        "passed": false,
+        "predicted": [
+          {
+            "count_star()": 0
+          }
+        ],
+        "gold": [
+          {
+            "count(DISTINCT T2.School)": 0
+          }
+        ],
+        "error_pred": null,
+        "error_gold": null
+      },
+      {
+        "scenario": "invalid_dates",
+        "gold_sql": "SELECT COUNT(DISTINCT T2.School) FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode WHERE T2.Virtual = 'F' AND T1.AvgScrMath > 400",
+        "prediction_sql": "SELECT COUNT(*) FROM schools WHERE CDSCode IN (SELECT cds FROM satscores WHERE AvgScrMath < 400) AND Virtual = 'Yes'",
+        "passed": false,
+        "predicted": [
+          {
+            "count_star()": 0
+          }
+        ],
+        "gold": [
+          {
+            "count(DISTINCT T2.School)": 0
+          }
+        ],
+        "error_pred": null,
+        "error_gold": null
+      },
+      {
+        "scenario": "join_key_nulls",
+        "gold_sql": "SELECT COUNT(DISTINCT T2.School) FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode WHERE T2.Virtual = 'F' AND T1.AvgScrMath > 400",
+        "prediction_sql": "SELECT COUNT(*) FROM schools WHERE CDSCode IN (SELECT cds FROM satscores WHERE AvgScrMath < 400) AND Virtual = 'Yes'",
+        "passed": false,
+        "predicted": [
+          {
+            "count_star()": 0
+          }
+        ],
+        "gold": [
+          {
+            "count(DISTINCT T2.School)": 0
+          }
+        ],
+        "error_pred": null,
+        "error_gold": null
+      },
+      {
+        "scenario": "join_only",
+        "gold_sql": "SELECT COUNT(DISTINCT T2.School) FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode WHERE T2.Virtual = 'F' AND T1.AvgScrMath > 400",
+        "prediction_sql": "SELECT COUNT(*) FROM schools WHERE CDSCode IN (SELECT cds FROM satscores WHERE AvgScrMath < 400) AND Virtual = 'Yes'",
+        "passed": false,
+        "predicted": [
+          {
+            "count_star()": 0
+          }
+        ],
+        "gold": [
+          {
+            "count(DISTINCT T2.School)": 0
+          }
+        ],
+        "error_pred": null,
+        "error_gold": null
+      },
+      {
+        "scenario": "multi_match",
+        "gold_sql": "SELECT COUNT(DISTINCT T2.School) FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode WHERE T2.Virtual = 'F' AND T1.AvgScrMath > 400",
+        "prediction_sql": "SELECT COUNT(*) FROM schools WHERE CDSCode IN (SELECT cds FROM satscores WHERE AvgScrMath < 400) AND Virtual = 'Yes'",
+        "passed": false,
+        "predicted": [
+          {
+            "count_star()": 0
+          }
+        ],
+        "gold": [
+          {
+            "count(DISTINCT T2.School)": 0
+          }
+        ],
+        "error_pred": null,
+        "error_gold": null
+      },
+      {
+        "scenario": "no_match",
+        "gold_sql": "SELECT COUNT(DISTINCT T2.School) FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode WHERE T2.Virtual = 'F' AND T1.AvgScrMath > 400",
+        "prediction_sql": "SELECT COUNT(*) FROM schools WHERE CDSCode IN (SELECT cds FROM satscores WHERE AvgScrMath < 400) AND Virtual = 'Yes'",
+        "passed": false,
+        "predicted": [
+          {
+            "count_star()": 0
+          }
+        ],
+        "gold": [
+          {
+            "count(DISTINCT T2.School)": 0
+          }
+        ],
+        "error_pred": null,
+        "error_gold": null
+      },
+      {
+        "scenario": "single_match",
+        "gold_sql": "SELECT COUNT(DISTINCT T2.School) FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode WHERE T2.Virtual = 'F' AND T1.AvgScrMath > 400",
+        "prediction_sql": "SELECT COUNT(*) FROM schools WHERE CDSCode IN (SELECT cds FROM satscores WHERE AvgScrMath < 400) AND Virtual = 'Yes'",
+        "passed": false,
+        "predicted": [
+          {
+            "count_star()": 0
+          }
+        ],
+        "gold": [
+          {
+            "count(DISTINCT T2.School)": 0
+          }
+        ],
+        "error_pred": null,
+        "error_gold": null
+      }
+    ]
+  },
+  {
+    "query_id": 6,
+    "strict_accuracy": 1,
+    "fractional_accuracy": 1.0,
+    "scenarios": [
+      {
+        "scenario": "duplicate_join_keys",
+        "gold_sql": "SELECT T2.School FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode WHERE T2.Magnet = 1 AND T1.NumTstTakr > 500",
+        "prediction_sql": "SELECT schools.School FROM schools JOIN satscores ON schools.CDSCode = satscores.cds WHERE satscores.NumTstTakr > 500 AND (schools.Magnet = 1 OR schools.GSoffered LIKE '%Magnet%')",
+        "passed": true,
+        "predicted": [],
+        "gold": [],
+        "error_pred": null,
+        "error_gold": null
+      },
+      {
+        "scenario": "full_match",
+        "gold_sql": "SELECT T2.School FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode WHERE T2.Magnet = 1 AND T1.NumTstTakr > 500",
+        "prediction_sql": "SELECT schools.School FROM schools JOIN satscores ON schools.CDSCode = satscores.cds WHERE satscores.NumTstTakr > 500 AND (schools.Magnet = 1 OR schools.GSoffered LIKE '%Magnet%')",
+        "passed": true,
+        "predicted": [],
+        "gold": [],
+        "error_pred": null,
+        "error_gold": null
+      },
+      {
+        "scenario": "inconsistent_categories",
+        "gold_sql": "SELECT T2.School FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode WHERE T2.Magnet = 1 AND T1.NumTstTakr > 500",
+        "prediction_sql": "SELECT schools.School FROM schools JOIN satscores ON schools.CDSCode = satscores.cds WHERE satscores.NumTstTakr > 500 AND (schools.Magnet = 1 OR schools.GSoffered LIKE '%Magnet%')",
+        "passed": true,
+        "predicted": [],
+        "gold": [],
+        "error_pred": null,
+        "error_gold": null
+      },
+      {
+        "scenario": "join_key_nulls",
+        "gold_sql": "SELECT T2.School FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode WHERE T2.Magnet = 1 AND T1.NumTstTakr > 500",
+        "prediction_sql": "SELECT schools.School FROM schools JOIN satscores ON schools.CDSCode = satscores.cds WHERE satscores.NumTstTakr > 500 AND (schools.Magnet = 1 OR schools.GSoffered LIKE '%Magnet%')",
+        "passed": true,
+        "predicted": [],
+        "gold": [],
+        "error_pred": null,
+        "error_gold": null
+      },
+      {
+        "scenario": "join_only",
+        "gold_sql": "SELECT T2.School FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode WHERE T2.Magnet = 1 AND T1.NumTstTakr > 500",
+        "prediction_sql": "SELECT schools.School FROM schools JOIN satscores ON schools.CDSCode = satscores.cds WHERE satscores.NumTstTakr > 500 AND (schools.Magnet = 1 OR schools.GSoffered LIKE '%Magnet%')",
+        "passed": true,
+        "predicted": [],
+        "gold": [],
+        "error_pred": null,
+        "error_gold": null
+      },
+      {
+        "scenario": "multi_match",
+        "gold_sql": "SELECT T2.School FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode WHERE T2.Magnet = 1 AND T1.NumTstTakr > 500",
+        "prediction_sql": "SELECT schools.School FROM schools JOIN satscores ON schools.CDSCode = satscores.cds WHERE satscores.NumTstTakr > 500 AND (schools.Magnet = 1 OR schools.GSoffered LIKE '%Magnet%')",
+        "passed": true,
+        "predicted": [],
+        "gold": [],
+        "error_pred": null,
+        "error_gold": null
+      },
+      {
+        "scenario": "no_match",
+        "gold_sql": "SELECT T2.School FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode WHERE T2.Magnet = 1 AND T1.NumTstTakr > 500",
+        "prediction_sql": "SELECT schools.School FROM schools JOIN satscores ON schools.CDSCode = satscores.cds WHERE satscores.NumTstTakr > 500 AND (schools.Magnet = 1 OR schools.GSoffered LIKE '%Magnet%')",
+        "passed": true,
+        "predicted": [],
+        "gold": [],
+        "error_pred": null,
+        "error_gold": null
+      },
+      {
+        "scenario": "single_match",
+        "gold_sql": "SELECT T2.School FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode WHERE T2.Magnet = 1 AND T1.NumTstTakr > 500",
+        "prediction_sql": "SELECT schools.School FROM schools JOIN satscores ON schools.CDSCode = satscores.cds WHERE satscores.NumTstTakr > 500 AND (schools.Magnet = 1 OR schools.GSoffered LIKE '%Magnet%')",
+        "passed": true,
+        "predicted": [],
+        "gold": [],
+        "error_pred": null,
+        "error_gold": null
+      }
+    ]
+  },
+  {
+    "query_id": 7,
+    "strict_accuracy": 1,
+    "fractional_accuracy": 1.0,
+    "scenarios": [
+      {
+        "scenario": "duplicate_join_keys",
+        "gold_sql": "SELECT T2.Phone FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode ORDER BY T1.NumGE1500 DESC LIMIT 1",
+        "prediction_sql": "SELECT schools.Phone FROM schools JOIN satscores ON schools.CDSCode = satscores.cds WHERE satscores.NumTstTakr > 0 AND satscores.NumGE1500 > 0 ORDER BY satscores.NumTstTakr DESC LIMIT 1",
+        "passed": true,
+        "predicted": [],
+        "gold": [],
+        "error_pred": null,
+        "error_gold": null
+      },
+      {
+        "scenario": "exact_limit",
+        "gold_sql": "SELECT T2.Phone FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode ORDER BY T1.NumGE1500 DESC LIMIT 1",
+        "prediction_sql": "SELECT schools.Phone FROM schools JOIN satscores ON schools.CDSCode = satscores.cds WHERE satscores.NumTstTakr > 0 AND satscores.NumGE1500 > 0 ORDER BY satscores.NumTstTakr DESC LIMIT 1",
+        "passed": true,
+        "predicted": [],
+        "gold": [],
+        "error_pred": null,
+        "error_gold": null
+      },
+      {
+        "scenario": "full_match",
+        "gold_sql": "SELECT T2.Phone FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode ORDER BY T1.NumGE1500 DESC LIMIT 1",
+        "prediction_sql": "SELECT schools.Phone FROM schools JOIN satscores ON schools.CDSCode = satscores.cds WHERE satscores.NumTstTakr > 0 AND satscores.NumGE1500 > 0 ORDER BY satscores.NumTstTakr DESC LIMIT 1",
+        "passed": true,
+        "predicted": [],
+        "gold": [],
+        "error_pred": null,
+        "error_gold": null
+      },
+      {
+        "scenario": "happy_path",
+        "gold_sql": "SELECT T2.Phone FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode ORDER BY T1.NumGE1500 DESC LIMIT 1",
+        "prediction_sql": "SELECT schools.Phone FROM schools JOIN satscores ON schools.CDSCode = satscores.cds WHERE satscores.NumTstTakr > 0 AND satscores.NumGE1500 > 0 ORDER BY satscores.NumTstTakr DESC LIMIT 1",
+        "passed": true,
+        "predicted": [],
+        "gold": [],
+        "error_pred": null,
+        "error_gold": null
+      },
+      {
+        "scenario": "inconsistent_categories",
+        "gold_sql": "SELECT T2.Phone FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode ORDER BY T1.NumGE1500 DESC LIMIT 1",
+        "prediction_sql": "SELECT schools.Phone FROM schools JOIN satscores ON schools.CDSCode = satscores.cds WHERE satscores.NumTstTakr > 0 AND satscores.NumGE1500 > 0 ORDER BY satscores.NumTstTakr DESC LIMIT 1",
+        "passed": true,
+        "predicted": [
+          {
+            "Phone": "Other"
+          }
+        ],
+        "gold": [
+          {
+            "Phone": "Other"
+          }
+        ],
+        "error_pred": null,
+        "error_gold": null
+      },
+      {
+        "scenario": "join_key_nulls",
+        "gold_sql": "SELECT T2.Phone FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode ORDER BY T1.NumGE1500 DESC LIMIT 1",
+        "prediction_sql": "SELECT schools.Phone FROM schools JOIN satscores ON schools.CDSCode = satscores.cds WHERE satscores.NumTstTakr > 0 AND satscores.NumGE1500 > 0 ORDER BY satscores.NumTstTakr DESC LIMIT 1",
+        "passed": true,
+        "predicted": [],
+        "gold": [],
+        "error_pred": null,
+        "error_gold": null
+      },
+      {
+        "scenario": "join_only",
+        "gold_sql": "SELECT T2.Phone FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode ORDER BY T1.NumGE1500 DESC LIMIT 1",
+        "prediction_sql": "SELECT schools.Phone FROM schools JOIN satscores ON schools.CDSCode = satscores.cds WHERE satscores.NumTstTakr > 0 AND satscores.NumGE1500 > 0 ORDER BY satscores.NumTstTakr DESC LIMIT 1",
+        "passed": true,
+        "predicted": [],
+        "gold": [],
+        "error_pred": null,
+        "error_gold": null
+      },
+      {
+        "scenario": "multi_match",
+        "gold_sql": "SELECT T2.Phone FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode ORDER BY T1.NumGE1500 DESC LIMIT 1",
+        "prediction_sql": "SELECT schools.Phone FROM schools JOIN satscores ON schools.CDSCode = satscores.cds WHERE satscores.NumTstTakr > 0 AND satscores.NumGE1500 > 0 ORDER BY satscores.NumTstTakr DESC LIMIT 1",
+        "passed": true,
+        "predicted": [],
+        "gold": [],
+        "error_pred": null,
+        "error_gold": null
+      },
+      {
+        "scenario": "no_match",
+        "gold_sql": "SELECT T2.Phone FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode ORDER BY T1.NumGE1500 DESC LIMIT 1",
+        "prediction_sql": "SELECT schools.Phone FROM schools JOIN satscores ON schools.CDSCode = satscores.cds WHERE satscores.NumTstTakr > 0 AND satscores.NumGE1500 > 0 ORDER BY satscores.NumTstTakr DESC LIMIT 1",
+        "passed": true,
+        "predicted": [],
+        "gold": [],
+        "error_pred": null,
+        "error_gold": null
+      },
+      {
+        "scenario": "reverse_order",
+        "gold_sql": "SELECT T2.Phone FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode ORDER BY T1.NumGE1500 DESC LIMIT 1",
+        "prediction_sql": "SELECT schools.Phone FROM schools JOIN satscores ON schools.CDSCode = satscores.cds WHERE satscores.NumTstTakr > 0 AND satscores.NumGE1500 > 0 ORDER BY satscores.NumTstTakr DESC LIMIT 1",
+        "passed": true,
+        "predicted": [],
+        "gold": [],
+        "error_pred": null,
+        "error_gold": null
+      },
+      {
+        "scenario": "single_match",
+        "gold_sql": "SELECT T2.Phone FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode ORDER BY T1.NumGE1500 DESC LIMIT 1",
+        "prediction_sql": "SELECT schools.Phone FROM schools JOIN satscores ON schools.CDSCode = satscores.cds WHERE satscores.NumTstTakr > 0 AND satscores.NumGE1500 > 0 ORDER BY satscores.NumTstTakr DESC LIMIT 1",
+        "passed": true,
+        "predicted": [],
+        "gold": [],
+        "error_pred": null,
+        "error_gold": null
+      },
+      {
+        "scenario": "under_limit",
+        "gold_sql": "SELECT T2.Phone FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode ORDER BY T1.NumGE1500 DESC LIMIT 1",
+        "prediction_sql": "SELECT schools.Phone FROM schools JOIN satscores ON schools.CDSCode = satscores.cds WHERE satscores.NumTstTakr > 0 AND satscores.NumGE1500 > 0 ORDER BY satscores.NumTstTakr DESC LIMIT 1",
+        "passed": true,
+        "predicted": [],
+        "gold": [],
+        "error_pred": null,
+        "error_gold": null
+      }
+    ]
+  },
+  {
+    "query_id": 8,
+    "strict_accuracy": 0,
+    "fractional_accuracy": 0.0,
+    "scenarios": [
+      {
+        "scenario": "duplicate_join_keys",
+        "gold_sql": "SELECT NumTstTakr FROM satscores WHERE cds = ( SELECT CDSCode FROM frpm ORDER BY \"FRPM Count (K-12)\" DESC LIMIT 1 )",
+        "prediction_sql": "SELECT SUM(NumTstTakr) FROM satscores WHERE cds IN (SELECT CDSCode FROM frpm ORDER BY \"FRPM Count (K-12)\" DESC LIMIT 1)",
+        "passed": false,
+        "predicted": [
+          {
+            "sum(NumTstTakr)": NaN
+          }
+        ],
+        "gold": [],
+        "error_pred": null,
+        "error_gold": null
+      },
+      {
+        "scenario": "exact_limit",
+        "gold_sql": "SELECT NumTstTakr FROM satscores WHERE cds = ( SELECT CDSCode FROM frpm ORDER BY \"FRPM Count (K-12)\" DESC LIMIT 1 )",
+        "prediction_sql": "SELECT SUM(NumTstTakr) FROM satscores WHERE cds IN (SELECT CDSCode FROM frpm ORDER BY \"FRPM Count (K-12)\" DESC LIMIT 1)",
+        "passed": false,
+        "predicted": [
+          {
+            "sum(NumTstTakr)": NaN
+          }
+        ],
+        "gold": [],
+        "error_pred": null,
+        "error_gold": null
+      },
+      {
+        "scenario": "extreme_outliers",
+        "gold_sql": "SELECT NumTstTakr FROM satscores WHERE cds = ( SELECT CDSCode FROM frpm ORDER BY \"FRPM Count (K-12)\" DESC LIMIT 1 )",
+        "prediction_sql": "SELECT SUM(NumTstTakr) FROM satscores WHERE cds IN (SELECT CDSCode FROM frpm ORDER BY \"FRPM Count (K-12)\" DESC LIMIT 1)",
+        "passed": false,
+        "predicted": [
+          {
+            "sum(NumTstTakr)": NaN
+          }
+        ],
+        "gold": [],
+        "error_pred": null,
+        "error_gold": null
+      },
+      {
+        "scenario": "full_match",
+        "gold_sql": "SELECT NumTstTakr FROM satscores WHERE cds = ( SELECT CDSCode FROM frpm ORDER BY \"FRPM Count (K-12)\" DESC LIMIT 1 )",
+        "prediction_sql": "SELECT SUM(NumTstTakr) FROM satscores WHERE cds IN (SELECT CDSCode FROM frpm ORDER BY \"FRPM Count (K-12)\" DESC LIMIT 1)",
+        "passed": false,
+        "predicted": [
+          {
+            "sum(NumTstTakr)": NaN
+          }
+        ],
+        "gold": [],
+        "error_pred": null,
+        "error_gold": null
+      },
+      {
+        "scenario": "happy_path",
+        "gold_sql": "SELECT NumTstTakr FROM satscores WHERE cds = ( SELECT CDSCode FROM frpm ORDER BY \"FRPM Count (K-12)\" DESC LIMIT 1 )",
+        "prediction_sql": "SELECT SUM(NumTstTakr) FROM satscores WHERE cds IN (SELECT CDSCode FROM frpm ORDER BY \"FRPM Count (K-12)\" DESC LIMIT 1)",
+        "passed": false,
+        "predicted": [
+          {
+            "sum(NumTstTakr)": NaN
+          }
+        ],
+        "gold": [],
+        "error_pred": null,
+        "error_gold": null
+      },
+      {
+        "scenario": "join_key_nulls",
+        "gold_sql": "SELECT NumTstTakr FROM satscores WHERE cds = ( SELECT CDSCode FROM frpm ORDER BY \"FRPM Count (K-12)\" DESC LIMIT 1 )",
+        "prediction_sql": "SELECT SUM(NumTstTakr) FROM satscores WHERE cds IN (SELECT CDSCode FROM frpm ORDER BY \"FRPM Count (K-12)\" DESC LIMIT 1)",
+        "passed": false,
+        "predicted": [
+          {
+            "sum(NumTstTakr)": NaN
+          }
+        ],
+        "gold": [],
+        "error_pred": null,
+        "error_gold": null
+      },
+      {
+        "scenario": "join_only",
+        "gold_sql": "SELECT NumTstTakr FROM satscores WHERE cds = ( SELECT CDSCode FROM frpm ORDER BY \"FRPM Count (K-12)\" DESC LIMIT 1 )",
+        "prediction_sql": "SELECT SUM(NumTstTakr) FROM satscores WHERE cds IN (SELECT CDSCode FROM frpm ORDER BY \"FRPM Count (K-12)\" DESC LIMIT 1)",
+        "passed": false,
+        "predicted": [
+          {
+            "sum(NumTstTakr)": NaN
+          }
+        ],
+        "gold": [],
+        "error_pred": null,
+        "error_gold": null
+      },
+      {
+        "scenario": "multi_match",
+        "gold_sql": "SELECT NumTstTakr FROM satscores WHERE cds = ( SELECT CDSCode FROM frpm ORDER BY \"FRPM Count (K-12)\" DESC LIMIT 1 )",
+        "prediction_sql": "SELECT SUM(NumTstTakr) FROM satscores WHERE cds IN (SELECT CDSCode FROM frpm ORDER BY \"FRPM Count (K-12)\" DESC LIMIT 1)",
+        "passed": false,
+        "predicted": [
+          {
+            "sum(NumTstTakr)": NaN
+          }
+        ],
+        "gold": [],
+        "error_pred": null,
+        "error_gold": null
+      },
+      {
+        "scenario": "no_match",
+        "gold_sql": "SELECT NumTstTakr FROM satscores WHERE cds = ( SELECT CDSCode FROM frpm ORDER BY \"FRPM Count (K-12)\" DESC LIMIT 1 )",
+        "prediction_sql": "SELECT SUM(NumTstTakr) FROM satscores WHERE cds IN (SELECT CDSCode FROM frpm ORDER BY \"FRPM Count (K-12)\" DESC LIMIT 1)",
+        "passed": false,
+        "predicted": [
+          {
+            "sum(NumTstTakr)": NaN
+          }
+        ],
+        "gold": [],
+        "error_pred": null,
+        "error_gold": null
+      },
+      {
+        "scenario": "reverse_order",
+        "gold_sql": "SELECT NumTstTakr FROM satscores WHERE cds = ( SELECT CDSCode FROM frpm ORDER BY \"FRPM Count (K-12)\" DESC LIMIT 1 )",
+        "prediction_sql": "SELECT SUM(NumTstTakr) FROM satscores WHERE cds IN (SELECT CDSCode FROM frpm ORDER BY \"FRPM Count (K-12)\" DESC LIMIT 1)",
+        "passed": false,
+        "predicted": [
+          {
+            "sum(NumTstTakr)": NaN
+          }
+        ],
+        "gold": [],
+        "error_pred": null,
+        "error_gold": null
+      },
+      {
+        "scenario": "single_match",
+        "gold_sql": "SELECT NumTstTakr FROM satscores WHERE cds = ( SELECT CDSCode FROM frpm ORDER BY \"FRPM Count (K-12)\" DESC LIMIT 1 )",
+        "prediction_sql": "SELECT SUM(NumTstTakr) FROM satscores WHERE cds IN (SELECT CDSCode FROM frpm ORDER BY \"FRPM Count (K-12)\" DESC LIMIT 1)",
+        "passed": false,
+        "predicted": [
+          {
+            "sum(NumTstTakr)": NaN
+          }
+        ],
+        "gold": [],
+        "error_pred": null,
+        "error_gold": null
+      },
+      {
+        "scenario": "under_limit",
+        "gold_sql": "SELECT NumTstTakr FROM satscores WHERE cds = ( SELECT CDSCode FROM frpm ORDER BY \"FRPM Count (K-12)\" DESC LIMIT 1 )",
+        "prediction_sql": "SELECT SUM(NumTstTakr) FROM satscores WHERE cds IN (SELECT CDSCode FROM frpm ORDER BY \"FRPM Count (K-12)\" DESC LIMIT 1)",
+        "passed": false,
+        "predicted": [
+          {
+            "sum(NumTstTakr)": NaN
+          }
+        ],
+        "gold": [],
+        "error_pred": null,
+        "error_gold": null
+      }
+    ]
+  },
+  {
+    "query_id": 9,
+    "strict_accuracy": 0,
+    "fractional_accuracy": 0.0,
+    "scenarios": [
+      {
+        "scenario": "duplicate_join_keys",
+        "gold_sql": "SELECT COUNT(T2.\"School Code\") FROM satscores AS T1 INNER JOIN frpm AS T2 ON T1.cds = T2.CDSCode WHERE T1.AvgScrMath > 560 AND T2.\"Charter Funding Type\" = 'Directly funded'",
+        "prediction_sql": "SELECT COUNT(*) FROM schools WHERE CDSCode IN (SELECT cds FROM satscores WHERE AvgScrMath > 560) AND FundingType = 'Charter'",
+        "passed": false,
+        "predicted": null,
+        "gold": [
+          {
+            "count(T2.\"School Code\")": 0
+          }
+        ],
+        "error_pred": "Catalog Error: Table with name schools does not exist!\nDid you mean \"pg_class\"?\n\nLINE 1: SELECT COUNT(*) FROM schools WHERE CDSCode IN (SELECT cds FROM satscores WHERE...\n                             ^",
+        "error_gold": null
+      },
+      {
+        "scenario": "full_match",
+        "gold_sql": "SELECT COUNT(T2.\"School Code\") FROM satscores AS T1 INNER JOIN frpm AS T2 ON T1.cds = T2.CDSCode WHERE T1.AvgScrMath > 560 AND T2.\"Charter Funding Type\" = 'Directly funded'",
+        "prediction_sql": "SELECT COUNT(*) FROM schools WHERE CDSCode IN (SELECT cds FROM satscores WHERE AvgScrMath > 560) AND FundingType = 'Charter'",
+        "passed": false,
+        "predicted": null,
+        "gold": [
+          {
+            "count(T2.\"School Code\")": 0
+          }
+        ],
+        "error_pred": "Catalog Error: Table with name schools does not exist!\nDid you mean \"pg_class\"?\n\nLINE 1: SELECT COUNT(*) FROM schools WHERE CDSCode IN (SELECT cds FROM satscores WHERE...\n                             ^",
+        "error_gold": null
+      },
+      {
+        "scenario": "inconsistent_categories",
+        "gold_sql": "SELECT COUNT(T2.\"School Code\") FROM satscores AS T1 INNER JOIN frpm AS T2 ON T1.cds = T2.CDSCode WHERE T1.AvgScrMath > 560 AND T2.\"Charter Funding Type\" = 'Directly funded'",
+        "prediction_sql": "SELECT COUNT(*) FROM schools WHERE CDSCode IN (SELECT cds FROM satscores WHERE AvgScrMath > 560) AND FundingType = 'Charter'",
+        "passed": false,
+        "predicted": null,
+        "gold": [
+          {
+            "count(T2.\"School Code\")": 0
+          }
+        ],
+        "error_pred": "Catalog Error: Table with name schools does not exist!\nDid you mean \"pg_class\"?\n\nLINE 1: SELECT COUNT(*) FROM schools WHERE CDSCode IN (SELECT cds FROM satscores WHERE...\n                             ^",
+        "error_gold": null
+      },
+      {
+        "scenario": "join_key_nulls",
+        "gold_sql": "SELECT COUNT(T2.\"School Code\") FROM satscores AS T1 INNER JOIN frpm AS T2 ON T1.cds = T2.CDSCode WHERE T1.AvgScrMath > 560 AND T2.\"Charter Funding Type\" = 'Directly funded'",
+        "prediction_sql": "SELECT COUNT(*) FROM schools WHERE CDSCode IN (SELECT cds FROM satscores WHERE AvgScrMath > 560) AND FundingType = 'Charter'",
+        "passed": false,
+        "predicted": null,
+        "gold": [
+          {
+            "count(T2.\"School Code\")": 0
+          }
+        ],
+        "error_pred": "Catalog Error: Table with name schools does not exist!\nDid you mean \"pg_class\"?\n\nLINE 1: SELECT COUNT(*) FROM schools WHERE CDSCode IN (SELECT cds FROM satscores WHERE...\n                             ^",
+        "error_gold": null
+      },
+      {
+        "scenario": "join_only",
+        "gold_sql": "SELECT COUNT(T2.\"School Code\") FROM satscores AS T1 INNER JOIN frpm AS T2 ON T1.cds = T2.CDSCode WHERE T1.AvgScrMath > 560 AND T2.\"Charter Funding Type\" = 'Directly funded'",
+        "prediction_sql": "SELECT COUNT(*) FROM schools WHERE CDSCode IN (SELECT cds FROM satscores WHERE AvgScrMath > 560) AND FundingType = 'Charter'",
+        "passed": false,
+        "predicted": null,
+        "gold": [
+          {
+            "count(T2.\"School Code\")": 0
+          }
+        ],
+        "error_pred": "Catalog Error: Table with name schools does not exist!\nDid you mean \"pg_class\"?\n\nLINE 1: SELECT COUNT(*) FROM schools WHERE CDSCode IN (SELECT cds FROM satscores WHERE...\n                             ^",
+        "error_gold": null
+      },
+      {
+        "scenario": "multi_match",
+        "gold_sql": "SELECT COUNT(T2.\"School Code\") FROM satscores AS T1 INNER JOIN frpm AS T2 ON T1.cds = T2.CDSCode WHERE T1.AvgScrMath > 560 AND T2.\"Charter Funding Type\" = 'Directly funded'",
+        "prediction_sql": "SELECT COUNT(*) FROM schools WHERE CDSCode IN (SELECT cds FROM satscores WHERE AvgScrMath > 560) AND FundingType = 'Charter'",
+        "passed": false,
+        "predicted": null,
+        "gold": [
+          {
+            "count(T2.\"School Code\")": 0
+          }
+        ],
+        "error_pred": "Catalog Error: Table with name schools does not exist!\nDid you mean \"pg_class\"?\n\nLINE 1: SELECT COUNT(*) FROM schools WHERE CDSCode IN (SELECT cds FROM satscores WHERE...\n                             ^",
+        "error_gold": null
+      },
+      {
+        "scenario": "no_match",
+        "gold_sql": "SELECT COUNT(T2.\"School Code\") FROM satscores AS T1 INNER JOIN frpm AS T2 ON T1.cds = T2.CDSCode WHERE T1.AvgScrMath > 560 AND T2.\"Charter Funding Type\" = 'Directly funded'",
+        "prediction_sql": "SELECT COUNT(*) FROM schools WHERE CDSCode IN (SELECT cds FROM satscores WHERE AvgScrMath > 560) AND FundingType = 'Charter'",
+        "passed": false,
+        "predicted": null,
+        "gold": [
+          {
+            "count(T2.\"School Code\")": 0
+          }
+        ],
+        "error_pred": "Catalog Error: Table with name schools does not exist!\nDid you mean \"pg_class\"?\n\nLINE 1: SELECT COUNT(*) FROM schools WHERE CDSCode IN (SELECT cds FROM satscores WHERE...\n                             ^",
+        "error_gold": null
+      },
+      {
+        "scenario": "single_match",
+        "gold_sql": "SELECT COUNT(T2.\"School Code\") FROM satscores AS T1 INNER JOIN frpm AS T2 ON T1.cds = T2.CDSCode WHERE T1.AvgScrMath > 560 AND T2.\"Charter Funding Type\" = 'Directly funded'",
+        "prediction_sql": "SELECT COUNT(*) FROM schools WHERE CDSCode IN (SELECT cds FROM satscores WHERE AvgScrMath > 560) AND FundingType = 'Charter'",
+        "passed": false,
+        "predicted": null,
+        "gold": [
+          {
+            "count(T2.\"School Code\")": 0
+          }
+        ],
+        "error_pred": "Catalog Error: Table with name schools does not exist!\nDid you mean \"pg_class\"?\n\nLINE 1: SELECT COUNT(*) FROM schools WHERE CDSCode IN (SELECT cds FROM satscores WHERE...\n                             ^",
+        "error_gold": null
+      }
+    ]
+  }
+]

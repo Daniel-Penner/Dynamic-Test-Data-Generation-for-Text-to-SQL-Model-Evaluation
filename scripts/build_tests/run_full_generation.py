@@ -43,7 +43,7 @@ def find_schema_entry(tables_meta, db_id: str):
     return None
 
 
-def run_all_queries(limit: int = 5):
+def run_all_queries(limit: int):
     queries, tables_meta = load_bird()
 
     for i, q in enumerate(queries[:limit]):
@@ -74,4 +74,4 @@ def run_all_queries(limit: int = 5):
 
 
 if __name__ == "__main__":
-    run_all_queries(limit=5)
+    run_all_queries(limit=10)
