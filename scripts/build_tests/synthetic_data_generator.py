@@ -342,7 +342,7 @@ def generate_synthetic_dataset(
                     if is_numeric_dtype(dtype):
                         forced_row[col] = _random_numeric()
                     else:
-                        forced_row[col] = f"orig_{col}"
+                        forced_row[col] = f"{col}_{len(rows)}"
                     continue
 
                 # otherwise original random behavior:
@@ -381,7 +381,7 @@ def generate_synthetic_dataset(
                     if is_numeric_dtype(dtype):
                         row[col] = _random_numeric()
                     else:
-                        row[col] = f"orig_{col}"
+                        row[col] = f"{col}_{len(rows)}"
                     continue
 
                 if "char" in t or "text" in t:
@@ -409,7 +409,7 @@ def generate_synthetic_dataset(
                     if is_numeric_dtype(dtype):
                         row[col] = _random_numeric()
                     else:
-                        row[col] = f"orig_{col}"
+                        row[col] = f"{col}_{len(rows)}"
                     continue
 
                 if "char" in t or "text" in t:

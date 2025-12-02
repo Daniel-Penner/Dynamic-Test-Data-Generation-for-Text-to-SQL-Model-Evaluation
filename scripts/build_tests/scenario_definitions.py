@@ -115,6 +115,14 @@ def _deterministic_scenarios(limit: int | None) -> List[Dict[str, Any]]:
     scenarios = []
 
     # Only scenarios dependent on LIMIT
+    # Always include deterministic base scenarios
+    scenarios.extend([
+        {"name": "full_match", "positive_count": 5, "ordering": "correct"},
+        {"name": "single_match", "positive_count": 1, "ordering": "correct"},
+        {"name": "multi_match", "positive_count": 3, "ordering": "correct"},
+    ])
+
+    # Only add LIMIT-sensitive variants if LIMIT exists
     if limit:
         scenarios.extend([
             {"name": "happy_path", "positive_count": limit + 2, "ordering": "correct"},
