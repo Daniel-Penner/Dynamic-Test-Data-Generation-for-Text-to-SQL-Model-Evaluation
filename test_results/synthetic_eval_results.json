@@ -11,12 +11,12 @@
         "passed": false,
         "predicted": [
           {
-            "max(\"Percent (%) Eligible Free (K-12)\")": 0.0
+            "max(\"Percent (%) Eligible Free (K-12)\")": 2118.757
           }
         ],
         "gold": [
           {
-            "(\"Free Meal Count (K-12)\" / \"Enrollment (K-12)\")": NaN
+            "(\"Free Meal Count (K-12)\" / \"Enrollment (K-12)\")": 1.1530155929057007
           }
         ],
         "error_pred": null,
@@ -29,12 +29,12 @@
         "passed": false,
         "predicted": [
           {
-            "max(\"Percent (%) Eligible Free (K-12)\")": 916.0
+            "max(\"Percent (%) Eligible Free (K-12)\")": 9.771479351564805
           }
         ],
         "gold": [
           {
-            "(\"Free Meal Count (K-12)\" / \"Enrollment (K-12)\")": 17.977777777777778
+            "(\"Free Meal Count (K-12)\" / \"Enrollment (K-12)\")": 1058.061431665748
           }
         ],
         "error_pred": null,
@@ -47,12 +47,12 @@
         "passed": false,
         "predicted": [
           {
-            "max(\"Percent (%) Eligible Free (K-12)\")": 0.0
+            "max(\"Percent (%) Eligible Free (K-12)\")": 4324.533
           }
         ],
         "gold": [
           {
-            "(\"Free Meal Count (K-12)\" / \"Enrollment (K-12)\")": NaN
+            "(\"Free Meal Count (K-12)\" / \"Enrollment (K-12)\")": 15.414059822550552
           }
         ],
         "error_pred": null,
@@ -65,12 +65,12 @@
         "passed": false,
         "predicted": [
           {
-            "max(\"Percent (%) Eligible Free (K-12)\")": 0.0
+            "max(\"Percent (%) Eligible Free (K-12)\")": 4036.22
           }
         ],
         "gold": [
           {
-            "(\"Free Meal Count (K-12)\" / \"Enrollment (K-12)\")": NaN
+            "(\"Free Meal Count (K-12)\" / \"Enrollment (K-12)\")": 22.720991485636986
           }
         ],
         "error_pred": null,
@@ -83,14 +83,10 @@
         "passed": false,
         "predicted": [
           {
-            "max(\"Percent (%) Eligible Free (K-12)\")": 550.0
+            "max(\"Percent (%) Eligible Free (K-12)\")": NaN
           }
         ],
-        "gold": [
-          {
-            "(\"Free Meal Count (K-12)\" / \"Enrollment (K-12)\")": 0.7532163742690059
-          }
-        ],
+        "gold": [],
         "error_pred": null,
         "error_gold": null
       },
@@ -101,12 +97,12 @@
         "passed": false,
         "predicted": [
           {
-            "max(\"Percent (%) Eligible Free (K-12)\")": 137767872.0
+            "max(\"Percent (%) Eligible Free (K-12)\")": 608448.4436876589
           }
         ],
         "gold": [
           {
-            "(\"Free Meal Count (K-12)\" / \"Enrollment (K-12)\")": 13.636043678810744
+            "(\"Free Meal Count (K-12)\" / \"Enrollment (K-12)\")": 1164.068023727227
           }
         ],
         "error_pred": null,
@@ -119,12 +115,12 @@
         "passed": false,
         "predicted": [
           {
-            "max(\"Percent (%) Eligible Free (K-12)\")": 0.0
+            "max(\"Percent (%) Eligible Free (K-12)\")": 2571.894
           }
         ],
         "gold": [
           {
-            "(\"Free Meal Count (K-12)\" / \"Enrollment (K-12)\")": NaN
+            "(\"Free Meal Count (K-12)\" / \"Enrollment (K-12)\")": 3.229482267235894
           }
         ],
         "error_pred": null,
@@ -137,12 +133,12 @@
         "passed": false,
         "predicted": [
           {
-            "max(\"Percent (%) Eligible Free (K-12)\")": 749.0
+            "max(\"Percent (%) Eligible Free (K-12)\")": 9.855342533520448
           }
         ],
         "gold": [
           {
-            "(\"Free Meal Count (K-12)\" / \"Enrollment (K-12)\")": 7.553571428571429
+            "(\"Free Meal Count (K-12)\" / \"Enrollment (K-12)\")": 2.5327585547082605
           }
         ],
         "error_pred": null,
@@ -155,14 +151,10 @@
         "passed": false,
         "predicted": [
           {
-            "max(\"Percent (%) Eligible Free (K-12)\")": 0.0
+            "max(\"Percent (%) Eligible Free (K-12)\")": NaN
           }
         ],
-        "gold": [
-          {
-            "(\"Free Meal Count (K-12)\" / \"Enrollment (K-12)\")": NaN
-          }
-        ],
+        "gold": [],
         "error_pred": null,
         "error_gold": null
       },
@@ -173,12 +165,12 @@
         "passed": false,
         "predicted": [
           {
-            "max(\"Percent (%) Eligible Free (K-12)\")": 0.0
+            "max(\"Percent (%) Eligible Free (K-12)\")": 4351.989
           }
         ],
         "gold": [
           {
-            "(\"Free Meal Count (K-12)\" / \"Enrollment (K-12)\")": NaN
+            "(\"Free Meal Count (K-12)\" / \"Enrollment (K-12)\")": 8.50294929519777
           }
         ],
         "error_pred": null,
@@ -191,12 +183,12 @@
         "passed": false,
         "predicted": [
           {
-            "max(\"Percent (%) Eligible Free (K-12)\")": 0.0
+            "max(\"Percent (%) Eligible Free (K-12)\")": 121.079
           }
         ],
         "gold": [
           {
-            "(\"Free Meal Count (K-12)\" / \"Enrollment (K-12)\")": NaN
+            "(\"Free Meal Count (K-12)\" / \"Enrollment (K-12)\")": 0.9991332056145854
           }
         ],
         "error_pred": null,
@@ -209,12 +201,12 @@
         "passed": false,
         "predicted": [
           {
-            "max(\"Percent (%) Eligible Free (K-12)\")": 0.0
+            "max(\"Percent (%) Eligible Free (K-12)\")": 2014.847
           }
         ],
         "gold": [
           {
-            "(\"Free Meal Count (K-12)\" / \"Enrollment (K-12)\")": NaN
+            "(\"Free Meal Count (K-12)\" / \"Enrollment (K-12)\")": 1.7024613861468514
           }
         ],
         "error_pred": null,
@@ -225,7 +217,7 @@
   {
     "query_id": 1,
     "strict_accuracy": 0,
-    "fractional_accuracy": 0.0,
+    "fractional_accuracy": 0.16666666666666666,
     "scenarios": [
       {
         "scenario": "exact_limit",
@@ -235,13 +227,13 @@
         "predicted": [],
         "gold": [
           {
-            "(\"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\")": NaN
+            "(\"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\")": 0.41707863952249086
           },
           {
-            "(\"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\")": NaN
+            "(\"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\")": 1.692413762590883
           },
           {
-            "(\"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\")": NaN
+            "(\"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\")": 1.7927667489749832
           }
         ],
         "error_pred": null,
@@ -255,13 +247,13 @@
         "predicted": [],
         "gold": [
           {
-            "(\"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\")": 0.4897959183673469
+            "(\"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\")": 0.2635409792800375
           },
           {
-            "(\"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\")": 1.188295165394402
+            "(\"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\")": 0.3795545761372392
           },
           {
-            "(\"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\")": 1.19375
+            "(\"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\")": 1.1303330833999659
           }
         ],
         "error_pred": null,
@@ -275,13 +267,13 @@
         "predicted": [],
         "gold": [
           {
-            "(\"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\")": NaN
+            "(\"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\")": 0.3101650357342797
           },
           {
-            "(\"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\")": NaN
+            "(\"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\")": 0.8906725864944406
           },
           {
-            "(\"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\")": NaN
+            "(\"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\")": 1.9470121110205871
           }
         ],
         "error_pred": null,
@@ -295,13 +287,13 @@
         "predicted": [],
         "gold": [
           {
-            "(\"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\")": NaN
+            "(\"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\")": 0.2553478375998374
           },
           {
-            "(\"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\")": NaN
+            "(\"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\")": 0.7309163643175863
           },
           {
-            "(\"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\")": NaN
+            "(\"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\")": 0.7419899101900205
           }
         ],
         "error_pred": null,
@@ -311,13 +303,9 @@
         "scenario": "join_only",
         "gold_sql": "SELECT \"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\" FROM frpm WHERE \"Educational Option Type\" = 'Continuation School' AND \"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\" IS NOT NULL ORDER BY \"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\" ASC LIMIT 3",
         "prediction_sql": "SELECT \"School Name\", \"Percent (%) Eligible Free (Ages 5-17)\" FROM frpm JOIN satscores ON frpm.CDSCode = satscores.cds JOIN schools ON schools.CDSCode = satscores.cds WHERE \"District Type\" = 'Continuation High School' AND rtype = 'S' AND \"Percent (%) Eligible Free (Ages 5-17)\" IS NOT NULL ORDER BY \"Percent (%) Eligible Free (Ages 5-17)\" ASC LIMIT 3",
-        "passed": false,
+        "passed": true,
         "predicted": [],
-        "gold": [
-          {
-            "(\"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\")": 4.369047619047619
-          }
-        ],
+        "gold": [],
         "error_pred": null,
         "error_gold": null
       },
@@ -329,13 +317,13 @@
         "predicted": [],
         "gold": [
           {
-            "(\"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\")": 0.1304183371589541
+            "(\"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\")": 0.7562284129647486
           },
           {
-            "(\"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\")": 0.6173660359715878
+            "(\"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\")": 1.089620239034407
           },
           {
-            "(\"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\")": 0.7017237780504886
+            "(\"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\")": 6.874512389329219
           }
         ],
         "error_pred": null,
@@ -349,13 +337,13 @@
         "predicted": [],
         "gold": [
           {
-            "(\"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\")": NaN
+            "(\"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\")": 0.1375256810103772
           },
           {
-            "(\"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\")": NaN
+            "(\"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\")": 3.4575190898245682
           },
           {
-            "(\"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\")": NaN
+            "(\"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\")": 8.840522742355402
           }
         ],
         "error_pred": null,
@@ -369,13 +357,13 @@
         "predicted": [],
         "gold": [
           {
-            "(\"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\")": 0.16024340770791076
+            "(\"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\")": 0.7444176631561767
           },
           {
-            "(\"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\")": 0.8718487394957983
+            "(\"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\")": 1.0338192662033145
           },
           {
-            "(\"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\")": 0.8894736842105263
+            "(\"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\")": 3.110387672598993
           }
         ],
         "error_pred": null,
@@ -385,19 +373,9 @@
         "scenario": "no_match",
         "gold_sql": "SELECT \"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\" FROM frpm WHERE \"Educational Option Type\" = 'Continuation School' AND \"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\" IS NOT NULL ORDER BY \"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\" ASC LIMIT 3",
         "prediction_sql": "SELECT \"School Name\", \"Percent (%) Eligible Free (Ages 5-17)\" FROM frpm JOIN satscores ON frpm.CDSCode = satscores.cds JOIN schools ON schools.CDSCode = satscores.cds WHERE \"District Type\" = 'Continuation High School' AND rtype = 'S' AND \"Percent (%) Eligible Free (Ages 5-17)\" IS NOT NULL ORDER BY \"Percent (%) Eligible Free (Ages 5-17)\" ASC LIMIT 3",
-        "passed": false,
+        "passed": true,
         "predicted": [],
-        "gold": [
-          {
-            "(\"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\")": NaN
-          },
-          {
-            "(\"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\")": NaN
-          },
-          {
-            "(\"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\")": NaN
-          }
-        ],
+        "gold": [],
         "error_pred": null,
         "error_gold": null
       },
@@ -409,13 +387,13 @@
         "predicted": [],
         "gold": [
           {
-            "(\"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\")": NaN
+            "(\"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\")": 0.2174121007720015
           },
           {
-            "(\"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\")": NaN
+            "(\"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\")": 0.5380966663677601
           },
           {
-            "(\"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\")": NaN
+            "(\"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\")": 0.6603632750007798
           }
         ],
         "error_pred": null,
@@ -429,13 +407,7 @@
         "predicted": [],
         "gold": [
           {
-            "(\"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\")": NaN
-          },
-          {
-            "(\"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\")": NaN
-          },
-          {
-            "(\"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\")": NaN
+            "(\"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\")": 1.1016769748090818
           }
         ],
         "error_pred": null,
@@ -449,13 +421,13 @@
         "predicted": [],
         "gold": [
           {
-            "(\"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\")": NaN
+            "(\"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\")": 0.012590915398680859
           },
           {
-            "(\"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\")": NaN
+            "(\"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\")": 1.2063044912095817
           },
           {
-            "(\"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\")": NaN
+            "(\"Free Meal Count (Ages 5-17)\" / \"Enrollment (Ages 5-17)\")": 3.9624790355642836
           }
         ],
         "error_pred": null,
@@ -466,19 +438,15 @@
   {
     "query_id": 2,
     "strict_accuracy": 0,
-    "fractional_accuracy": 0.0,
+    "fractional_accuracy": 0.625,
     "scenarios": [
       {
         "scenario": "duplicate_join_keys",
         "gold_sql": "SELECT T2.Zip FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode WHERE T1.\"District Name\" = 'Fresno County Office of Education' AND T1.\"Charter School (Y/N)\" = 1",
         "prediction_sql": "SELECT Zip FROM schools WHERE County = 'Fresno' AND Charter = 1",
-        "passed": false,
+        "passed": true,
         "predicted": [],
-        "gold": [
-          {
-            "Zip": "txt_560564"
-          }
-        ],
+        "gold": [],
         "error_pred": null,
         "error_gold": null
       },
@@ -490,23 +458,19 @@
         "predicted": [],
         "gold": [
           {
-            "Zip": "90000"
+            "Zip": "Zip_00000"
           }
         ],
         "error_pred": null,
         "error_gold": null
       },
       {
-        "scenario": "invalid_dates",
+        "scenario": "inconsistent_categories",
         "gold_sql": "SELECT T2.Zip FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode WHERE T1.\"District Name\" = 'Fresno County Office of Education' AND T1.\"Charter School (Y/N)\" = 1",
         "prediction_sql": "SELECT Zip FROM schools WHERE County = 'Fresno' AND Charter = 1",
-        "passed": false,
+        "passed": true,
         "predicted": [],
-        "gold": [
-          {
-            "Zip": "txt_764842"
-          }
-        ],
+        "gold": [],
         "error_pred": null,
         "error_gold": null
       },
@@ -514,13 +478,9 @@
         "scenario": "join_key_nulls",
         "gold_sql": "SELECT T2.Zip FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode WHERE T1.\"District Name\" = 'Fresno County Office of Education' AND T1.\"Charter School (Y/N)\" = 1",
         "prediction_sql": "SELECT Zip FROM schools WHERE County = 'Fresno' AND Charter = 1",
-        "passed": false,
+        "passed": true,
         "predicted": [],
-        "gold": [
-          {
-            "Zip": "txt_248896"
-          }
-        ],
+        "gold": [],
         "error_pred": null,
         "error_gold": null
       },
@@ -528,13 +488,9 @@
         "scenario": "join_only",
         "gold_sql": "SELECT T2.Zip FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode WHERE T1.\"District Name\" = 'Fresno County Office of Education' AND T1.\"Charter School (Y/N)\" = 1",
         "prediction_sql": "SELECT Zip FROM schools WHERE County = 'Fresno' AND Charter = 1",
-        "passed": false,
+        "passed": true,
         "predicted": [],
-        "gold": [
-          {
-            "Zip": "txt_921769"
-          }
-        ],
+        "gold": [],
         "error_pred": null,
         "error_gold": null
       },
@@ -546,7 +502,7 @@
         "predicted": [],
         "gold": [
           {
-            "Zip": "90000"
+            "Zip": "Zip_00000"
           }
         ],
         "error_pred": null,
@@ -556,13 +512,9 @@
         "scenario": "no_match",
         "gold_sql": "SELECT T2.Zip FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode WHERE T1.\"District Name\" = 'Fresno County Office of Education' AND T1.\"Charter School (Y/N)\" = 1",
         "prediction_sql": "SELECT Zip FROM schools WHERE County = 'Fresno' AND Charter = 1",
-        "passed": false,
+        "passed": true,
         "predicted": [],
-        "gold": [
-          {
-            "Zip": "90000"
-          }
-        ],
+        "gold": [],
         "error_pred": null,
         "error_gold": null
       },
@@ -574,7 +526,7 @@
         "predicted": [],
         "gold": [
           {
-            "Zip": "90000"
+            "Zip": "Zip_00000"
           }
         ],
         "error_pred": null,
@@ -592,44 +544,10 @@
         "gold_sql": "SELECT T2.MailStreet FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode ORDER BY T1.\"FRPM Count (K-12)\" DESC LIMIT 1",
         "prediction_sql": "SELECT MailStreet || ' ' || MailCity || ' ' || MailState || ' ' || MailZip FROM schools WHERE CDSCode = (SELECT CDSCode FROM frpm ORDER BY \"FRPM Count (K-12)\" DESC LIMIT 1)",
         "passed": false,
-        "predicted": [
-          {
-            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "match_349346 match_827510 match_568735 match_772099"
-          },
-          {
-            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "match_800381 match_279671 match_850192 match_372676"
-          },
-          {
-            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "s_160932 s_725688 s_286912 s_940421"
-          },
-          {
-            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "s_850681 s_763222 s_956280 s_556084"
-          },
-          {
-            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "s_460180 s_903420 s_188727 s_239552"
-          },
-          {
-            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "s_982808 s_998870 s_389096 s_175719"
-          },
-          {
-            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "s_326918 s_387889 s_982868 s_182141"
-          },
-          {
-            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "s_938603 s_205031 s_421685 s_589198"
-          },
-          {
-            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "s_083306 s_090815 s_399295 s_074935"
-          },
-          {
-            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "s_238333 s_374021 s_215106 s_075961"
-          },
-          {
-            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "s_760656 s_713931 s_997448 s_025945"
-          }
-        ],
+        "predicted": [],
         "gold": [
           {
-            "MailStreet": "match_349346"
+            "MailStreet": "v_356668"
           }
         ],
         "error_pred": null,
@@ -642,12 +560,42 @@
         "passed": false,
         "predicted": [
           {
-            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "txt_00000 txt_00000 txt_00000 90000"
+            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "MailStreet_00001 MailCity_00001 MailState_00001 MailZip_00001"
+          },
+          {
+            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "MailStreet_00002 MailCity_00002 MailState_00002 MailZip_00002"
+          },
+          {
+            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "MailStreet_00003 MailCity_00003 MailState_00003 MailZip_00003"
+          },
+          {
+            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "MailStreet_00004 MailCity_00004 MailState_00004 MailZip_00004"
+          },
+          {
+            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "MailStreet_00005 MailCity_00005 MailState_00005 MailZip_00005"
+          },
+          {
+            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "MailStreet_00006 MailCity_00006 MailState_00006 MailZip_00006"
+          },
+          {
+            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "MailStreet_00007 MailCity_00007 MailState_00007 MailZip_00007"
+          },
+          {
+            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "MailStreet_00008 MailCity_00008 MailState_00008 MailZip_00008"
+          },
+          {
+            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "MailStreet_00009 MailCity_00009 MailState_00009 MailZip_00009"
+          },
+          {
+            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "MailStreet_00010 MailCity_00010 MailState_00010 MailZip_00010"
+          },
+          {
+            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "MailStreet_00011 MailCity_00011 MailState_00011 MailZip_00011"
           }
         ],
         "gold": [
           {
-            "MailStreet": "txt_00000"
+            "MailStreet": "MailStreet_00001"
           }
         ],
         "error_pred": null,
@@ -660,12 +608,42 @@
         "passed": false,
         "predicted": [
           {
-            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "txt_00000 txt_00000 txt_00000 90000"
+            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "MailStreet_00001 MailCity_00001 MailState_00001 MailZip_00001"
+          },
+          {
+            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "MailStreet_00002 MailCity_00002 MailState_00002 MailZip_00002"
+          },
+          {
+            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "MailStreet_00003 MailCity_00003 MailState_00003 MailZip_00003"
+          },
+          {
+            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "MailStreet_00004 MailCity_00004 MailState_00004 MailZip_00004"
+          },
+          {
+            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "MailStreet_00005 MailCity_00005 MailState_00005 MailZip_00005"
+          },
+          {
+            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "MailStreet_00006 MailCity_00006 MailState_00006 MailZip_00006"
+          },
+          {
+            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "MailStreet_00007 MailCity_00007 MailState_00007 MailZip_00007"
+          },
+          {
+            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "MailStreet_00008 MailCity_00008 MailState_00008 MailZip_00008"
+          },
+          {
+            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "MailStreet_00009 MailCity_00009 MailState_00009 MailZip_00009"
+          },
+          {
+            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "MailStreet_00010 MailCity_00010 MailState_00010 MailZip_00010"
+          },
+          {
+            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "MailStreet_00011 MailCity_00011 MailState_00011 MailZip_00011"
           }
         ],
         "gold": [
           {
-            "MailStreet": "txt_00000"
+            "MailStreet": "MailStreet_00001"
           }
         ],
         "error_pred": null,
@@ -678,12 +656,42 @@
         "passed": false,
         "predicted": [
           {
-            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "txt_00000 txt_00000 txt_00000 90000"
+            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "MailStreet_00001 MailCity_00001 MailState_00001 MailZip_00001"
+          },
+          {
+            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "MailStreet_00002 MailCity_00002 MailState_00002 MailZip_00002"
+          },
+          {
+            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "MailStreet_00003 MailCity_00003 MailState_00003 MailZip_00003"
+          },
+          {
+            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "MailStreet_00004 MailCity_00004 MailState_00004 MailZip_00004"
+          },
+          {
+            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "MailStreet_00005 MailCity_00005 MailState_00005 MailZip_00005"
+          },
+          {
+            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "MailStreet_00006 MailCity_00006 MailState_00006 MailZip_00006"
+          },
+          {
+            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "MailStreet_00007 MailCity_00007 MailState_00007 MailZip_00007"
+          },
+          {
+            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "MailStreet_00008 MailCity_00008 MailState_00008 MailZip_00008"
+          },
+          {
+            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "MailStreet_00009 MailCity_00009 MailState_00009 MailZip_00009"
+          },
+          {
+            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "MailStreet_00010 MailCity_00010 MailState_00010 MailZip_00010"
+          },
+          {
+            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "MailStreet_00011 MailCity_00011 MailState_00011 MailZip_00011"
           }
         ],
         "gold": [
           {
-            "MailStreet": "txt_00000"
+            "MailStreet": "MailStreet_00001"
           }
         ],
         "error_pred": null,
@@ -696,42 +704,42 @@
         "passed": false,
         "predicted": [
           {
-            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "match_463242 match_609425 match_441793 match_328664"
+            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "txt_912654 txt_144268 txt_471915 txt_598387"
           },
           {
-            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "match_053828 match_195653 match_833683 match_587912"
+            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "txt_285910 txt_970952 txt_217857 txt_201666"
           },
           {
-            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "s_433640 s_917685 s_925923 s_049557"
+            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "txt_983817 txt_163935 txt_516256 txt_623742"
           },
           {
-            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "s_951270 s_046200 s_679887 s_702453"
+            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "txt_028815 txt_277419 txt_706844 txt_014649"
           },
           {
-            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "s_029242 s_764239 s_277106 s_537732"
+            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "txt_909628 txt_399911 txt_998052 txt_378555"
           },
           {
-            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "s_662494 s_123063 s_193315 s_659972"
+            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "txt_321076 txt_188358 txt_491470 txt_683126"
           },
           {
-            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "s_881934 s_300729 s_832471 s_409703"
+            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "txt_531094 txt_079797 txt_263738 txt_144461"
           },
           {
-            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "s_129202 s_546814 s_411657 s_906253"
+            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "txt_277166 txt_004877 txt_914016 txt_123952"
           },
           {
-            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "s_718914 s_046544 s_085268 s_868383"
+            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "txt_039484 txt_777800 txt_626674 txt_883725"
           },
           {
-            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "s_294870 s_857361 s_922401 s_573014"
+            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "txt_864051 txt_551049 txt_375537 txt_154458"
           },
           {
-            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "s_379168 s_945254 s_682732 s_816276"
+            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "txt_434047 txt_457463 txt_693560 txt_714276"
           }
         ],
         "gold": [
           {
-            "MailStreet": "match_463242"
+            "MailStreet": "txt_912654"
           }
         ],
         "error_pred": null,
@@ -744,12 +752,27 @@
         "passed": false,
         "predicted": [
           {
-            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "match_683546 match_162560 match_584490 match_932493"
+            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "v_109135 v_143096 v_366708 v_356648"
+          },
+          {
+            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "v_473785 v_522090 v_003345 v_976392"
+          },
+          {
+            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "v_479152 v_569298 v_957468 v_497630"
+          },
+          {
+            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "v_917950 v_470249 v_175032 v_604371"
+          },
+          {
+            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "v_110437 v_364600 v_838695 v_364447"
+          },
+          {
+            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "v_176266 v_351683 v_193783 v_001779"
           }
         ],
         "gold": [
           {
-            "MailStreet": "match_683546"
+            "MailStreet": "v_109135"
           }
         ],
         "error_pred": null,
@@ -762,42 +785,42 @@
         "passed": false,
         "predicted": [
           {
-            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "s_781404 s_000559 s_861313 s_571988"
+            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "v_561712 v_932927 v_066968 v_171835"
           },
           {
-            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "s_244064 s_626246 s_472059 s_110070"
+            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "v_848071 v_727553 v_871433 v_091940"
           },
           {
-            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "s_063877 s_862726 s_012667 s_821514"
+            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "v_347232 v_669946 v_719296 v_432251"
           },
           {
-            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "s_170736 s_843536 s_414384 s_333892"
+            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "v_931766 v_876761 v_998048 v_082905"
           },
           {
-            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "s_527717 s_653648 s_265560 s_571682"
+            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "v_518737 v_701298 v_351482 v_526004"
           },
           {
-            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "s_207115 s_784481 s_537241 s_406872"
+            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "v_582696 v_369229 v_291055 v_628299"
           },
           {
-            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "s_182927 s_205586 s_897549 s_753166"
+            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "v_942989 v_108699 v_148580 v_786622"
           },
           {
-            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "s_814714 s_493588 s_665226 s_268591"
+            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "v_590594 v_170080 v_619837 v_740532"
           },
           {
-            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "s_616173 s_077343 s_359765 s_911097"
+            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "v_838816 v_407286 v_250123 v_655038"
           },
           {
-            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "s_853386 s_256072 s_719744 s_413634"
+            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "v_503347 v_106431 v_518789 v_592952"
           },
           {
-            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "s_091076 s_133048 s_376175 s_979854"
+            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "v_485292 v_630903 v_608778 v_829836"
           }
         ],
         "gold": [
           {
-            "MailStreet": "s_781404"
+            "MailStreet": "v_561712"
           }
         ],
         "error_pred": null,
@@ -810,12 +833,12 @@
         "passed": false,
         "predicted": [
           {
-            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "txt_00000 txt_00000 txt_00000 90000"
+            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "MailStreet_00009 MailCity_00009 MailState_00009 MailZip_00009"
           }
         ],
         "gold": [
           {
-            "MailStreet": "txt_00000"
+            "MailStreet": "MailStreet_00009"
           }
         ],
         "error_pred": null,
@@ -826,14 +849,10 @@
         "gold_sql": "SELECT T2.MailStreet FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode ORDER BY T1.\"FRPM Count (K-12)\" DESC LIMIT 1",
         "prediction_sql": "SELECT MailStreet || ' ' || MailCity || ' ' || MailState || ' ' || MailZip FROM schools WHERE CDSCode = (SELECT CDSCode FROM frpm ORDER BY \"FRPM Count (K-12)\" DESC LIMIT 1)",
         "passed": false,
-        "predicted": [
-          {
-            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "txt_00000 txt_00000 txt_00000 90000"
-          }
-        ],
+        "predicted": [],
         "gold": [
           {
-            "MailStreet": "txt_00000"
+            "MailStreet": "MailStreet_00000"
           }
         ],
         "error_pred": null,
@@ -846,12 +865,42 @@
         "passed": false,
         "predicted": [
           {
-            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "txt_00000 txt_00000 txt_00000 90000"
+            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "MailStreet_00001 MailCity_00001 MailState_00001 MailZip_00001"
+          },
+          {
+            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "MailStreet_00002 MailCity_00002 MailState_00002 MailZip_00002"
+          },
+          {
+            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "MailStreet_00003 MailCity_00003 MailState_00003 MailZip_00003"
+          },
+          {
+            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "MailStreet_00004 MailCity_00004 MailState_00004 MailZip_00004"
+          },
+          {
+            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "MailStreet_00005 MailCity_00005 MailState_00005 MailZip_00005"
+          },
+          {
+            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "MailStreet_00006 MailCity_00006 MailState_00006 MailZip_00006"
+          },
+          {
+            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "MailStreet_00007 MailCity_00007 MailState_00007 MailZip_00007"
+          },
+          {
+            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "MailStreet_00008 MailCity_00008 MailState_00008 MailZip_00008"
+          },
+          {
+            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "MailStreet_00009 MailCity_00009 MailState_00009 MailZip_00009"
+          },
+          {
+            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "MailStreet_00010 MailCity_00010 MailState_00010 MailZip_00010"
+          },
+          {
+            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "MailStreet_00011 MailCity_00011 MailState_00011 MailZip_00011"
           }
         ],
         "gold": [
           {
-            "MailStreet": "txt_00000"
+            "MailStreet": "MailStreet_00001"
           }
         ],
         "error_pred": null,
@@ -864,12 +913,12 @@
         "passed": false,
         "predicted": [
           {
-            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "txt_00000 txt_00000 txt_00000 90000"
+            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "MailStreet_00009 MailCity_00009 MailState_00009 MailZip_00009"
           }
         ],
         "gold": [
           {
-            "MailStreet": "txt_00000"
+            "MailStreet": "MailStreet_00009"
           }
         ],
         "error_pred": null,
@@ -882,12 +931,42 @@
         "passed": false,
         "predicted": [
           {
-            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "txt_00000 txt_00000 txt_00000 90000"
+            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "MailStreet_00001 MailCity_00001 MailState_00001 MailZip_00001"
+          },
+          {
+            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "MailStreet_00002 MailCity_00002 MailState_00002 MailZip_00002"
+          },
+          {
+            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "MailStreet_00003 MailCity_00003 MailState_00003 MailZip_00003"
+          },
+          {
+            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "MailStreet_00004 MailCity_00004 MailState_00004 MailZip_00004"
+          },
+          {
+            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "MailStreet_00005 MailCity_00005 MailState_00005 MailZip_00005"
+          },
+          {
+            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "MailStreet_00006 MailCity_00006 MailState_00006 MailZip_00006"
+          },
+          {
+            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "MailStreet_00007 MailCity_00007 MailState_00007 MailZip_00007"
+          },
+          {
+            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "MailStreet_00008 MailCity_00008 MailState_00008 MailZip_00008"
+          },
+          {
+            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "MailStreet_00009 MailCity_00009 MailState_00009 MailZip_00009"
+          },
+          {
+            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "MailStreet_00010 MailCity_00010 MailState_00010 MailZip_00010"
+          },
+          {
+            "((((((MailStreet || ' ') || MailCity) || ' ') || MailState) || ' ') || MailZip)": "MailStreet_00011 MailCity_00011 MailState_00011 MailZip_00011"
           }
         ],
         "gold": [
           {
-            "MailStreet": "txt_00000"
+            "MailStreet": "MailStreet_00001"
           }
         ],
         "error_pred": null,
@@ -898,19 +977,15 @@
   {
     "query_id": 4,
     "strict_accuracy": 0,
-    "fractional_accuracy": 0.0,
+    "fractional_accuracy": 0.5,
     "scenarios": [
       {
         "scenario": "duplicate_join_keys",
         "gold_sql": "SELECT T2.Phone FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode WHERE T1.\"Charter Funding Type\" = 'Directly funded' AND T1.\"Charter School (Y/N)\" = 1 AND T2.OpenDate > '2000-01-01'",
         "prediction_sql": "SELECT Phone FROM schools WHERE Charter = 1 AND OpenDate > '2000-01-01'",
-        "passed": false,
+        "passed": true,
         "predicted": [],
-        "gold": [
-          {
-            "Phone": "txt_077250"
-          }
-        ],
+        "gold": [],
         "error_pred": null,
         "error_gold": null
       },
@@ -919,47 +994,7 @@
         "gold_sql": "SELECT T2.Phone FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode WHERE T1.\"Charter Funding Type\" = 'Directly funded' AND T1.\"Charter School (Y/N)\" = 1 AND T2.OpenDate > '2000-01-01'",
         "prediction_sql": "SELECT Phone FROM schools WHERE Charter = 1 AND OpenDate > '2000-01-01'",
         "passed": false,
-        "predicted": [
-          {
-            "Phone": "Phone_00000"
-          },
-          {
-            "Phone": "Phone_00000"
-          },
-          {
-            "Phone": "Phone_00000"
-          },
-          {
-            "Phone": "Phone_00000"
-          },
-          {
-            "Phone": "Phone_00000"
-          },
-          {
-            "Phone": "Phone_00000"
-          },
-          {
-            "Phone": "Phone_00000"
-          },
-          {
-            "Phone": "Phone_00000"
-          },
-          {
-            "Phone": "Phone_00000"
-          },
-          {
-            "Phone": "Phone_00000"
-          },
-          {
-            "Phone": "Phone_00000"
-          },
-          {
-            "Phone": "Phone_00000"
-          },
-          {
-            "Phone": "Phone_00000"
-          }
-        ],
+        "predicted": [],
         "gold": [
           {
             "Phone": "Phone_00000"
@@ -976,7 +1011,7 @@
         "predicted": [],
         "gold": [
           {
-            "Phone": "txt_064744"
+            "Phone": "txt_842675"
           }
         ],
         "error_pred": null,
@@ -986,13 +1021,9 @@
         "scenario": "join_key_nulls",
         "gold_sql": "SELECT T2.Phone FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode WHERE T1.\"Charter Funding Type\" = 'Directly funded' AND T1.\"Charter School (Y/N)\" = 1 AND T2.OpenDate > '2000-01-01'",
         "prediction_sql": "SELECT Phone FROM schools WHERE Charter = 1 AND OpenDate > '2000-01-01'",
-        "passed": false,
+        "passed": true,
         "predicted": [],
-        "gold": [
-          {
-            "Phone": "txt_994091"
-          }
-        ],
+        "gold": [],
         "error_pred": null,
         "error_gold": null
       },
@@ -1000,13 +1031,9 @@
         "scenario": "join_only",
         "gold_sql": "SELECT T2.Phone FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode WHERE T1.\"Charter Funding Type\" = 'Directly funded' AND T1.\"Charter School (Y/N)\" = 1 AND T2.OpenDate > '2000-01-01'",
         "prediction_sql": "SELECT Phone FROM schools WHERE Charter = 1 AND OpenDate > '2000-01-01'",
-        "passed": false,
+        "passed": true,
         "predicted": [],
-        "gold": [
-          {
-            "Phone": "txt_891666"
-          }
-        ],
+        "gold": [],
         "error_pred": null,
         "error_gold": null
       },
@@ -1015,47 +1042,7 @@
         "gold_sql": "SELECT T2.Phone FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode WHERE T1.\"Charter Funding Type\" = 'Directly funded' AND T1.\"Charter School (Y/N)\" = 1 AND T2.OpenDate > '2000-01-01'",
         "prediction_sql": "SELECT Phone FROM schools WHERE Charter = 1 AND OpenDate > '2000-01-01'",
         "passed": false,
-        "predicted": [
-          {
-            "Phone": "Phone_00000"
-          },
-          {
-            "Phone": "Phone_00000"
-          },
-          {
-            "Phone": "Phone_00000"
-          },
-          {
-            "Phone": "Phone_00000"
-          },
-          {
-            "Phone": "Phone_00000"
-          },
-          {
-            "Phone": "Phone_00000"
-          },
-          {
-            "Phone": "Phone_00000"
-          },
-          {
-            "Phone": "Phone_00000"
-          },
-          {
-            "Phone": "Phone_00000"
-          },
-          {
-            "Phone": "Phone_00000"
-          },
-          {
-            "Phone": "Phone_00000"
-          },
-          {
-            "Phone": "Phone_00000"
-          },
-          {
-            "Phone": "Phone_00000"
-          }
-        ],
+        "predicted": [],
         "gold": [
           {
             "Phone": "Phone_00000"
@@ -1068,50 +1055,9 @@
         "scenario": "no_match",
         "gold_sql": "SELECT T2.Phone FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode WHERE T1.\"Charter Funding Type\" = 'Directly funded' AND T1.\"Charter School (Y/N)\" = 1 AND T2.OpenDate > '2000-01-01'",
         "prediction_sql": "SELECT Phone FROM schools WHERE Charter = 1 AND OpenDate > '2000-01-01'",
-        "passed": false,
-        "predicted": [
-          {
-            "Phone": "Phone_00000"
-          },
-          {
-            "Phone": "Phone_00000"
-          },
-          {
-            "Phone": "Phone_00000"
-          },
-          {
-            "Phone": "Phone_00000"
-          },
-          {
-            "Phone": "Phone_00000"
-          },
-          {
-            "Phone": "Phone_00000"
-          },
-          {
-            "Phone": "Phone_00000"
-          },
-          {
-            "Phone": "Phone_00000"
-          },
-          {
-            "Phone": "Phone_00000"
-          },
-          {
-            "Phone": "Phone_00000"
-          },
-          {
-            "Phone": "Phone_00000"
-          },
-          {
-            "Phone": "Phone_00000"
-          }
-        ],
-        "gold": [
-          {
-            "Phone": "Phone_00000"
-          }
-        ],
+        "passed": true,
+        "predicted": [],
+        "gold": [],
         "error_pred": null,
         "error_gold": null
       },
@@ -1120,47 +1066,7 @@
         "gold_sql": "SELECT T2.Phone FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode WHERE T1.\"Charter Funding Type\" = 'Directly funded' AND T1.\"Charter School (Y/N)\" = 1 AND T2.OpenDate > '2000-01-01'",
         "prediction_sql": "SELECT Phone FROM schools WHERE Charter = 1 AND OpenDate > '2000-01-01'",
         "passed": false,
-        "predicted": [
-          {
-            "Phone": "Phone_00000"
-          },
-          {
-            "Phone": "Phone_00000"
-          },
-          {
-            "Phone": "Phone_00000"
-          },
-          {
-            "Phone": "Phone_00000"
-          },
-          {
-            "Phone": "Phone_00000"
-          },
-          {
-            "Phone": "Phone_00000"
-          },
-          {
-            "Phone": "Phone_00000"
-          },
-          {
-            "Phone": "Phone_00000"
-          },
-          {
-            "Phone": "Phone_00000"
-          },
-          {
-            "Phone": "Phone_00000"
-          },
-          {
-            "Phone": "Phone_00000"
-          },
-          {
-            "Phone": "Phone_00000"
-          },
-          {
-            "Phone": "Phone_00000"
-          }
-        ],
+        "predicted": [],
         "gold": [
           {
             "Phone": "Phone_00000"
@@ -1188,7 +1094,7 @@
         ],
         "gold": [
           {
-            "count(DISTINCT T2.School)": 1
+            "count(DISTINCT T2.School)": 0
           }
         ],
         "error_pred": null,
@@ -1206,7 +1112,7 @@
         ],
         "gold": [
           {
-            "count(DISTINCT T2.School)": 0
+            "count(DISTINCT T2.School)": 1
           }
         ],
         "error_pred": null,
@@ -1224,7 +1130,7 @@
         ],
         "gold": [
           {
-            "count(DISTINCT T2.School)": 1
+            "count(DISTINCT T2.School)": 0
           }
         ],
         "error_pred": null,
@@ -1242,7 +1148,7 @@
         ],
         "gold": [
           {
-            "count(DISTINCT T2.School)": 1
+            "count(DISTINCT T2.School)": 0
           }
         ],
         "error_pred": null,
@@ -1278,7 +1184,7 @@
         ],
         "gold": [
           {
-            "count(DISTINCT T2.School)": 0
+            "count(DISTINCT T2.School)": 1
           }
         ],
         "error_pred": null,
@@ -1314,7 +1220,7 @@
         ],
         "gold": [
           {
-            "count(DISTINCT T2.School)": 0
+            "count(DISTINCT T2.School)": 1
           }
         ],
         "error_pred": null,
@@ -1332,16 +1238,8 @@
         "gold_sql": "SELECT T2.School FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode WHERE T2.Magnet = 1 AND T1.NumTstTakr > 500",
         "prediction_sql": "SELECT schools.School FROM schools JOIN satscores ON schools.CDSCode = satscores.cds WHERE satscores.NumTstTakr > 500 AND (schools.Magnet = 1 OR schools.GSoffered LIKE '%Magnet%')",
         "passed": true,
-        "predicted": [
-          {
-            "School": "txt_724902"
-          }
-        ],
-        "gold": [
-          {
-            "School": "txt_724902"
-          }
-        ],
+        "predicted": [],
+        "gold": [],
         "error_pred": null,
         "error_gold": null
       },
@@ -1350,8 +1248,16 @@
         "gold_sql": "SELECT T2.School FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode WHERE T2.Magnet = 1 AND T1.NumTstTakr > 500",
         "prediction_sql": "SELECT schools.School FROM schools JOIN satscores ON schools.CDSCode = satscores.cds WHERE satscores.NumTstTakr > 500 AND (schools.Magnet = 1 OR schools.GSoffered LIKE '%Magnet%')",
         "passed": true,
-        "predicted": [],
-        "gold": [],
+        "predicted": [
+          {
+            "School": "School_00000"
+          }
+        ],
+        "gold": [
+          {
+            "School": "School_00000"
+          }
+        ],
         "error_pred": null,
         "error_gold": null
       },
@@ -1360,16 +1266,8 @@
         "gold_sql": "SELECT T2.School FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode WHERE T2.Magnet = 1 AND T1.NumTstTakr > 500",
         "prediction_sql": "SELECT schools.School FROM schools JOIN satscores ON schools.CDSCode = satscores.cds WHERE satscores.NumTstTakr > 500 AND (schools.Magnet = 1 OR schools.GSoffered LIKE '%Magnet%')",
         "passed": true,
-        "predicted": [
-          {
-            "School": "txt_288378"
-          }
-        ],
-        "gold": [
-          {
-            "School": "txt_288378"
-          }
-        ],
+        "predicted": [],
+        "gold": [],
         "error_pred": null,
         "error_gold": null
       },
@@ -1388,16 +1286,8 @@
         "gold_sql": "SELECT T2.School FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode WHERE T2.Magnet = 1 AND T1.NumTstTakr > 500",
         "prediction_sql": "SELECT schools.School FROM schools JOIN satscores ON schools.CDSCode = satscores.cds WHERE satscores.NumTstTakr > 500 AND (schools.Magnet = 1 OR schools.GSoffered LIKE '%Magnet%')",
         "passed": true,
-        "predicted": [
-          {
-            "School": "txt_336575"
-          }
-        ],
-        "gold": [
-          {
-            "School": "txt_336575"
-          }
-        ],
+        "predicted": [],
+        "gold": [],
         "error_pred": null,
         "error_gold": null
       },
@@ -1426,8 +1316,16 @@
         "gold_sql": "SELECT T2.School FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode WHERE T2.Magnet = 1 AND T1.NumTstTakr > 500",
         "prediction_sql": "SELECT schools.School FROM schools JOIN satscores ON schools.CDSCode = satscores.cds WHERE satscores.NumTstTakr > 500 AND (schools.Magnet = 1 OR schools.GSoffered LIKE '%Magnet%')",
         "passed": true,
-        "predicted": [],
-        "gold": [],
+        "predicted": [
+          {
+            "School": "School_00000"
+          }
+        ],
+        "gold": [
+          {
+            "School": "School_00000"
+          }
+        ],
         "error_pred": null,
         "error_gold": null
       }
@@ -1445,12 +1343,12 @@
         "passed": true,
         "predicted": [
           {
-            "Phone": "match_230259"
+            "Phone": "v_345371"
           }
         ],
         "gold": [
           {
-            "Phone": "match_230259"
+            "Phone": "v_345371"
           }
         ],
         "error_pred": null,
@@ -1481,12 +1379,12 @@
         "passed": true,
         "predicted": [
           {
-            "Phone": "Phone_00000"
+            "Phone": "Phone_00001"
           }
         ],
         "gold": [
           {
-            "Phone": "Phone_00000"
+            "Phone": "Phone_00001"
           }
         ],
         "error_pred": null,
@@ -1499,30 +1397,30 @@
         "passed": true,
         "predicted": [
           {
-            "Phone": "Phone_00000"
+            "Phone": "Phone_00001"
           }
         ],
         "gold": [
           {
-            "Phone": "Phone_00000"
+            "Phone": "Phone_00001"
           }
         ],
         "error_pred": null,
         "error_gold": null
       },
       {
-        "scenario": "inconsistent_categories",
+        "scenario": "invalid_dates",
         "gold_sql": "SELECT T2.Phone FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode ORDER BY T1.NumGE1500 DESC LIMIT 1",
         "prediction_sql": "SELECT schools.Phone FROM schools JOIN satscores ON schools.CDSCode = satscores.cds WHERE satscores.NumTstTakr > 0 AND satscores.NumGE1500 > 0 ORDER BY satscores.NumTstTakr DESC LIMIT 1",
         "passed": true,
         "predicted": [
           {
-            "Phone": "UNKNOWN"
+            "Phone": "txt_932503"
           }
         ],
         "gold": [
           {
-            "Phone": "UNKNOWN"
+            "Phone": "txt_932503"
           }
         ],
         "error_pred": null,
@@ -1535,12 +1433,12 @@
         "passed": true,
         "predicted": [
           {
-            "Phone": "match_631791"
+            "Phone": "v_958949"
           }
         ],
         "gold": [
           {
-            "Phone": "match_631791"
+            "Phone": "v_958949"
           }
         ],
         "error_pred": null,
@@ -1553,12 +1451,12 @@
         "passed": true,
         "predicted": [
           {
-            "Phone": "s_960837"
+            "Phone": "v_868036"
           }
         ],
         "gold": [
           {
-            "Phone": "s_960837"
+            "Phone": "v_868036"
           }
         ],
         "error_pred": null,
@@ -1607,12 +1505,12 @@
         "passed": true,
         "predicted": [
           {
-            "Phone": "Phone_00000"
+            "Phone": "Phone_00001"
           }
         ],
         "gold": [
           {
-            "Phone": "Phone_00000"
+            "Phone": "Phone_00001"
           }
         ],
         "error_pred": null,
@@ -1643,12 +1541,12 @@
         "passed": true,
         "predicted": [
           {
-            "Phone": "Phone_00000"
+            "Phone": "Phone_00001"
           }
         ],
         "gold": [
           {
-            "Phone": "Phone_00000"
+            "Phone": "Phone_00001"
           }
         ],
         "error_pred": null,
@@ -1668,10 +1566,14 @@
         "passed": false,
         "predicted": [
           {
-            "sum(NumTstTakr)": NaN
+            "sum(NumTstTakr)": 60.0
           }
         ],
-        "gold": [],
+        "gold": [
+          {
+            "NumTstTakr": 60
+          }
+        ],
         "error_pred": null,
         "error_gold": null
       },
@@ -1682,14 +1584,10 @@
         "passed": false,
         "predicted": [
           {
-            "sum(NumTstTakr)": 1.0
+            "sum(NumTstTakr)": NaN
           }
         ],
-        "gold": [
-          {
-            "NumTstTakr": 1
-          }
-        ],
+        "gold": [],
         "error_pred": null,
         "error_gold": null
       },
@@ -1700,12 +1598,12 @@
         "passed": false,
         "predicted": [
           {
-            "sum(NumTstTakr)": 1.0
+            "sum(NumTstTakr)": 631.0
           }
         ],
         "gold": [
           {
-            "NumTstTakr": 1
+            "NumTstTakr": 631
           }
         ],
         "error_pred": null,
@@ -1718,12 +1616,12 @@
         "passed": false,
         "predicted": [
           {
-            "sum(NumTstTakr)": 1.0
+            "sum(NumTstTakr)": 3082.0
           }
         ],
         "gold": [
           {
-            "NumTstTakr": 1
+            "NumTstTakr": 3082
           }
         ],
         "error_pred": null,
@@ -1750,10 +1648,14 @@
         "passed": false,
         "predicted": [
           {
-            "sum(NumTstTakr)": NaN
+            "sum(NumTstTakr)": 85.0
           }
         ],
-        "gold": [],
+        "gold": [
+          {
+            "NumTstTakr": 85
+          }
+        ],
         "error_pred": null,
         "error_gold": null
       },
@@ -1778,14 +1680,10 @@
         "passed": false,
         "predicted": [
           {
-            "sum(NumTstTakr)": 1.0
+            "sum(NumTstTakr)": NaN
           }
         ],
-        "gold": [
-          {
-            "NumTstTakr": 1
-          }
-        ],
+        "gold": [],
         "error_pred": null,
         "error_gold": null
       },
@@ -1796,14 +1694,10 @@
         "passed": false,
         "predicted": [
           {
-            "sum(NumTstTakr)": 1.0
+            "sum(NumTstTakr)": NaN
           }
         ],
-        "gold": [
-          {
-            "NumTstTakr": 1
-          }
-        ],
+        "gold": [],
         "error_pred": null,
         "error_gold": null
       },
@@ -1814,14 +1708,10 @@
         "passed": false,
         "predicted": [
           {
-            "sum(NumTstTakr)": 1.0
+            "sum(NumTstTakr)": NaN
           }
         ],
-        "gold": [
-          {
-            "NumTstTakr": 1
-          }
-        ],
+        "gold": [],
         "error_pred": null,
         "error_gold": null
       },
@@ -1832,14 +1722,10 @@
         "passed": false,
         "predicted": [
           {
-            "sum(NumTstTakr)": 1.0
+            "sum(NumTstTakr)": NaN
           }
         ],
-        "gold": [
-          {
-            "NumTstTakr": 1
-          }
-        ],
+        "gold": [],
         "error_pred": null,
         "error_gold": null
       },
@@ -1850,14 +1736,10 @@
         "passed": false,
         "predicted": [
           {
-            "sum(NumTstTakr)": 1.0
+            "sum(NumTstTakr)": NaN
           }
         ],
-        "gold": [
-          {
-            "NumTstTakr": 1
-          }
-        ],
+        "gold": [],
         "error_pred": null,
         "error_gold": null
       }
@@ -1880,7 +1762,7 @@
         ],
         "gold": [
           {
-            "count(T2.\"School Code\")": 1
+            "count(T2.\"School Code\")": 0
           }
         ],
         "error_pred": null,
@@ -1898,7 +1780,7 @@
         ],
         "gold": [
           {
-            "count(T2.\"School Code\")": 0
+            "count(T2.\"School Code\")": 1
           }
         ],
         "error_pred": null,
@@ -1916,7 +1798,7 @@
         ],
         "gold": [
           {
-            "count(T2.\"School Code\")": 1
+            "count(T2.\"School Code\")": 0
           }
         ],
         "error_pred": null,
@@ -1952,7 +1834,7 @@
         ],
         "gold": [
           {
-            "count(T2.\"School Code\")": 1
+            "count(T2.\"School Code\")": 0
           }
         ],
         "error_pred": null,
@@ -1970,7 +1852,7 @@
         ],
         "gold": [
           {
-            "count(T2.\"School Code\")": 0
+            "count(T2.\"School Code\")": 1
           }
         ],
         "error_pred": null,

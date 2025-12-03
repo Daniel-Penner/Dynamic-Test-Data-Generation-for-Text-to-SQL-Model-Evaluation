@@ -43,44 +43,54 @@ def _infer_dtype(col_name: str) -> str:
     # Otherwise default to text
     return "text"
 
-def _deterministic_value(col, dtype, row_idx=None):
-    """
-    Deterministic synthetic value generator.
-    row_idx may be None when used for forced rows; in that case use a fixed suffix.
-    """
+import random
 
-    # Handle row_idx=None safely
+def _deterministic_value(col: str, dtype: str, row_idx: int | None):
+    """
+    Produce deterministic but *varying* values.
+    If row_idx is None (edge-case override), generate a random suffix.
+    """
+    if dtype in ("float", "real", "double"):
+        return round(random.uniform(1, 5000), 3)
+
+    if dtype in ("int", "integer"):
+        return random.randint(1, 5000)
+
+    # text-like fallback
     if row_idx is None:
-        suffix = "00000"
-    else:
-        suffix = f"{row_idx:05d}"
+        row_idx = random.randint(1, 99999)
+    suffix = f"{row_idx:05d}"
+    return f"{col}_{suffix}"
 
-    col_l = col.lower()
 
-    if "zip" in col_l:
-        return f"9{suffix[:4]}"
-    if "phone" in col_l:
-        return f"Phone_{suffix}"
-    if "id" in col_l or "code" in col_l:
-        return f"id_{suffix}"
-    if dtype == "text":
-        return f"txt_{suffix}"
-    if dtype == "category":
-        return "Other"
-    if dtype == "int":
-        return int(suffix) % 500 + 1
-    if dtype == "float":
-        return float(int(suffix) % 1000) / 10.0
+def _override_row(base_row: dict, overrides: dict) -> dict:
+    """
+    Return a *new* row with overrides applied (correctly overriding deterministic values).
+    """
+    out = dict(base_row)
+    for k, v in overrides.items():
+        out[k] = v
+    return out
 
-    return f"val_{suffix}"
+
 
 def _random_string(prefix: str, length: int = 6) -> str:
     suffix = "".join(random.choices(string.digits, k=length))
     return f"{prefix}_{suffix}"
 
 
-def _random_numeric() -> float:
-    return float(random.randint(1, 1000))
+    # Utility: normal fallback numeric/string generator
+def rnd(col, dtype):
+    t = dtype.lower()
+    if "int" in t:
+        return random.randint(1, 100)
+    if "float" in t or "real" in t:
+        return random.random() * 10
+    if "date" in t:
+        return "2005-01-01"
+    if "char" in t or "text" in t:
+        return _random_string("txt")
+    return _random_string("v")
 
 
 def _coerce_value_for_dtype(val: Any, dtype: str) -> Any:
@@ -385,174 +395,276 @@ def generate_synthetic_dataset(
 
     for table_name, columns in schema_map.items():
 
+        # Skip unused tables but preserve schema
         if table_name.lower() not in used_tables:
-            # ensure at least ONE column exists to avoid DuckDB errors
             if columns:
-                # use real schema columns as placeholder
                 dataset[table_name] = pd.DataFrame([{col: None for col in columns}])
             else:
-                # if schema somehow has no columns, add 1 safe placeholder
                 dataset[table_name] = pd.DataFrame([{"placeholder": None}])
             continue
 
         table_required_eq = required_eq_by_table.get(table_name, {})
         rows: List[Dict[str, Any]] = []
 
-        # ---------------------------------------------------------
-        # 3A: Guaranteed WHERE-matching AND join-matching row
-        # ---------------------------------------------------------
-        # A forced row must satisfy BOTH required_equals AND join_keys
+        # ============================================================
+        # Scenario handler (scenario-overrides normal generation)
+        # ============================================================
+
+        def scenario_rows(scn_name: str) -> List[Dict[str, Any]]:
+            """Return rows for special edge-case scenarios."""
+            out = []
+
+            # Utility: deterministic with row index
+            def det(col, dtype, idx):
+                return _coerce_value_for_dtype(_deterministic_value(col, dtype, row_idx=idx), dtype)
+
+            # Utility: normal fallback numeric/string
+            def rnd(col, dtype):
+                t = dtype.lower()
+                if "int" in t:
+                    return random.randint(1, 100)
+                if "float" in t or "real" in t:
+                    return random.random() * 10
+                if "date" in t:
+                    return "2005-01-01"
+                return _random_string("v")
+
+            # Utility: join key value retrieval
+            def join_val(col):
+                key = (table_name, col)
+                return global_join_values.get(key, None)
+
+            # ----------------------------------------------------------
+            # SCENARIO: no_match → produce rows guaranteed to NOT match
+            # ----------------------------------------------------------
+            if scn_name == "no_match":
+                for idx in range(n_rows_per_table):
+                    r = {}
+                    for col, dtype in columns.items():
+                        r[col] = det(col, dtype, idx) if is_deterministic else rnd(col, dtype)
+                    # break forced join by injecting unique keys
+                    for (t1, c1, t2, c2) in join_edges:
+                        if t1 == table_name:
+                            r[c1] = _random_string("noj")
+                        if t2 == table_name:
+                            r[c2] = _random_string("noj")
+                    out.append(r)
+                return out
+
+            # ----------------------------------------------------------
+            # SCENARIO: single_match → exactly 1 matching row
+            # ----------------------------------------------------------
+            if scn_name == "single_match":
+                # create one matching row
+                r = {}
+                for col, dtype in columns.items():
+                    key = (table_name, col)
+                    if key in forced_join_values or key in global_join_values:
+                        r[col] = _coerce_value_for_dtype(
+                            forced_join_values.get(key, global_join_values.get(key)),
+                            dtype
+                        )
+                    elif col in table_required_eq:
+                        r[col] = _coerce_value_for_dtype(table_required_eq[col], dtype)
+                    else:
+                        r[col] = det(col, dtype, 0) if is_deterministic else rnd(col, dtype)
+                out.append(r)
+
+                # rest non-matching
+                for idx in range(1, n_rows_per_table):
+                    r = {}
+                    for col, dtype in columns.items():
+                        r[col] = det(col, dtype, idx) if is_deterministic else rnd(col, dtype)
+                    out.append(r)
+                return out
+
+            # ----------------------------------------------------------
+            # SCENARIO: multi_match → create several aligned matches
+            # ----------------------------------------------------------
+            if scn_name == "multi_match":
+                count = max(3, int(n_rows_per_table * 0.3))
+                shared_key = _random_string("mj")
+
+                for idx in range(count):
+                    r = {}
+                    for col, dtype in columns.items():
+                        key = (table_name, col)
+
+                        if key in global_join_values or key in forced_join_values:
+                            r[col] = _coerce_value_for_dtype(shared_key, dtype)
+                        elif col in table_required_eq:
+                            r[col] = _coerce_value_for_dtype(table_required_eq[col], dtype)
+                        else:
+                            r[col] = det(col, dtype, idx) if is_deterministic else rnd(col, dtype)
+                    out.append(r)
+
+                # remaining rows non-match
+                for idx in range(count, n_rows_per_table):
+                    r = {}
+                    for col, dtype in columns.items():
+                        r[col] = det(col, dtype, idx) if is_deterministic else rnd(col, dtype)
+                    out.append(r)
+
+                return out
+
+            # ----------------------------------------------------------
+            # SCENARIO: duplicate_join_keys → repeat the SAME join key
+            # ----------------------------------------------------------
+            if scn_name == "duplicate_join_keys":
+                dup_val = _random_string("dup")
+
+                for idx in range(n_rows_per_table):
+                    r = {}
+                    for col, dtype in columns.items():
+                        key = (table_name, col)
+                        if key in global_join_values or key in forced_join_values:
+                            r[col] = _coerce_value_for_dtype(dup_val, dtype)
+                        else:
+                            r[col] = det(col, dtype, idx) if is_deterministic else rnd(col, dtype)
+                    out.append(r)
+                return out
+
+            # ----------------------------------------------------------
+            # SCENARIO: join_key_nulls → nullify join keys in some rows
+            # ----------------------------------------------------------
+            if scn_name == "join_key_nulls":
+                for idx in range(n_rows_per_table):
+                    r = {}
+                    for col, dtype in columns.items():
+                        key = (table_name, col)
+                        if key in global_join_values or key in forced_join_values:
+                            # half null / half valid
+                            if idx % 2 == 0:
+                                r[col] = None
+                            else:
+                                r[col] = _coerce_value_for_dtype(
+                                    forced_join_values.get(key, global_join_values.get(key)),
+                                    dtype
+                                )
+                        else:
+                            r[col] = det(col, dtype, idx) if is_deterministic else rnd(col, dtype)
+                    out.append(r)
+                return out
+
+            # ----------------------------------------------------------
+            # SCENARIO: inconsistent_categories → break category cols
+            # ----------------------------------------------------------
+            if scn_name == "inconsistent_categories":
+                for idx in range(n_rows_per_table):
+                    r = {}
+                    for col, dtype in columns.items():
+                        if any(kw in col.lower() for kw in ["type", "status", "category", "option"]):
+                            r[col] = random.choice(["A", "B", "C", "UNKNOWN"])
+                        else:
+                            r[col] = det(col, dtype, idx) if is_deterministic else rnd(col, dtype)
+                    out.append(r)
+                return out
+
+            # ----------------------------------------------------------
+            # SCENARIO: join_only → only join keys matter; everything else noise
+            # ----------------------------------------------------------
+            if scn_name == "join_only":
+                for idx in range(n_rows_per_table):
+                    r = {}
+                    for col, dtype in columns.items():
+                        key = (table_name, col)
+                        if key in global_join_values or key in forced_join_values:
+                            r[col] = _coerce_value_for_dtype(
+                                forced_join_values.get(key, global_join_values.get(key)),
+                                dtype
+                            )
+                        else:
+                            r[col] = rnd(col, dtype)
+                    out.append(r)
+                return out
+
+            return None
+
+        # ============================================================
+        # Scenario override (if scenario has structured meaning)
+        # ============================================================
+        if scenario and scenario.get("name"):
+            custom = scenario_rows(scenario["name"])
+            if custom is not None:
+                df = pd.DataFrame(custom)
+
+                # Scenario inject (mutation)
+                if scenario.get("inject"):
+                    df = scenario["inject"](df)
+
+                dataset[table_name] = df
+                continue
+
+        # ============================================================
+        # FALLBACK: ORIGINAL DEFAULT GENERATION LOGIC
+        # ============================================================
+
+        # forced row?
         must_force = (
             bool(table_required_eq)
             or any((table_name, col) in forced_join_values for col in columns)
         )
 
+        row_idx = 0
+
         if must_force:
             forced_row = {}
-
             for col, dtype in columns.items():
-
                 key = (table_name, col)
 
-                # 1. WHERE constraints override everything
                 if col in table_required_eq:
-                    forced_row[col] = _coerce_value_for_dtype(
-                        table_required_eq[col], dtype
-                    )
-                    continue
-
-                # 2. Forced join key value (must override random)
-                if key in forced_join_values:
-                    forced_row[col] = _coerce_value_for_dtype(
-                        forced_join_values[key], dtype
-                    )
-                    continue
-
-                # 3. Normal join-propagation
-                if key in global_join_values:
-                    forced_row[col] = _coerce_value_for_dtype(
-                        global_join_values[key], dtype
-                    )
-                    continue
-
-                # 4. Otherwise: normal random fallback
-                t = dtype.lower()
-
-                # NEW: deterministic scenarios use stable deterministic string instead of random
-                if is_deterministic:
-                    if col in table_required_eq:
-                        forced_row[col] = _coerce_value_for_dtype(table_required_eq[col], dtype)
-                    else:
-                        forced_row[col] = _coerce_value_for_dtype(
-                            _deterministic_value(col, dtype),
-                            dtype
-                        )
-                    continue
-
-                # otherwise original random behavior:
-                if "char" in t or "text" in t:
-                    forced_row[col] = _random_string("txt")
-                elif any(x in t for x in ("int", "float", "real", "double")):
-                    forced_row[col] = _random_numeric()
-                elif "date" in t:
-                    forced_row[col] = "2005-01-01"
+                    forced_row[col] = _coerce_value_for_dtype(table_required_eq[col], dtype)
+                elif key in forced_join_values:
+                    forced_row[col] = _coerce_value_for_dtype(forced_join_values[key], dtype)
+                elif key in global_join_values:
+                    forced_row[col] = _coerce_value_for_dtype(global_join_values[key], dtype)
                 else:
-                    forced_row[col] = _random_string("v")
-
-            # IMPORTANT: add this BEFORE match rows
+                    forced_row[col] = _coerce_value_for_dtype(
+                        _deterministic_value(col, dtype, row_idx=row_idx),
+                        dtype
+                    ) if is_deterministic else rnd(col, dtype)
             rows.append(forced_row)
+            row_idx += 1
 
-        # If scenario says "no_match", do not create forced match row
-        if scenario and scenario.get("name") == "no_match":
-            rows = []  # wipe any forced rows
-            must_force = False
-            match_count = 0
-
-        # ---------------------------------------------------------
-        # 3B: Normal rows (matching + non-matching)
-        # ---------------------------------------------------------
-        # If scenario defines positive_count, use that
-        if scenario and "positive_count" in scenario:
-            match_count = scenario["positive_count"]
-        else:
-            match_count = max(1, int(n_rows_per_table * match_ratio))
-
+        # matching rows
+        match_count = scenario.get("positive_count") if (scenario and "positive_count" in scenario) else max(1, int(n_rows_per_table * match_ratio))
 
         for _ in range(match_count):
-            row = {}
+            r = {}
             for col, dtype in columns.items():
+                key = (table_name, col)
 
                 if col in table_required_eq:
-                    row[col] = _coerce_value_for_dtype(table_required_eq[col], dtype)
-                    continue
-
-                if (table_name, col) in global_join_values:
-                    row[col] = _coerce_value_for_dtype(global_join_values[(table_name, col)], dtype)
-                    continue
-
-                t = dtype.lower()
-                if is_deterministic:
-                    if col in table_required_eq:
-                        row[col] = _coerce_value_for_dtype(table_required_eq[col], dtype)
-                    else:
-                        row[col] = _coerce_value_for_dtype(
-                            _deterministic_value(col, dtype),
-                            dtype
-                        )
-                    continue
-
-                if "char" in t or "text" in t:
-                    row[col] = _random_string("match")
-                elif "int" in t or "float" in t or "real" in t or "double" in t:
-                    row[col] = _random_numeric()
-                elif "date" in t:
-                    row[col] = "2005-01-01"
+                    r[col] = _coerce_value_for_dtype(table_required_eq[col], dtype)
+                elif key in global_join_values:
+                    r[col] = _coerce_value_for_dtype(global_join_values[key], dtype)
                 else:
-                    row[col] = _random_string("v")
+                    r[col] = _coerce_value_for_dtype(
+                        _deterministic_value(col, dtype, row_idx=row_idx),
+                        dtype
+                    ) if is_deterministic else rnd(col, dtype)
+            rows.append(r)
+            row_idx += 1
 
-            rows.append(row)
-
+        # non-matching rows
         for _ in range(n_rows_per_table - match_count):
-            row = {}
+            r = {}
             for col, dtype in columns.items():
-
-                jk = (table_name, col)
-                if jk in global_join_values:
-                    row[col] = _coerce_value_for_dtype(global_join_values[jk], dtype)
-                    continue
-
-                t = dtype.lower()
-                if is_deterministic:
-                    if col in table_required_eq:
-                        row[col] = _coerce_value_for_dtype(table_required_eq[col], dtype)
-                    else:
-                        row[col] = _coerce_value_for_dtype(
-                            _deterministic_value(col, dtype),
-                            dtype
-                        )
-                    continue
-
-                if "char" in t or "text" in t:
-                    row[col] = _random_string("s")
-                elif "int" in t or "float" in t or "real" in t or "double" in t:
-                    row[col] = _random_numeric()
-                elif "date" in t:
-                    row[col] = "2005-01-01"
+                key = (table_name, col)
+                if key in global_join_values:
+                    r[col] = _coerce_value_for_dtype(global_join_values[key], dtype)
                 else:
-                    row[col] = _random_string("v")
-
-            rows.append(row)
+                    r[col] = _coerce_value_for_dtype(
+                        _deterministic_value(col, dtype, row_idx=row_idx),
+                        dtype
+                    ) if is_deterministic else rnd(col, dtype)
+            rows.append(r)
+            row_idx += 1
 
         df = pd.DataFrame(rows)
 
-        # Apply scenario mutation
         if scenario and scenario.get("inject"):
             df = scenario["inject"](df)
-
-        # Apply NOT NULL constraints
-        for (tbl, col) in c.required_not_null:
-            if tbl == table_name and col in df.columns:
-                df[col] = df[col].fillna(_random_numeric())
 
         dataset[table_name] = df
 
