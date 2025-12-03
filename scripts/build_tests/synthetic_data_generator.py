@@ -14,21 +14,65 @@ import pandas as pd
 # Helper random generators
 # =====================================================================
 
-_DET_COUNTER = 0
+import re
 
-def _deterministic_value(col, dtype):
+def _infer_dtype(col_name: str) -> str:
     """
-    Deterministic but non-constant values:
-    - numeric columns: 1, 2, 3, ...
-    - text columns:    f"{col}_{k}"
+    Infers dtypes using *token-level* matching instead of substring matching.
+    Prevents 'County Name' from matching 'count'.
     """
-    global _DET_COUNTER
-    _DET_COUNTER += 1
 
-    t = dtype.lower()
-    if "int" in t or "real" in t or "float" in t or "double" in t:
-        return _DET_COUNTER
-    return f"{col}_{_DET_COUNTER}"
+    name = col_name.lower()
+
+    # split into meaningful tokens
+    tokens = re.split(r"[^a-z0-9]+", name)
+
+    # patterns that imply numeric INT
+    int_tokens = {"count", "num", "number", "total", "enrollment", "sum"}
+
+    # patterns that imply numeric FLOAT
+    float_tokens = {"rate", "ratio", "percent", "percentage", "%"}
+
+    # check exact token match, not substring
+    if any(tok in int_tokens for tok in tokens):
+        return "int"
+
+    if any(tok in float_tokens for tok in tokens):
+        return "float"
+
+    # Otherwise default to text
+    return "text"
+
+def _deterministic_value(col, dtype, row_idx=None):
+    """
+    Deterministic synthetic value generator.
+    row_idx may be None when used for forced rows; in that case use a fixed suffix.
+    """
+
+    # Handle row_idx=None safely
+    if row_idx is None:
+        suffix = "00000"
+    else:
+        suffix = f"{row_idx:05d}"
+
+    col_l = col.lower()
+
+    if "zip" in col_l:
+        return f"9{suffix[:4]}"
+    if "phone" in col_l:
+        return f"Phone_{suffix}"
+    if "id" in col_l or "code" in col_l:
+        return f"id_{suffix}"
+    if dtype == "text":
+        return f"txt_{suffix}"
+    if dtype == "category":
+        return "Other"
+    if dtype == "int":
+        return int(suffix) % 500 + 1
+    if dtype == "float":
+        return float(int(suffix) % 1000) / 10.0
+
+    return f"val_{suffix}"
 
 def _random_string(prefix: str, length: int = 6) -> str:
     suffix = "".join(random.choices(string.digits, k=length))
@@ -314,10 +358,28 @@ def generate_synthetic_dataset(
             global_join_values[k1] = v
             global_join_values[k2] = v
 
+
     # =============================================================
     # STEP 3: Generate data table-by-table
     # =============================================================
-    schema_map = {tbl.lower(): cols for tbl, cols in schema_map.items()}
+    # absolute dtype normalization as fallback
+    normalized_schema = {}
+    for tbl, cols in schema_map.items():
+        new_cols = {}
+        for col, dtype in cols.items():
+            dtype = dtype.lower()
+            if dtype in ("varchar", "text", "char", "string"):
+                inferred = _infer_dtype(col)
+                dtype = inferred
+            if dtype in ("real", "double", "numeric"):
+                dtype = "float"
+            if dtype in ("integer", "bigint", "smallint"):
+                dtype = "int"
+
+            new_cols[col] = dtype
+        normalized_schema[tbl] = new_cols
+
+    schema_map = normalized_schema
 
     dataset: Dict[str, pd.DataFrame] = {}
 
@@ -381,7 +443,10 @@ def generate_synthetic_dataset(
                     if col in table_required_eq:
                         forced_row[col] = _coerce_value_for_dtype(table_required_eq[col], dtype)
                     else:
-                        forced_row[col] = _deterministic_value(col, dtype)
+                        forced_row[col] = _coerce_value_for_dtype(
+                            _deterministic_value(col, dtype),
+                            dtype
+                        )
                     continue
 
                 # otherwise original random behavior:
@@ -430,7 +495,10 @@ def generate_synthetic_dataset(
                     if col in table_required_eq:
                         row[col] = _coerce_value_for_dtype(table_required_eq[col], dtype)
                     else:
-                        row[col] = _deterministic_value(col, dtype)
+                        row[col] = _coerce_value_for_dtype(
+                            _deterministic_value(col, dtype),
+                            dtype
+                        )
                     continue
 
                 if "char" in t or "text" in t:
@@ -458,7 +526,10 @@ def generate_synthetic_dataset(
                     if col in table_required_eq:
                         row[col] = _coerce_value_for_dtype(table_required_eq[col], dtype)
                     else:
-                        row[col] = _deterministic_value(col, dtype)
+                        row[col] = _coerce_value_for_dtype(
+                            _deterministic_value(col, dtype),
+                            dtype
+                        )
                     continue
 
                 if "char" in t or "text" in t:
