@@ -4,7 +4,7 @@ import argparse
 from pathlib import Path
 from collections import defaultdict
 import pandas as pd
-
+from scripts.sql_fixers.sqlite_to_duckdb import canonicalize_sql
 
 # -------------------------------------------------------------
 # Helpers
@@ -74,17 +74,13 @@ def evaluate_query(query_id, scenario_files, prediction_sql):
     total = len(scenario_files)
     scenario_details = []
 
-    prediction_sql = normalize_sql(prediction_sql)
-    prediction_sql = rewrite_mysql_limit(prediction_sql)
-    prediction_sql = fix_strftime(prediction_sql)
+    prediction_sql = canonicalize_sql(prediction_sql)
 
     for file in scenario_files:
         with open(file, "r", encoding="utf-8") as f:
             scenario = json.load(f)
 
-        gold_sql = normalize_sql(scenario["sql"])
-        gold_sql = rewrite_mysql_limit(gold_sql)
-        gold_sql = fix_strftime(gold_sql)
+        gold_sql = canonicalize_sql(scenario["sql"])
         tables = scenario["tables"]
         expected_output = scenario.get("expected_output", None)
 

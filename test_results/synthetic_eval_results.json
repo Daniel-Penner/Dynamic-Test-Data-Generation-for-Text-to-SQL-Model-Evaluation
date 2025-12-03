@@ -7696,7 +7696,7 @@
     "scenarios": [
       {
         "scenario": "duplicate_join_keys",
-        "gold_sql": "SELECT T2.School, T1.AvgScrWrite, T2.Phone FROM schools AS T2 LEFT JOIN satscores AS T1 ON T2.CDSCode = T1.cds WHERE strftime(CAST(T2.OpenDate AS DATE), '%Y') > '1991' OR strftime(CAST(T2.ClosedDate AS DATE), '%Y') < '2000'",
+        "gold_sql": "SELECT T2.School, T1.AvgScrWrite, T2.Phone FROM schools AS T2 LEFT JOIN satscores AS T1 ON T2.CDSCode = T1.cds WHERE strftime(T2.OpenDate, '%Y') > '1991' OR strftime(T2.ClosedDate, '%Y') < '2000'",
         "prediction_sql": "SELECT schools.School, satscores.AvgScrWrite, schools.Phone FROM schools JOIN satscores ON schools.CDSCode = satscores.cds WHERE schools.OpenDate > '1991-01-01' AND schools.ClosedDate < '2000-01-01' AND satscores.AvgScrWrite IS NOT NULL",
         "passed": false,
         "predicted": [],
@@ -7763,21 +7763,21 @@
           }
         ],
         "error_pred": null,
-        "error_gold": null
+        "error_gold": "Binder Error: Could not choose a best candidate function for the function call \"strftime(VARCHAR, STRING_LITERAL)\". In order to select one, please add explicit type casts.\n\tCandidate functions:\n\tstrftime(VARCHAR, TIMESTAMP) -> VARCHAR\n\tstrftime(VARCHAR, TIMESTAMP_NS) -> VARCHAR\n\tstrftime(VARCHAR, DATE) -> VARCHAR\n\n\nLINE 1: ... AS T2 LEFT JOIN satscores AS T1 ON T2.CDSCode = T1.cds WHERE strftime(T2.OpenDate, '%Y') > '1991' OR strftime(T2.ClosedDate...\n                                                                         ^"
       },
       {
         "scenario": "far_future_dates",
-        "gold_sql": "SELECT T2.School, T1.AvgScrWrite, T2.Phone FROM schools AS T2 LEFT JOIN satscores AS T1 ON T2.CDSCode = T1.cds WHERE strftime(CAST(T2.OpenDate AS DATE), '%Y') > '1991' OR strftime(CAST(T2.ClosedDate AS DATE), '%Y') < '2000'",
+        "gold_sql": "SELECT T2.School, T1.AvgScrWrite, T2.Phone FROM schools AS T2 LEFT JOIN satscores AS T1 ON T2.CDSCode = T1.cds WHERE strftime(T2.OpenDate, '%Y') > '1991' OR strftime(T2.ClosedDate, '%Y') < '2000'",
         "prediction_sql": "SELECT schools.School, satscores.AvgScrWrite, schools.Phone FROM schools JOIN satscores ON schools.CDSCode = satscores.cds WHERE schools.OpenDate > '1991-01-01' AND schools.ClosedDate < '2000-01-01' AND satscores.AvgScrWrite IS NOT NULL",
         "passed": true,
         "predicted": [],
         "gold": [],
         "error_pred": null,
-        "error_gold": null
+        "error_gold": "Binder Error: Could not choose a best candidate function for the function call \"strftime(VARCHAR, STRING_LITERAL)\". In order to select one, please add explicit type casts.\n\tCandidate functions:\n\tstrftime(VARCHAR, TIMESTAMP) -> VARCHAR\n\tstrftime(VARCHAR, TIMESTAMP_NS) -> VARCHAR\n\tstrftime(VARCHAR, DATE) -> VARCHAR\n\n\nLINE 1: ... AS T2 LEFT JOIN satscores AS T1 ON T2.CDSCode = T1.cds WHERE strftime(T2.OpenDate, '%Y') > '1991' OR strftime(T2.ClosedDate...\n                                                                         ^"
       },
       {
         "scenario": "full_match",
-        "gold_sql": "SELECT T2.School, T1.AvgScrWrite, T2.Phone FROM schools AS T2 LEFT JOIN satscores AS T1 ON T2.CDSCode = T1.cds WHERE strftime(CAST(T2.OpenDate AS DATE), '%Y') > '1991' OR strftime(CAST(T2.ClosedDate AS DATE), '%Y') < '2000'",
+        "gold_sql": "SELECT T2.School, T1.AvgScrWrite, T2.Phone FROM schools AS T2 LEFT JOIN satscores AS T1 ON T2.CDSCode = T1.cds WHERE strftime(T2.OpenDate, '%Y') > '1991' OR strftime(T2.ClosedDate, '%Y') < '2000'",
         "prediction_sql": "SELECT schools.School, satscores.AvgScrWrite, schools.Phone FROM schools JOIN satscores ON schools.CDSCode = satscores.cds WHERE schools.OpenDate > '1991-01-01' AND schools.ClosedDate < '2000-01-01' AND satscores.AvgScrWrite IS NOT NULL",
         "passed": false,
         "predicted": [],
@@ -8394,21 +8394,21 @@
           }
         ],
         "error_pred": null,
-        "error_gold": null
+        "error_gold": "Binder Error: Could not choose a best candidate function for the function call \"strftime(VARCHAR, STRING_LITERAL)\". In order to select one, please add explicit type casts.\n\tCandidate functions:\n\tstrftime(VARCHAR, TIMESTAMP) -> VARCHAR\n\tstrftime(VARCHAR, TIMESTAMP_NS) -> VARCHAR\n\tstrftime(VARCHAR, DATE) -> VARCHAR\n\n\nLINE 1: ... AS T2 LEFT JOIN satscores AS T1 ON T2.CDSCode = T1.cds WHERE strftime(T2.OpenDate, '%Y') > '1991' OR strftime(T2.ClosedDate...\n                                                                         ^"
       },
       {
         "scenario": "invalid_dates",
-        "gold_sql": "SELECT T2.School, T1.AvgScrWrite, T2.Phone FROM schools AS T2 LEFT JOIN satscores AS T1 ON T2.CDSCode = T1.cds WHERE strftime(CAST(T2.OpenDate AS DATE), '%Y') > '1991' OR strftime(CAST(T2.ClosedDate AS DATE), '%Y') < '2000'",
+        "gold_sql": "SELECT T2.School, T1.AvgScrWrite, T2.Phone FROM schools AS T2 LEFT JOIN satscores AS T1 ON T2.CDSCode = T1.cds WHERE strftime(T2.OpenDate, '%Y') > '1991' OR strftime(T2.ClosedDate, '%Y') < '2000'",
         "prediction_sql": "SELECT schools.School, satscores.AvgScrWrite, schools.Phone FROM schools JOIN satscores ON schools.CDSCode = satscores.cds WHERE schools.OpenDate > '1991-01-01' AND schools.ClosedDate < '2000-01-01' AND satscores.AvgScrWrite IS NOT NULL",
         "passed": true,
         "predicted": [],
         "gold": [],
         "error_pred": null,
-        "error_gold": null
+        "error_gold": "Binder Error: Could not choose a best candidate function for the function call \"strftime(VARCHAR, STRING_LITERAL)\". In order to select one, please add explicit type casts.\n\tCandidate functions:\n\tstrftime(VARCHAR, TIMESTAMP) -> VARCHAR\n\tstrftime(VARCHAR, TIMESTAMP_NS) -> VARCHAR\n\tstrftime(VARCHAR, DATE) -> VARCHAR\n\n\nLINE 1: ... AS T2 LEFT JOIN satscores AS T1 ON T2.CDSCode = T1.cds WHERE strftime(T2.OpenDate, '%Y') > '1991' OR strftime(T2.ClosedDate...\n                                                                         ^"
       },
       {
         "scenario": "join_key_nulls",
-        "gold_sql": "SELECT T2.School, T1.AvgScrWrite, T2.Phone FROM schools AS T2 LEFT JOIN satscores AS T1 ON T2.CDSCode = T1.cds WHERE strftime(CAST(T2.OpenDate AS DATE), '%Y') > '1991' OR strftime(CAST(T2.ClosedDate AS DATE), '%Y') < '2000'",
+        "gold_sql": "SELECT T2.School, T1.AvgScrWrite, T2.Phone FROM schools AS T2 LEFT JOIN satscores AS T1 ON T2.CDSCode = T1.cds WHERE strftime(T2.OpenDate, '%Y') > '1991' OR strftime(T2.ClosedDate, '%Y') < '2000'",
         "prediction_sql": "SELECT schools.School, satscores.AvgScrWrite, schools.Phone FROM schools JOIN satscores ON schools.CDSCode = satscores.cds WHERE schools.OpenDate > '1991-01-01' AND schools.ClosedDate < '2000-01-01' AND satscores.AvgScrWrite IS NOT NULL",
         "passed": false,
         "predicted": [],
@@ -8625,11 +8625,11 @@
           }
         ],
         "error_pred": null,
-        "error_gold": null
+        "error_gold": "Binder Error: Could not choose a best candidate function for the function call \"strftime(VARCHAR, STRING_LITERAL)\". In order to select one, please add explicit type casts.\n\tCandidate functions:\n\tstrftime(VARCHAR, TIMESTAMP) -> VARCHAR\n\tstrftime(VARCHAR, TIMESTAMP_NS) -> VARCHAR\n\tstrftime(VARCHAR, DATE) -> VARCHAR\n\n\nLINE 1: ... AS T2 LEFT JOIN satscores AS T1 ON T2.CDSCode = T1.cds WHERE strftime(T2.OpenDate, '%Y') > '1991' OR strftime(T2.ClosedDate...\n                                                                         ^"
       },
       {
         "scenario": "join_only",
-        "gold_sql": "SELECT T2.School, T1.AvgScrWrite, T2.Phone FROM schools AS T2 LEFT JOIN satscores AS T1 ON T2.CDSCode = T1.cds WHERE strftime(CAST(T2.OpenDate AS DATE), '%Y') > '1991' OR strftime(CAST(T2.ClosedDate AS DATE), '%Y') < '2000'",
+        "gold_sql": "SELECT T2.School, T1.AvgScrWrite, T2.Phone FROM schools AS T2 LEFT JOIN satscores AS T1 ON T2.CDSCode = T1.cds WHERE strftime(T2.OpenDate, '%Y') > '1991' OR strftime(T2.ClosedDate, '%Y') < '2000'",
         "prediction_sql": "SELECT schools.School, satscores.AvgScrWrite, schools.Phone FROM schools JOIN satscores ON schools.CDSCode = satscores.cds WHERE schools.OpenDate > '1991-01-01' AND schools.ClosedDate < '2000-01-01' AND satscores.AvgScrWrite IS NOT NULL",
         "passed": false,
         "predicted": [
@@ -9357,11 +9357,11 @@
           }
         ],
         "error_pred": null,
-        "error_gold": null
+        "error_gold": "Binder Error: Could not choose a best candidate function for the function call \"strftime(VARCHAR, STRING_LITERAL)\". In order to select one, please add explicit type casts.\n\tCandidate functions:\n\tstrftime(VARCHAR, TIMESTAMP) -> VARCHAR\n\tstrftime(VARCHAR, TIMESTAMP_NS) -> VARCHAR\n\tstrftime(VARCHAR, DATE) -> VARCHAR\n\n\nLINE 1: ... AS T2 LEFT JOIN satscores AS T1 ON T2.CDSCode = T1.cds WHERE strftime(T2.OpenDate, '%Y') > '1991' OR strftime(T2.ClosedDate...\n                                                                         ^"
       },
       {
         "scenario": "multi_match",
-        "gold_sql": "SELECT T2.School, T1.AvgScrWrite, T2.Phone FROM schools AS T2 LEFT JOIN satscores AS T1 ON T2.CDSCode = T1.cds WHERE strftime(CAST(T2.OpenDate AS DATE), '%Y') > '1991' OR strftime(CAST(T2.ClosedDate AS DATE), '%Y') < '2000'",
+        "gold_sql": "SELECT T2.School, T1.AvgScrWrite, T2.Phone FROM schools AS T2 LEFT JOIN satscores AS T1 ON T2.CDSCode = T1.cds WHERE strftime(T2.OpenDate, '%Y') > '1991' OR strftime(T2.ClosedDate, '%Y') < '2000'",
         "prediction_sql": "SELECT schools.School, satscores.AvgScrWrite, schools.Phone FROM schools JOIN satscores ON schools.CDSCode = satscores.cds WHERE schools.OpenDate > '1991-01-01' AND schools.ClosedDate < '2000-01-01' AND satscores.AvgScrWrite IS NOT NULL",
         "passed": false,
         "predicted": [],
@@ -9428,11 +9428,11 @@
           }
         ],
         "error_pred": null,
-        "error_gold": null
+        "error_gold": "Binder Error: Could not choose a best candidate function for the function call \"strftime(VARCHAR, STRING_LITERAL)\". In order to select one, please add explicit type casts.\n\tCandidate functions:\n\tstrftime(VARCHAR, TIMESTAMP) -> VARCHAR\n\tstrftime(VARCHAR, TIMESTAMP_NS) -> VARCHAR\n\tstrftime(VARCHAR, DATE) -> VARCHAR\n\n\nLINE 1: ... AS T2 LEFT JOIN satscores AS T1 ON T2.CDSCode = T1.cds WHERE strftime(T2.OpenDate, '%Y') > '1991' OR strftime(T2.ClosedDate...\n                                                                         ^"
       },
       {
         "scenario": "no_match",
-        "gold_sql": "SELECT T2.School, T1.AvgScrWrite, T2.Phone FROM schools AS T2 LEFT JOIN satscores AS T1 ON T2.CDSCode = T1.cds WHERE strftime(CAST(T2.OpenDate AS DATE), '%Y') > '1991' OR strftime(CAST(T2.ClosedDate AS DATE), '%Y') < '2000'",
+        "gold_sql": "SELECT T2.School, T1.AvgScrWrite, T2.Phone FROM schools AS T2 LEFT JOIN satscores AS T1 ON T2.CDSCode = T1.cds WHERE strftime(T2.OpenDate, '%Y') > '1991' OR strftime(T2.ClosedDate, '%Y') < '2000'",
         "prediction_sql": "SELECT schools.School, satscores.AvgScrWrite, schools.Phone FROM schools JOIN satscores ON schools.CDSCode = satscores.cds WHERE schools.OpenDate > '1991-01-01' AND schools.ClosedDate < '2000-01-01' AND satscores.AvgScrWrite IS NOT NULL",
         "passed": false,
         "predicted": [],
@@ -9499,11 +9499,11 @@
           }
         ],
         "error_pred": null,
-        "error_gold": null
+        "error_gold": "Binder Error: Could not choose a best candidate function for the function call \"strftime(VARCHAR, STRING_LITERAL)\". In order to select one, please add explicit type casts.\n\tCandidate functions:\n\tstrftime(VARCHAR, TIMESTAMP) -> VARCHAR\n\tstrftime(VARCHAR, TIMESTAMP_NS) -> VARCHAR\n\tstrftime(VARCHAR, DATE) -> VARCHAR\n\n\nLINE 1: ... AS T2 LEFT JOIN satscores AS T1 ON T2.CDSCode = T1.cds WHERE strftime(T2.OpenDate, '%Y') > '1991' OR strftime(T2.ClosedDate...\n                                                                         ^"
       },
       {
         "scenario": "single_match",
-        "gold_sql": "SELECT T2.School, T1.AvgScrWrite, T2.Phone FROM schools AS T2 LEFT JOIN satscores AS T1 ON T2.CDSCode = T1.cds WHERE strftime(CAST(T2.OpenDate AS DATE), '%Y') > '1991' OR strftime(CAST(T2.ClosedDate AS DATE), '%Y') < '2000'",
+        "gold_sql": "SELECT T2.School, T1.AvgScrWrite, T2.Phone FROM schools AS T2 LEFT JOIN satscores AS T1 ON T2.CDSCode = T1.cds WHERE strftime(T2.OpenDate, '%Y') > '1991' OR strftime(T2.ClosedDate, '%Y') < '2000'",
         "prediction_sql": "SELECT schools.School, satscores.AvgScrWrite, schools.Phone FROM schools JOIN satscores ON schools.CDSCode = satscores.cds WHERE schools.OpenDate > '1991-01-01' AND schools.ClosedDate < '2000-01-01' AND satscores.AvgScrWrite IS NOT NULL",
         "passed": false,
         "predicted": [],
@@ -9570,7 +9570,7 @@
           }
         ],
         "error_pred": null,
-        "error_gold": null
+        "error_gold": "Binder Error: Could not choose a best candidate function for the function call \"strftime(VARCHAR, STRING_LITERAL)\". In order to select one, please add explicit type casts.\n\tCandidate functions:\n\tstrftime(VARCHAR, TIMESTAMP) -> VARCHAR\n\tstrftime(VARCHAR, TIMESTAMP_NS) -> VARCHAR\n\tstrftime(VARCHAR, DATE) -> VARCHAR\n\n\nLINE 1: ... AS T2 LEFT JOIN satscores AS T1 ON T2.CDSCode = T1.cds WHERE strftime(T2.OpenDate, '%Y') > '1991' OR strftime(T2.ClosedDate...\n                                                                         ^"
       }
     ]
   },
@@ -11728,7 +11728,7 @@
     "scenarios": [
       {
         "scenario": "extreme_outliers",
-        "gold_sql": "SELECT AVG(T1.NumTstTakr) FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode WHERE strftime(CAST(T2.OpenDate AS DATE), '%Y') = '1980' AND T2.County = 'Fresno'",
+        "gold_sql": "SELECT AVG(T1.NumTstTakr) FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode WHERE strftime(T2.OpenDate, '%Y') = '1980' AND T2.County = 'Fresno'",
         "prediction_sql": "SELECT AVG(NumTstTakr) FROM satscores WHERE cds IN (SELECT CDSCode FROM schools WHERE City = 'Fresno' AND OpenDate BETWEEN '1/1/1980' AND '12/31/1980')",
         "passed": false,
         "predicted": [
@@ -11742,11 +11742,11 @@
           }
         ],
         "error_pred": null,
-        "error_gold": null
+        "error_gold": "Binder Error: Could not choose a best candidate function for the function call \"strftime(VARCHAR, STRING_LITERAL)\". In order to select one, please add explicit type casts.\n\tCandidate functions:\n\tstrftime(VARCHAR, TIMESTAMP) -> VARCHAR\n\tstrftime(VARCHAR, TIMESTAMP_NS) -> VARCHAR\n\tstrftime(VARCHAR, DATE) -> VARCHAR\n\n\nLINE 1: ... AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode WHERE strftime(T2.OpenDate, '%Y') = '1980' AND T2.County = 'Fresno...\n                                                                        ^"
       },
       {
         "scenario": "full_match",
-        "gold_sql": "SELECT AVG(T1.NumTstTakr) FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode WHERE strftime(CAST(T2.OpenDate AS DATE), '%Y') = '1980' AND T2.County = 'Fresno'",
+        "gold_sql": "SELECT AVG(T1.NumTstTakr) FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode WHERE strftime(T2.OpenDate, '%Y') = '1980' AND T2.County = 'Fresno'",
         "prediction_sql": "SELECT AVG(NumTstTakr) FROM satscores WHERE cds IN (SELECT CDSCode FROM schools WHERE City = 'Fresno' AND OpenDate BETWEEN '1/1/1980' AND '12/31/1980')",
         "passed": false,
         "predicted": [
@@ -11760,11 +11760,11 @@
           }
         ],
         "error_pred": null,
-        "error_gold": null
+        "error_gold": "Binder Error: Could not choose a best candidate function for the function call \"strftime(VARCHAR, STRING_LITERAL)\". In order to select one, please add explicit type casts.\n\tCandidate functions:\n\tstrftime(VARCHAR, TIMESTAMP) -> VARCHAR\n\tstrftime(VARCHAR, TIMESTAMP_NS) -> VARCHAR\n\tstrftime(VARCHAR, DATE) -> VARCHAR\n\n\nLINE 1: ... AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode WHERE strftime(T2.OpenDate, '%Y') = '1980' AND T2.County = 'Fresno...\n                                                                        ^"
       },
       {
         "scenario": "invalid_dates",
-        "gold_sql": "SELECT AVG(T1.NumTstTakr) FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode WHERE strftime(CAST(T2.OpenDate AS DATE), '%Y') = '1980' AND T2.County = 'Fresno'",
+        "gold_sql": "SELECT AVG(T1.NumTstTakr) FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode WHERE strftime(T2.OpenDate, '%Y') = '1980' AND T2.County = 'Fresno'",
         "prediction_sql": "SELECT AVG(NumTstTakr) FROM satscores WHERE cds IN (SELECT CDSCode FROM schools WHERE City = 'Fresno' AND OpenDate BETWEEN '1/1/1980' AND '12/31/1980')",
         "passed": false,
         "predicted": [
@@ -11778,11 +11778,11 @@
           }
         ],
         "error_pred": null,
-        "error_gold": null
+        "error_gold": "Binder Error: Could not choose a best candidate function for the function call \"strftime(VARCHAR, STRING_LITERAL)\". In order to select one, please add explicit type casts.\n\tCandidate functions:\n\tstrftime(VARCHAR, TIMESTAMP) -> VARCHAR\n\tstrftime(VARCHAR, TIMESTAMP_NS) -> VARCHAR\n\tstrftime(VARCHAR, DATE) -> VARCHAR\n\n\nLINE 1: ... AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode WHERE strftime(T2.OpenDate, '%Y') = '1980' AND T2.County = 'Fresno...\n                                                                        ^"
       },
       {
         "scenario": "join_key_nulls",
-        "gold_sql": "SELECT AVG(T1.NumTstTakr) FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode WHERE strftime(CAST(T2.OpenDate AS DATE), '%Y') = '1980' AND T2.County = 'Fresno'",
+        "gold_sql": "SELECT AVG(T1.NumTstTakr) FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode WHERE strftime(T2.OpenDate, '%Y') = '1980' AND T2.County = 'Fresno'",
         "prediction_sql": "SELECT AVG(NumTstTakr) FROM satscores WHERE cds IN (SELECT CDSCode FROM schools WHERE City = 'Fresno' AND OpenDate BETWEEN '1/1/1980' AND '12/31/1980')",
         "passed": false,
         "predicted": [
@@ -11796,11 +11796,11 @@
           }
         ],
         "error_pred": null,
-        "error_gold": null
+        "error_gold": "Binder Error: Could not choose a best candidate function for the function call \"strftime(VARCHAR, STRING_LITERAL)\". In order to select one, please add explicit type casts.\n\tCandidate functions:\n\tstrftime(VARCHAR, TIMESTAMP) -> VARCHAR\n\tstrftime(VARCHAR, TIMESTAMP_NS) -> VARCHAR\n\tstrftime(VARCHAR, DATE) -> VARCHAR\n\n\nLINE 1: ... AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode WHERE strftime(T2.OpenDate, '%Y') = '1980' AND T2.County = 'Fresno...\n                                                                        ^"
       },
       {
         "scenario": "join_only",
-        "gold_sql": "SELECT AVG(T1.NumTstTakr) FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode WHERE strftime(CAST(T2.OpenDate AS DATE), '%Y') = '1980' AND T2.County = 'Fresno'",
+        "gold_sql": "SELECT AVG(T1.NumTstTakr) FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode WHERE strftime(T2.OpenDate, '%Y') = '1980' AND T2.County = 'Fresno'",
         "prediction_sql": "SELECT AVG(NumTstTakr) FROM satscores WHERE cds IN (SELECT CDSCode FROM schools WHERE City = 'Fresno' AND OpenDate BETWEEN '1/1/1980' AND '12/31/1980')",
         "passed": false,
         "predicted": [
@@ -11814,11 +11814,11 @@
           }
         ],
         "error_pred": null,
-        "error_gold": null
+        "error_gold": "Binder Error: Could not choose a best candidate function for the function call \"strftime(VARCHAR, STRING_LITERAL)\". In order to select one, please add explicit type casts.\n\tCandidate functions:\n\tstrftime(VARCHAR, TIMESTAMP) -> VARCHAR\n\tstrftime(VARCHAR, TIMESTAMP_NS) -> VARCHAR\n\tstrftime(VARCHAR, DATE) -> VARCHAR\n\n\nLINE 1: ... AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode WHERE strftime(T2.OpenDate, '%Y') = '1980' AND T2.County = 'Fresno...\n                                                                        ^"
       },
       {
         "scenario": "multi_match",
-        "gold_sql": "SELECT AVG(T1.NumTstTakr) FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode WHERE strftime(CAST(T2.OpenDate AS DATE), '%Y') = '1980' AND T2.County = 'Fresno'",
+        "gold_sql": "SELECT AVG(T1.NumTstTakr) FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode WHERE strftime(T2.OpenDate, '%Y') = '1980' AND T2.County = 'Fresno'",
         "prediction_sql": "SELECT AVG(NumTstTakr) FROM satscores WHERE cds IN (SELECT CDSCode FROM schools WHERE City = 'Fresno' AND OpenDate BETWEEN '1/1/1980' AND '12/31/1980')",
         "passed": false,
         "predicted": [
@@ -11832,11 +11832,11 @@
           }
         ],
         "error_pred": null,
-        "error_gold": null
+        "error_gold": "Binder Error: Could not choose a best candidate function for the function call \"strftime(VARCHAR, STRING_LITERAL)\". In order to select one, please add explicit type casts.\n\tCandidate functions:\n\tstrftime(VARCHAR, TIMESTAMP) -> VARCHAR\n\tstrftime(VARCHAR, TIMESTAMP_NS) -> VARCHAR\n\tstrftime(VARCHAR, DATE) -> VARCHAR\n\n\nLINE 1: ... AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode WHERE strftime(T2.OpenDate, '%Y') = '1980' AND T2.County = 'Fresno...\n                                                                        ^"
       },
       {
         "scenario": "no_match",
-        "gold_sql": "SELECT AVG(T1.NumTstTakr) FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode WHERE strftime(CAST(T2.OpenDate AS DATE), '%Y') = '1980' AND T2.County = 'Fresno'",
+        "gold_sql": "SELECT AVG(T1.NumTstTakr) FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode WHERE strftime(T2.OpenDate, '%Y') = '1980' AND T2.County = 'Fresno'",
         "prediction_sql": "SELECT AVG(NumTstTakr) FROM satscores WHERE cds IN (SELECT CDSCode FROM schools WHERE City = 'Fresno' AND OpenDate BETWEEN '1/1/1980' AND '12/31/1980')",
         "passed": false,
         "predicted": [
@@ -11850,11 +11850,11 @@
           }
         ],
         "error_pred": null,
-        "error_gold": null
+        "error_gold": "Binder Error: Could not choose a best candidate function for the function call \"strftime(VARCHAR, STRING_LITERAL)\". In order to select one, please add explicit type casts.\n\tCandidate functions:\n\tstrftime(VARCHAR, TIMESTAMP) -> VARCHAR\n\tstrftime(VARCHAR, TIMESTAMP_NS) -> VARCHAR\n\tstrftime(VARCHAR, DATE) -> VARCHAR\n\n\nLINE 1: ... AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode WHERE strftime(T2.OpenDate, '%Y') = '1980' AND T2.County = 'Fresno...\n                                                                        ^"
       },
       {
         "scenario": "single_match",
-        "gold_sql": "SELECT AVG(T1.NumTstTakr) FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode WHERE strftime(CAST(T2.OpenDate AS DATE), '%Y') = '1980' AND T2.County = 'Fresno'",
+        "gold_sql": "SELECT AVG(T1.NumTstTakr) FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode WHERE strftime(T2.OpenDate, '%Y') = '1980' AND T2.County = 'Fresno'",
         "prediction_sql": "SELECT AVG(NumTstTakr) FROM satscores WHERE cds IN (SELECT CDSCode FROM schools WHERE City = 'Fresno' AND OpenDate BETWEEN '1/1/1980' AND '12/31/1980')",
         "passed": false,
         "predicted": [
@@ -11868,7 +11868,7 @@
           }
         ],
         "error_pred": null,
-        "error_gold": null
+        "error_gold": "Binder Error: Could not choose a best candidate function for the function call \"strftime(VARCHAR, STRING_LITERAL)\". In order to select one, please add explicit type casts.\n\tCandidate functions:\n\tstrftime(VARCHAR, TIMESTAMP) -> VARCHAR\n\tstrftime(VARCHAR, TIMESTAMP_NS) -> VARCHAR\n\tstrftime(VARCHAR, DATE) -> VARCHAR\n\n\nLINE 1: ... AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode WHERE strftime(T2.OpenDate, '%Y') = '1980' AND T2.County = 'Fresno...\n                                                                        ^"
       }
     ]
   },
@@ -12345,6 +12345,26 @@
         "predicted": [
           {
             "avg(AvgScrMath)": 262.0,
+            "County": "County_00005"
+          },
+          {
+            "avg(AvgScrMath)": 262.0,
+            "County": "County_00001"
+          },
+          {
+            "avg(AvgScrMath)": 262.0,
+            "County": "County_00009"
+          },
+          {
+            "avg(AvgScrMath)": 262.0,
+            "County": "County_00011"
+          },
+          {
+            "avg(AvgScrMath)": 262.0,
+            "County": "County_00002"
+          },
+          {
+            "avg(AvgScrMath)": 262.0,
             "County": "County_00007"
           },
           {
@@ -12353,39 +12373,19 @@
           },
           {
             "avg(AvgScrMath)": 262.0,
-            "County": "County_00006"
-          },
-          {
-            "avg(AvgScrMath)": 262.0,
-            "County": "County_00001"
-          },
-          {
-            "avg(AvgScrMath)": 262.0,
-            "County": "County_00011"
-          },
-          {
-            "avg(AvgScrMath)": 262.0,
-            "County": "County_00009"
-          },
-          {
-            "avg(AvgScrMath)": 262.0,
             "County": "County_00004"
           },
           {
             "avg(AvgScrMath)": 262.0,
-            "County": "County_00005"
-          },
-          {
-            "avg(AvgScrMath)": 262.0,
-            "County": "County_00003"
-          },
-          {
-            "avg(AvgScrMath)": 262.0,
-            "County": "County_00002"
+            "County": "County_00006"
           },
           {
             "avg(AvgScrMath)": 262.0,
             "County": "County_00010"
+          },
+          {
+            "avg(AvgScrMath)": 262.0,
+            "County": "County_00003"
           }
         ],
         "gold": [
@@ -12405,22 +12405,6 @@
         "predicted": [
           {
             "avg(AvgScrMath)": 1462.0,
-            "County": "County_00001"
-          },
-          {
-            "avg(AvgScrMath)": 1462.0,
-            "County": "County_00004"
-          },
-          {
-            "avg(AvgScrMath)": 1462.0,
-            "County": "County_00003"
-          },
-          {
-            "avg(AvgScrMath)": 1462.0,
-            "County": "County_00011"
-          },
-          {
-            "avg(AvgScrMath)": 1462.0,
             "County": "County_00005"
           },
           {
@@ -12429,7 +12413,7 @@
           },
           {
             "avg(AvgScrMath)": 1462.0,
-            "County": "County_00006"
+            "County": "County_00001"
           },
           {
             "avg(AvgScrMath)": 1462.0,
@@ -12441,11 +12425,27 @@
           },
           {
             "avg(AvgScrMath)": 1462.0,
+            "County": "County_00004"
+          },
+          {
+            "avg(AvgScrMath)": 1462.0,
             "County": "County_00002"
           },
           {
             "avg(AvgScrMath)": 1462.0,
             "County": "County_00010"
+          },
+          {
+            "avg(AvgScrMath)": 1462.0,
+            "County": "County_00006"
+          },
+          {
+            "avg(AvgScrMath)": 1462.0,
+            "County": "County_00011"
+          },
+          {
+            "avg(AvgScrMath)": 1462.0,
+            "County": "County_00003"
           }
         ],
         "gold": [
@@ -12465,19 +12465,15 @@
         "predicted": [
           {
             "avg(AvgScrMath)": 2187.0,
-            "County": "County_00002"
-          },
-          {
-            "avg(AvgScrMath)": 2187.0,
             "County": "County_00001"
           },
           {
             "avg(AvgScrMath)": 2187.0,
-            "County": "County_00003"
+            "County": "County_00004"
           },
           {
             "avg(AvgScrMath)": 2187.0,
-            "County": "County_00009"
+            "County": "County_00005"
           },
           {
             "avg(AvgScrMath)": 2187.0,
@@ -12485,7 +12481,19 @@
           },
           {
             "avg(AvgScrMath)": 2187.0,
-            "County": "County_00004"
+            "County": "County_00011"
+          },
+          {
+            "avg(AvgScrMath)": 2187.0,
+            "County": "County_00003"
+          },
+          {
+            "avg(AvgScrMath)": 2187.0,
+            "County": "County_00010"
+          },
+          {
+            "avg(AvgScrMath)": 2187.0,
+            "County": "County_00009"
           },
           {
             "avg(AvgScrMath)": 2187.0,
@@ -12497,15 +12505,7 @@
           },
           {
             "avg(AvgScrMath)": 2187.0,
-            "County": "County_00010"
-          },
-          {
-            "avg(AvgScrMath)": 2187.0,
-            "County": "County_00005"
-          },
-          {
-            "avg(AvgScrMath)": 2187.0,
-            "County": "County_00011"
+            "County": "County_00002"
           }
         ],
         "gold": [
@@ -12525,23 +12525,15 @@
         "predicted": [
           {
             "avg(AvgScrMath)": 12.0,
-            "County": "txt_387572"
-          },
-          {
-            "avg(AvgScrMath)": 12.0,
-            "County": "txt_520529"
-          },
-          {
-            "avg(AvgScrMath)": 12.0,
-            "County": "txt_693862"
-          },
-          {
-            "avg(AvgScrMath)": 12.0,
             "County": "txt_567296"
           },
           {
             "avg(AvgScrMath)": 12.0,
             "County": "txt_524325"
+          },
+          {
+            "avg(AvgScrMath)": 12.0,
+            "County": "txt_520529"
           },
           {
             "avg(AvgScrMath)": 12.0,
@@ -12561,11 +12553,19 @@
           },
           {
             "avg(AvgScrMath)": 12.0,
+            "County": "txt_387572"
+          },
+          {
+            "avg(AvgScrMath)": 12.0,
             "County": "txt_536698"
           },
           {
             "avg(AvgScrMath)": 12.0,
             "County": "txt_630967"
+          },
+          {
+            "avg(AvgScrMath)": 12.0,
+            "County": "txt_693862"
           }
         ],
         "gold": [
@@ -12650,19 +12650,19 @@
         "predicted": [
           {
             "avg(AvgScrMath)": 2190.0,
-            "County": "County_00003"
-          },
-          {
-            "avg(AvgScrMath)": 2190.0,
             "County": "County_00001"
           },
           {
             "avg(AvgScrMath)": 2190.0,
-            "County": "County_00006"
+            "County": "County_00004"
           },
           {
             "avg(AvgScrMath)": 2190.0,
-            "County": "County_00011"
+            "County": "County_00003"
+          },
+          {
+            "avg(AvgScrMath)": 2190.0,
+            "County": "County_00005"
           },
           {
             "avg(AvgScrMath)": 2190.0,
@@ -12674,11 +12674,7 @@
           },
           {
             "avg(AvgScrMath)": 2190.0,
-            "County": "County_00002"
-          },
-          {
-            "avg(AvgScrMath)": 2190.0,
-            "County": "County_00004"
+            "County": "County_00006"
           },
           {
             "avg(AvgScrMath)": 2190.0,
@@ -12686,11 +12682,15 @@
           },
           {
             "avg(AvgScrMath)": 2190.0,
-            "County": "County_00005"
+            "County": "County_00009"
           },
           {
             "avg(AvgScrMath)": 2190.0,
-            "County": "County_00009"
+            "County": "County_00011"
+          },
+          {
+            "avg(AvgScrMath)": 2190.0,
+            "County": "County_00002"
           }
         ],
         "gold": [
@@ -12767,18 +12767,6 @@
         "predicted": [
           {
             "avg(AvgScrWrite)": 63.0,
-            "City": "City_00005"
-          },
-          {
-            "avg(AvgScrWrite)": 63.0,
-            "City": "City_00008"
-          },
-          {
-            "avg(AvgScrWrite)": 63.0,
-            "City": "City_00009"
-          },
-          {
-            "avg(AvgScrWrite)": 63.0,
             "City": "City_00002"
           },
           {
@@ -12803,11 +12791,23 @@
           },
           {
             "avg(AvgScrWrite)": 63.0,
-            "City": "City_00006"
+            "City": "City_00010"
           },
           {
             "avg(AvgScrWrite)": 63.0,
-            "City": "City_00010"
+            "City": "City_00009"
+          },
+          {
+            "avg(AvgScrWrite)": 63.0,
+            "City": "City_00005"
+          },
+          {
+            "avg(AvgScrWrite)": 63.0,
+            "City": "City_00008"
+          },
+          {
+            "avg(AvgScrWrite)": 63.0,
+            "City": "City_00006"
           }
         ],
         "gold": [
@@ -12827,11 +12827,19 @@
         "predicted": [
           {
             "avg(AvgScrWrite)": 4754.0,
-            "City": "City_00010"
+            "City": "City_00006"
           },
           {
             "avg(AvgScrWrite)": 4754.0,
-            "City": "City_00009"
+            "City": "City_00002"
+          },
+          {
+            "avg(AvgScrWrite)": 4754.0,
+            "City": "City_00004"
+          },
+          {
+            "avg(AvgScrWrite)": 4754.0,
+            "City": "City_00007"
           },
           {
             "avg(AvgScrWrite)": 4754.0,
@@ -12843,15 +12851,15 @@
           },
           {
             "avg(AvgScrWrite)": 4754.0,
-            "City": "City_00007"
+            "City": "City_00003"
           },
           {
             "avg(AvgScrWrite)": 4754.0,
-            "City": "City_00002"
+            "City": "City_00009"
           },
           {
             "avg(AvgScrWrite)": 4754.0,
-            "City": "City_00006"
+            "City": "City_00010"
           },
           {
             "avg(AvgScrWrite)": 4754.0,
@@ -12860,14 +12868,6 @@
           {
             "avg(AvgScrWrite)": 4754.0,
             "City": "City_00008"
-          },
-          {
-            "avg(AvgScrWrite)": 4754.0,
-            "City": "City_00004"
-          },
-          {
-            "avg(AvgScrWrite)": 4754.0,
-            "City": "City_00003"
           }
         ],
         "gold": [
@@ -12887,7 +12887,23 @@
         "predicted": [
           {
             "avg(AvgScrWrite)": 1228.0,
+            "City": "City_00007"
+          },
+          {
+            "avg(AvgScrWrite)": 1228.0,
             "City": "City_00004"
+          },
+          {
+            "avg(AvgScrWrite)": 1228.0,
+            "City": "City_00009"
+          },
+          {
+            "avg(AvgScrWrite)": 1228.0,
+            "City": "City_00003"
+          },
+          {
+            "avg(AvgScrWrite)": 1228.0,
+            "City": "City_00002"
           },
           {
             "avg(AvgScrWrite)": 1228.0,
@@ -12899,14 +12915,6 @@
           },
           {
             "avg(AvgScrWrite)": 1228.0,
-            "City": "City_00006"
-          },
-          {
-            "avg(AvgScrWrite)": 1228.0,
-            "City": "City_00010"
-          },
-          {
-            "avg(AvgScrWrite)": 1228.0,
             "City": "City_00005"
           },
           {
@@ -12915,19 +12923,11 @@
           },
           {
             "avg(AvgScrWrite)": 1228.0,
-            "City": "City_00003"
+            "City": "City_00010"
           },
           {
             "avg(AvgScrWrite)": 1228.0,
-            "City": "City_00007"
-          },
-          {
-            "avg(AvgScrWrite)": 1228.0,
-            "City": "City_00002"
-          },
-          {
-            "avg(AvgScrWrite)": 1228.0,
-            "City": "City_00009"
+            "City": "City_00006"
           }
         ],
         "gold": [
@@ -12947,19 +12947,19 @@
         "predicted": [
           {
             "avg(AvgScrWrite)": 56.0,
-            "City": "txt_723267"
+            "City": "txt_718240"
           },
           {
             "avg(AvgScrWrite)": 56.0,
-            "City": "txt_554391"
+            "City": "txt_223944"
           },
           {
             "avg(AvgScrWrite)": 56.0,
-            "City": "txt_707296"
+            "City": "txt_254390"
           },
           {
             "avg(AvgScrWrite)": 56.0,
-            "City": "txt_583947"
+            "City": "txt_336676"
           },
           {
             "avg(AvgScrWrite)": 56.0,
@@ -12975,19 +12975,19 @@
           },
           {
             "avg(AvgScrWrite)": 56.0,
-            "City": "txt_718240"
+            "City": "txt_723267"
           },
           {
             "avg(AvgScrWrite)": 56.0,
-            "City": "txt_223944"
+            "City": "txt_583947"
           },
           {
             "avg(AvgScrWrite)": 56.0,
-            "City": "txt_254390"
+            "City": "txt_554391"
           },
           {
             "avg(AvgScrWrite)": 56.0,
-            "City": "txt_336676"
+            "City": "txt_707296"
           }
         ],
         "gold": [
@@ -13072,35 +13072,15 @@
         "predicted": [
           {
             "avg(AvgScrWrite)": 4986.0,
+            "City": "City_00007"
+          },
+          {
+            "avg(AvgScrWrite)": 4986.0,
             "City": "City_00001"
           },
           {
             "avg(AvgScrWrite)": 4986.0,
             "City": "City_00011"
-          },
-          {
-            "avg(AvgScrWrite)": 4986.0,
-            "City": "City_00003"
-          },
-          {
-            "avg(AvgScrWrite)": 4986.0,
-            "City": "City_00004"
-          },
-          {
-            "avg(AvgScrWrite)": 4986.0,
-            "City": "City_00010"
-          },
-          {
-            "avg(AvgScrWrite)": 4986.0,
-            "City": "City_00009"
-          },
-          {
-            "avg(AvgScrWrite)": 4986.0,
-            "City": "City_00007"
-          },
-          {
-            "avg(AvgScrWrite)": 4986.0,
-            "City": "City_00002"
           },
           {
             "avg(AvgScrWrite)": 4986.0,
@@ -13112,7 +13092,27 @@
           },
           {
             "avg(AvgScrWrite)": 4986.0,
+            "City": "City_00002"
+          },
+          {
+            "avg(AvgScrWrite)": 4986.0,
+            "City": "City_00009"
+          },
+          {
+            "avg(AvgScrWrite)": 4986.0,
+            "City": "City_00010"
+          },
+          {
+            "avg(AvgScrWrite)": 4986.0,
+            "City": "City_00003"
+          },
+          {
+            "avg(AvgScrWrite)": 4986.0,
             "City": "City_00006"
+          },
+          {
+            "avg(AvgScrWrite)": 4986.0,
+            "City": "City_00004"
           }
         ],
         "gold": [
@@ -13147,27 +13147,11 @@
         "predicted": [
           {
             "avg(AvgScrWrite)": 2999.0,
-            "City": "City_00003"
-          },
-          {
-            "avg(AvgScrWrite)": 2999.0,
             "City": "City_00001"
           },
           {
             "avg(AvgScrWrite)": 2999.0,
             "City": "City_00011"
-          },
-          {
-            "avg(AvgScrWrite)": 2999.0,
-            "City": "City_00007"
-          },
-          {
-            "avg(AvgScrWrite)": 2999.0,
-            "City": "City_00004"
-          },
-          {
-            "avg(AvgScrWrite)": 2999.0,
-            "City": "City_00010"
           },
           {
             "avg(AvgScrWrite)": 2999.0,
@@ -13179,15 +13163,31 @@
           },
           {
             "avg(AvgScrWrite)": 2999.0,
-            "City": "City_00002"
+            "City": "City_00007"
           },
           {
             "avg(AvgScrWrite)": 2999.0,
-            "City": "City_00009"
+            "City": "City_00004"
           },
           {
             "avg(AvgScrWrite)": 2999.0,
             "City": "City_00006"
+          },
+          {
+            "avg(AvgScrWrite)": 2999.0,
+            "City": "City_00002"
+          },
+          {
+            "avg(AvgScrWrite)": 2999.0,
+            "City": "City_00003"
+          },
+          {
+            "avg(AvgScrWrite)": 2999.0,
+            "City": "City_00010"
+          },
+          {
+            "avg(AvgScrWrite)": 2999.0,
+            "City": "City_00009"
           }
         ],
         "gold": [
@@ -13484,7 +13484,7 @@
     "scenarios": [
       {
         "scenario": "extreme_ratios",
-        "gold_sql": "SELECT CAST(COUNT(School) AS REAL) / 12 FROM schools WHERE DOC = 52 AND County = 'Alameda' AND strftime(CAST(OpenDate AS DATE), '%Y') = '1980'",
+        "gold_sql": "SELECT CAST(COUNT(School) AS REAL) / 12 FROM schools WHERE DOC = 52 AND County = 'Alameda' AND strftime(OpenDate, '%Y') = '1980'",
         "prediction_sql": "SELECT AVG(1.0) FROM schools WHERE County = 'Alameda County' AND District = 'Elementary School District' AND OpenDate like '1980-%'",
         "passed": false,
         "predicted": [
@@ -13498,11 +13498,11 @@
           }
         ],
         "error_pred": null,
-        "error_gold": null
+        "error_gold": "Binder Error: Could not choose a best candidate function for the function call \"strftime(VARCHAR, STRING_LITERAL)\". In order to select one, please add explicit type casts.\n\tCandidate functions:\n\tstrftime(VARCHAR, TIMESTAMP) -> VARCHAR\n\tstrftime(VARCHAR, TIMESTAMP_NS) -> VARCHAR\n\tstrftime(VARCHAR, DATE) -> VARCHAR\n\n\nLINE 1: ...) / 12 FROM schools WHERE DOC = 52 AND County = 'Alameda' AND strftime(OpenDate, '%Y') = '1980'\n                                                                         ^"
       },
       {
         "scenario": "full_match",
-        "gold_sql": "SELECT CAST(COUNT(School) AS REAL) / 12 FROM schools WHERE DOC = 52 AND County = 'Alameda' AND strftime(CAST(OpenDate AS DATE), '%Y') = '1980'",
+        "gold_sql": "SELECT CAST(COUNT(School) AS REAL) / 12 FROM schools WHERE DOC = 52 AND County = 'Alameda' AND strftime(OpenDate, '%Y') = '1980'",
         "prediction_sql": "SELECT AVG(1.0) FROM schools WHERE County = 'Alameda County' AND District = 'Elementary School District' AND OpenDate like '1980-%'",
         "passed": false,
         "predicted": [
@@ -13516,11 +13516,11 @@
           }
         ],
         "error_pred": null,
-        "error_gold": null
+        "error_gold": "Binder Error: Could not choose a best candidate function for the function call \"strftime(VARCHAR, STRING_LITERAL)\". In order to select one, please add explicit type casts.\n\tCandidate functions:\n\tstrftime(VARCHAR, TIMESTAMP) -> VARCHAR\n\tstrftime(VARCHAR, TIMESTAMP_NS) -> VARCHAR\n\tstrftime(VARCHAR, DATE) -> VARCHAR\n\n\nLINE 1: ...) / 12 FROM schools WHERE DOC = 52 AND County = 'Alameda' AND strftime(OpenDate, '%Y') = '1980'\n                                                                         ^"
       },
       {
         "scenario": "invalid_dates",
-        "gold_sql": "SELECT CAST(COUNT(School) AS REAL) / 12 FROM schools WHERE DOC = 52 AND County = 'Alameda' AND strftime(CAST(OpenDate AS DATE), '%Y') = '1980'",
+        "gold_sql": "SELECT CAST(COUNT(School) AS REAL) / 12 FROM schools WHERE DOC = 52 AND County = 'Alameda' AND strftime(OpenDate, '%Y') = '1980'",
         "prediction_sql": "SELECT AVG(1.0) FROM schools WHERE County = 'Alameda County' AND District = 'Elementary School District' AND OpenDate like '1980-%'",
         "passed": false,
         "predicted": [
@@ -13534,11 +13534,11 @@
           }
         ],
         "error_pred": null,
-        "error_gold": null
+        "error_gold": "Binder Error: Could not choose a best candidate function for the function call \"strftime(VARCHAR, STRING_LITERAL)\". In order to select one, please add explicit type casts.\n\tCandidate functions:\n\tstrftime(VARCHAR, TIMESTAMP) -> VARCHAR\n\tstrftime(VARCHAR, TIMESTAMP_NS) -> VARCHAR\n\tstrftime(VARCHAR, DATE) -> VARCHAR\n\n\nLINE 1: ...) / 12 FROM schools WHERE DOC = 52 AND County = 'Alameda' AND strftime(OpenDate, '%Y') = '1980'\n                                                                         ^"
       },
       {
         "scenario": "join_only",
-        "gold_sql": "SELECT CAST(COUNT(School) AS REAL) / 12 FROM schools WHERE DOC = 52 AND County = 'Alameda' AND strftime(CAST(OpenDate AS DATE), '%Y') = '1980'",
+        "gold_sql": "SELECT CAST(COUNT(School) AS REAL) / 12 FROM schools WHERE DOC = 52 AND County = 'Alameda' AND strftime(OpenDate, '%Y') = '1980'",
         "prediction_sql": "SELECT AVG(1.0) FROM schools WHERE County = 'Alameda County' AND District = 'Elementary School District' AND OpenDate like '1980-%'",
         "passed": false,
         "predicted": [
@@ -13552,11 +13552,11 @@
           }
         ],
         "error_pred": null,
-        "error_gold": null
+        "error_gold": "Binder Error: Could not choose a best candidate function for the function call \"strftime(VARCHAR, STRING_LITERAL)\". In order to select one, please add explicit type casts.\n\tCandidate functions:\n\tstrftime(VARCHAR, TIMESTAMP) -> VARCHAR\n\tstrftime(VARCHAR, TIMESTAMP_NS) -> VARCHAR\n\tstrftime(VARCHAR, DATE) -> VARCHAR\n\n\nLINE 1: ...) / 12 FROM schools WHERE DOC = 52 AND County = 'Alameda' AND strftime(OpenDate, '%Y') = '1980'\n                                                                         ^"
       },
       {
         "scenario": "missing_numeric",
-        "gold_sql": "SELECT CAST(COUNT(School) AS REAL) / 12 FROM schools WHERE DOC = 52 AND County = 'Alameda' AND strftime(CAST(OpenDate AS DATE), '%Y') = '1980'",
+        "gold_sql": "SELECT CAST(COUNT(School) AS REAL) / 12 FROM schools WHERE DOC = 52 AND County = 'Alameda' AND strftime(OpenDate, '%Y') = '1980'",
         "prediction_sql": "SELECT AVG(1.0) FROM schools WHERE County = 'Alameda County' AND District = 'Elementary School District' AND OpenDate like '1980-%'",
         "passed": false,
         "predicted": [
@@ -13570,11 +13570,11 @@
           }
         ],
         "error_pred": null,
-        "error_gold": null
+        "error_gold": "Binder Error: Could not choose a best candidate function for the function call \"strftime(VARCHAR, STRING_LITERAL)\". In order to select one, please add explicit type casts.\n\tCandidate functions:\n\tstrftime(VARCHAR, TIMESTAMP) -> VARCHAR\n\tstrftime(VARCHAR, TIMESTAMP_NS) -> VARCHAR\n\tstrftime(VARCHAR, DATE) -> VARCHAR\n\n\nLINE 1: ...) / 12 FROM schools WHERE DOC = 52 AND County = 'Alameda' AND strftime(OpenDate, '%Y') = '1980'\n                                                                         ^"
       },
       {
         "scenario": "multi_match",
-        "gold_sql": "SELECT CAST(COUNT(School) AS REAL) / 12 FROM schools WHERE DOC = 52 AND County = 'Alameda' AND strftime(CAST(OpenDate AS DATE), '%Y') = '1980'",
+        "gold_sql": "SELECT CAST(COUNT(School) AS REAL) / 12 FROM schools WHERE DOC = 52 AND County = 'Alameda' AND strftime(OpenDate, '%Y') = '1980'",
         "prediction_sql": "SELECT AVG(1.0) FROM schools WHERE County = 'Alameda County' AND District = 'Elementary School District' AND OpenDate like '1980-%'",
         "passed": false,
         "predicted": [
@@ -13588,11 +13588,11 @@
           }
         ],
         "error_pred": null,
-        "error_gold": null
+        "error_gold": "Binder Error: Could not choose a best candidate function for the function call \"strftime(VARCHAR, STRING_LITERAL)\". In order to select one, please add explicit type casts.\n\tCandidate functions:\n\tstrftime(VARCHAR, TIMESTAMP) -> VARCHAR\n\tstrftime(VARCHAR, TIMESTAMP_NS) -> VARCHAR\n\tstrftime(VARCHAR, DATE) -> VARCHAR\n\n\nLINE 1: ...) / 12 FROM schools WHERE DOC = 52 AND County = 'Alameda' AND strftime(OpenDate, '%Y') = '1980'\n                                                                         ^"
       },
       {
         "scenario": "no_match",
-        "gold_sql": "SELECT CAST(COUNT(School) AS REAL) / 12 FROM schools WHERE DOC = 52 AND County = 'Alameda' AND strftime(CAST(OpenDate AS DATE), '%Y') = '1980'",
+        "gold_sql": "SELECT CAST(COUNT(School) AS REAL) / 12 FROM schools WHERE DOC = 52 AND County = 'Alameda' AND strftime(OpenDate, '%Y') = '1980'",
         "prediction_sql": "SELECT AVG(1.0) FROM schools WHERE County = 'Alameda County' AND District = 'Elementary School District' AND OpenDate like '1980-%'",
         "passed": false,
         "predicted": [
@@ -13606,11 +13606,11 @@
           }
         ],
         "error_pred": null,
-        "error_gold": null
+        "error_gold": "Binder Error: Could not choose a best candidate function for the function call \"strftime(VARCHAR, STRING_LITERAL)\". In order to select one, please add explicit type casts.\n\tCandidate functions:\n\tstrftime(VARCHAR, TIMESTAMP) -> VARCHAR\n\tstrftime(VARCHAR, TIMESTAMP_NS) -> VARCHAR\n\tstrftime(VARCHAR, DATE) -> VARCHAR\n\n\nLINE 1: ...) / 12 FROM schools WHERE DOC = 52 AND County = 'Alameda' AND strftime(OpenDate, '%Y') = '1980'\n                                                                         ^"
       },
       {
         "scenario": "single_match",
-        "gold_sql": "SELECT CAST(COUNT(School) AS REAL) / 12 FROM schools WHERE DOC = 52 AND County = 'Alameda' AND strftime(CAST(OpenDate AS DATE), '%Y') = '1980'",
+        "gold_sql": "SELECT CAST(COUNT(School) AS REAL) / 12 FROM schools WHERE DOC = 52 AND County = 'Alameda' AND strftime(OpenDate, '%Y') = '1980'",
         "prediction_sql": "SELECT AVG(1.0) FROM schools WHERE County = 'Alameda County' AND District = 'Elementary School District' AND OpenDate like '1980-%'",
         "passed": false,
         "predicted": [
@@ -13624,7 +13624,7 @@
           }
         ],
         "error_pred": null,
-        "error_gold": null
+        "error_gold": "Binder Error: Could not choose a best candidate function for the function call \"strftime(VARCHAR, STRING_LITERAL)\". In order to select one, please add explicit type casts.\n\tCandidate functions:\n\tstrftime(VARCHAR, TIMESTAMP) -> VARCHAR\n\tstrftime(VARCHAR, TIMESTAMP_NS) -> VARCHAR\n\tstrftime(VARCHAR, DATE) -> VARCHAR\n\n\nLINE 1: ...) / 12 FROM schools WHERE DOC = 52 AND County = 'Alameda' AND strftime(OpenDate, '%Y') = '1980'\n                                                                         ^"
       }
     ]
   },
