@@ -706,6 +706,23 @@ def generate_synthetic_dataset(
 
         dataset[table_name] = df
 
+    # =============================================================
+    # FINAL PATCH: sanitize all DATE columns to ensure valid values
+    # =============================================================
+
+    for tbl, df in dataset.items():
+        for col, dtype in schema_map[tbl].items():
+            if dtype == "date":
+                def fix_date(x):
+                    if x is None:
+                        return None
+                    try:
+                        return pd.to_datetime(x, errors="coerce").date()
+                    except Exception:
+                        return None
+
+                df[col] = df[col].apply(fix_date)
+
     dataset = enforce_join_alignment(dataset)
 
     return dataset

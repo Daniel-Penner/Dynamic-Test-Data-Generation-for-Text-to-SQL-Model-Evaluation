@@ -22,13 +22,36 @@ def _rewrite_mysql_limit(sql):
                   sql,
                   flags=re.IGNORECASE)
 
-def _fix_strftime(sql):
-    # Rewrites: strftime('%Y', OpenDate) → strftime(OpenDate, '%Y')
-    return re.sub(
-        r"strftime\(\s*'([^']+)'\s*,\s*([A-Za-z0-9_]+)\s*\)",
-        r"strftime(\2, '\1')",
-        sql
-    )
+def _fix_strftime(sql: str) -> str:
+    """
+    Rewrite SQLite-style strftime('%Y', col) into DuckDB-style:
+        strftime(CAST(col AS DATE), '%Y')
+    Also fix the reversed argument order (DuckDB requires (value, format)).
+    """
+
+    import re
+
+    # Pattern matching: strftime('%Y', OpenDate)
+    pattern = r"strftime\(\s*'([^']+)'\s*,\s*([a-zA-Z0-9_\.]+)\s*\)"
+
+    def repl(match):
+        fmt = match.group(1)
+        col = match.group(2)
+        # DuckDB form: strftime(CAST(col AS DATE), 'fmt')
+        return f"strftime(CAST({col} AS DATE), '{fmt}')"
+
+    sql = re.sub(pattern, repl, sql)
+
+    # Pattern matching reversed arguments that DuckDB errors on:
+    #   strftime(OpenDate, '%Y')
+    pattern2 = r"strftime\(\s*([a-zA-Z0-9_\.]+)\s*,\s*'([^']+)'\s*\)"
+
+    def repl2(match):
+        col = match.group(1)
+        fmt = match.group(2)
+        return f"strftime(CAST({col} AS DATE), '{fmt}')"
+
+    return re.sub(pattern2, repl2, sql)
 
 def generate_tests_for_query(
     db_id: str,
