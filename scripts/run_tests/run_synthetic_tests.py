@@ -15,6 +15,33 @@ def normalize_sql(sql: str) -> str:
         return sql
     return sql.replace("`", '"')
 
+import re
+
+def fix_strftime(sql: str) -> str:
+    """
+    Rewrite MySQL-style strftime('%Y', column) → strftime(CAST(column AS DATE), '%Y')
+    to satisfy DuckDB's typing rules.
+    """
+    if sql is None:
+        return sql
+
+    # Pattern: strftime('%Y', T2.OpenDate)
+    pattern = r"strftime\s*\(\s*'(%Y|%m|%d)'\s*,\s*([a-zA-Z0-9_\.]+)\s*\)"
+
+    def repl(match):
+        fmt = match.group(1)
+        col = match.group(2)
+        return f"strftime(CAST({col} AS DATE), '{fmt}')"
+
+    return re.sub(pattern, repl, sql)
+
+
+def rewrite_mysql_limit(sql: str) -> str:
+    # Rewrite LIMIT offset, count → LIMIT count OFFSET offset
+    pattern = r"LIMIT\s+(\d+)\s*,\s*(\d+)"
+    repl = r"LIMIT \2 OFFSET \1"
+    return re.sub(pattern, repl, sql, flags=re.IGNORECASE)
+
 
 def run_sql(conn, sql):
     """Execute SQL and capture errors safely."""
@@ -48,12 +75,16 @@ def evaluate_query(query_id, scenario_files, prediction_sql):
     scenario_details = []
 
     prediction_sql = normalize_sql(prediction_sql)
+    prediction_sql = rewrite_mysql_limit(prediction_sql)
+    prediction_sql = fix_strftime(prediction_sql)
 
     for file in scenario_files:
         with open(file, "r", encoding="utf-8") as f:
             scenario = json.load(f)
 
         gold_sql = normalize_sql(scenario["sql"])
+        gold_sql = rewrite_mysql_limit(gold_sql)
+        gold_sql = fix_strftime(gold_sql)
         tables = scenario["tables"]
         expected_output = scenario.get("expected_output", None)
 
@@ -61,7 +92,23 @@ def evaluate_query(query_id, scenario_files, prediction_sql):
         conn = duckdb.connect()
         for tbl_name, rows in tables.items():
             df = pd.DataFrame(rows)
+
+            # --- FIX: Clean date columns before DuckDB sees them ---
+            for col in df.columns:
+                if col.lower().endswith("date") or "date" in col.lower():
+                    df[col] = df[col].astype(str)
+
+                    # Replace invalid or NaT with a neutral date
+                    df[col] = df[col].replace(["NaT", "nat", "None"], "1970-01-01")
+
+                    # Final validation: ensure format YYYY-MM-DD
+                    df[col] = df[col].apply(
+                        lambda x: x if re.match(r"^\d{4}-\d{2}-\d{2}$", x)
+                        else "1970-01-01"
+                    )
+
             conn.register(tbl_name, df)
+
 
         # Run gold SQL
         gold_result, gold_err = run_sql(conn, gold_sql)
