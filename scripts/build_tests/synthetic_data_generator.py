@@ -14,6 +14,22 @@ import pandas as pd
 # Helper random generators
 # =====================================================================
 
+_DET_COUNTER = 0
+
+def _deterministic_value(col, dtype):
+    """
+    Deterministic but non-constant values:
+    - numeric columns: 1, 2, 3, ...
+    - text columns:    f"{col}_{k}"
+    """
+    global _DET_COUNTER
+    _DET_COUNTER += 1
+
+    t = dtype.lower()
+    if "int" in t or "real" in t or "float" in t or "double" in t:
+        return _DET_COUNTER
+    return f"{col}_{_DET_COUNTER}"
+
 def _random_string(prefix: str, length: int = 6) -> str:
     suffix = "".join(random.choices(string.digits, k=length))
     return f"{prefix}_{suffix}"
@@ -118,33 +134,47 @@ def generate_synthetic_dataset(
         t = dtype.lower()
         return ("int" in t) or ("real" in t) or ("float" in t) or ("double" in t)
 
-    def enforce_join_alignment(dataset):
+    def enforce_join_alignment(dataset: Dict[str, pd.DataFrame]) -> Dict[str, pd.DataFrame]:
         """
-        Ensure all tables share the same join key values BEFORE any mutation.
-        This runs ONCE per synthetic dataset.
+        Heuristic join alignment:
+        - Look for groups of columns that represent the same logical key
+          (e.g., ['CDSCode', 'cdscode', 'cds']).
+        - For each group, if at least two tables have a column from that group,
+          force those columns to share the same row-wise join keys.
         """
 
-        import pandas as pd
+        # Each set = synonyms that should represent the same join key
+        join_groups = [
+            {"CDSCode", "cdscode", "cds"},
+            {"id", "ID", "Id"},
+        ]
 
-        # Identify join column
-        join_cols = ["CDSCode", "cdscode", "id"]
-        join_col = None
-        for col in join_cols:
-            if all(col in df.columns for df in dataset.values()):
-                join_col = col
-                break
-        if join_col is None:
-            return dataset
+        for group in join_groups:
+            # Collect (table_name, column_name) pairs that belong to this group
+            members: List[Tuple[str, str]] = []
+            for tname, df in dataset.items():
+                for col in df.columns:
+                    if col in group:
+                        members.append((tname, col))
+                        break  # only one column per table per group
 
-        # Determine n rows to align
-        n = min(len(df) for df in dataset.values())
-        keys = [f"JOINKEY_{i}" for i in range(n)]
+            # Need at least 2 tables involved to bother aligning
+            if len(members) < 2:
+                continue
 
-        # Assign matching join keys
-        for tname, df in dataset.items():
-            df.loc[:n-1, join_col] = keys
+            # Align first n rows across the participating tables
+            n = min(len(dataset[t]) for t, _ in members)
+            if n == 0:
+                continue
+
+            keys = [f"JOINKEY_{i}" for i in range(n)]
+
+            for tname, col in members:
+                df = dataset[tname]
+                df.loc[: n - 1, col] = keys
 
         return dataset
+
 
     # NEW — detect whether this scenario is deterministic (no mutation fn)
     is_deterministic = not scenario or ("inject" not in scenario or scenario["inject"] is None)
@@ -204,11 +234,11 @@ def generate_synthetic_dataset(
 
         # FROM <table>
         for m in re.finditer(r"\bFROM\s+([a-zA-Z0-9_]+)", s, re.IGNORECASE):
-            used_tables.add(m.group(1).lower())
+            used_tables.add(m.group(1).strip().lower())
 
         # JOIN <table>
         for m in re.finditer(r"\bJOIN\s+([a-zA-Z0-9_]+)", s, re.IGNORECASE):
-            used_tables.add(m.group(1).lower())
+            used_tables.add(m.group(1).strip().lower())
 
     # If parsing somehow failed, fall back to "all tables"
     if not used_tables:
@@ -287,11 +317,20 @@ def generate_synthetic_dataset(
     # =============================================================
     # STEP 3: Generate data table-by-table
     # =============================================================
+    schema_map = {tbl.lower(): cols for tbl, cols in schema_map.items()}
+
     dataset: Dict[str, pd.DataFrame] = {}
 
     for table_name, columns in schema_map.items():
-        # Skip tables not referenced in the SQL query
+
         if table_name.lower() not in used_tables:
+            # ensure at least ONE column exists to avoid DuckDB errors
+            if columns:
+                # use real schema columns as placeholder
+                dataset[table_name] = pd.DataFrame([{col: None for col in columns}])
+            else:
+                # if schema somehow has no columns, add 1 safe placeholder
+                dataset[table_name] = pd.DataFrame([{"placeholder": None}])
             continue
 
         table_required_eq = required_eq_by_table.get(table_name, {})
@@ -339,10 +378,10 @@ def generate_synthetic_dataset(
 
                 # NEW: deterministic scenarios use stable deterministic string instead of random
                 if is_deterministic:
-                    if is_numeric_dtype(dtype):
-                        forced_row[col] = _random_numeric()
+                    if col in table_required_eq:
+                        forced_row[col] = _coerce_value_for_dtype(table_required_eq[col], dtype)
                     else:
-                        forced_row[col] = f"{col}_{len(rows)}"
+                        forced_row[col] = _deterministic_value(col, dtype)
                     continue
 
                 # otherwise original random behavior:
@@ -358,6 +397,11 @@ def generate_synthetic_dataset(
             # IMPORTANT: add this BEFORE match rows
             rows.append(forced_row)
 
+        # If scenario says "no_match", do not create forced match row
+        if scenario and scenario.get("name") == "no_match":
+            rows = []  # wipe any forced rows
+            must_force = False
+            match_count = 0
 
         # ---------------------------------------------------------
         # 3B: Normal rows (matching + non-matching)
@@ -383,10 +427,10 @@ def generate_synthetic_dataset(
 
                 t = dtype.lower()
                 if is_deterministic:
-                    if is_numeric_dtype(dtype):
-                        row[col] = _random_numeric()
+                    if col in table_required_eq:
+                        row[col] = _coerce_value_for_dtype(table_required_eq[col], dtype)
                     else:
-                        row[col] = f"{col}_{len(rows)}"
+                        row[col] = _deterministic_value(col, dtype)
                     continue
 
                 if "char" in t or "text" in t:
@@ -411,10 +455,10 @@ def generate_synthetic_dataset(
 
                 t = dtype.lower()
                 if is_deterministic:
-                    if is_numeric_dtype(dtype):
-                        row[col] = _random_numeric()
+                    if col in table_required_eq:
+                        row[col] = _coerce_value_for_dtype(table_required_eq[col], dtype)
                     else:
-                        row[col] = f"{col}_{len(rows)}"
+                        row[col] = _deterministic_value(col, dtype)
                     continue
 
                 if "char" in t or "text" in t:
@@ -441,6 +485,6 @@ def generate_synthetic_dataset(
 
         dataset[table_name] = df
 
-        dataset = enforce_join_alignment(dataset)
+    dataset = enforce_join_alignment(dataset)
 
     return dataset
