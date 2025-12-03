@@ -16,34 +16,39 @@ import pandas as pd
 
 import re
 
-def _infer_dtype(col_name: str) -> str:
+def _infer_dtype(col_name, example_values=None):
     """
-    Infers dtypes using *token-level* matching instead of substring matching.
-    Prevents 'County Name' from matching 'count'.
+    Infer a coarse dtype: 'int', 'float', 'date', or 'text'
+    based on the column name (and optionally example values).
     """
 
     name = col_name.lower()
+    # split into tokens: ["low", "grade"], ["free", "meal", "count", "k", "12"], etc.
+    tokens = [t for t in re.split(r"[^a-z0-9]+", name) if t]
 
-    # split into meaningful tokens
-    tokens = re.split(r"[^a-z0-9]+", name)
-
-    # patterns that imply numeric INT
-    int_tokens = {"count", "num", "number", "total", "enrollment", "sum"}
-
-    # patterns that imply numeric FLOAT
-    float_tokens = {"rate", "ratio", "percent", "percentage", "%"}
-
-    # check exact token match, not substring
-    if any(tok in int_tokens for tok in tokens):
+    # 1) grade-like stuff → integers
+    if "grade" in tokens:
         return "int"
 
-    if any(tok in float_tokens for tok in tokens):
+    # 2) clearly numeric aggregate tokens
+    numeric_tokens = {"count", "num", "number", "total", "enrollment", "sum"}
+    if any(t in numeric_tokens for t in tokens):
+        return "int"
+
+    # 3) rates / percents → float
+    if "%" in col_name or "percent" in tokens or "ratio" in tokens or "rate" in tokens:
         return "float"
 
-    # Otherwise default to text
-    return "text"
+    # 4) latitude / longitude → float
+    if "latitude" in tokens or "longitude" in tokens:
+        return "float"
 
-import random
+    # 5) dates
+    if "date" in tokens:
+        return "date"
+
+    # 6) fallback
+    return "text"
 
 def _deterministic_value(col: str, dtype: str, row_idx: int | None):
     """
@@ -55,6 +60,13 @@ def _deterministic_value(col: str, dtype: str, row_idx: int | None):
 
     if dtype in ("int", "integer"):
         return random.randint(1, 5000)
+    
+    if dtype == "date":
+        # Deterministic date based on row index
+        if row_idx is None:
+            # used only in edge-case overrides
+            return f"19{random.randint(70,99)}-{random.randint(1,12):02d}-{random.randint(1,28):02d}"
+        return f"1980-{(row_idx % 12) + 1:02d}-{(row_idx % 28) + 1:02d}"
 
     # text-like fallback
     if row_idx is None:
@@ -87,7 +99,7 @@ def rnd(col, dtype):
     if "float" in t or "real" in t:
         return random.random() * 10
     if "date" in t:
-        return "2005-01-01"
+        return f"19{random.randint(70,99)}-{random.randint(1,12):02d}-{random.randint(1,28):02d}"
     if "char" in t or "text" in t:
         return _random_string("txt")
     return _random_string("v")
@@ -373,22 +385,48 @@ def generate_synthetic_dataset(
     # STEP 3: Generate data table-by-table
     # =============================================================
     # absolute dtype normalization as fallback
-    normalized_schema = {}
+    # DO NOT GUESS TYPES — trust the schema provided by BIRD
+    # Just normalize to lowercase table names
+    normalized_schema: Dict[str, Dict[str, str]] = {}
+
     for tbl, cols in schema_map.items():
-        new_cols = {}
-        for col, dtype in cols.items():
-            dtype = dtype.lower()
-            if dtype in ("varchar", "text", "char", "string"):
-                inferred = _infer_dtype(col)
-                dtype = inferred
-            if dtype in ("real", "double", "numeric"):
-                dtype = "float"
-            if dtype in ("integer", "bigint", "smallint"):
-                dtype = "int"
+        tbl_lower = tbl.lower()
+        new_cols: Dict[str, str] = {}
 
-            new_cols[col] = dtype
-        normalized_schema[tbl] = new_cols
+        for col, raw_dtype in cols.items():
+            raw = (raw_dtype or "").lower()
 
+            # First, collapse DB types into coarse kinds (int / float / date / text)
+            if any(tok in raw for tok in ("int", "integer")):
+                base = "int"
+            elif any(tok in raw for tok in ("real", "float", "double", "numeric", "decimal")):
+                base = "float"
+            elif "date" in raw or "time" in raw:
+                base = "date"
+            else:
+                # VARCHAR/TEXT/CHAR or unknown ⇒ infer by column name
+                base = _infer_dtype(col)
+
+            # Now refine using WHERE literals if we have them
+            # e.g., Low Grade = 9, High Grade = 12, DOC = 31
+            val = required_eq_by_table.get(tbl_lower, {}).get(col)
+            if base == "text" and val is not None:
+                # If the literal is numeric, upgrade the type
+                try:
+                    as_float = float(val)
+                    if as_float.is_integer():
+                        base = "int"
+                    else:
+                        base = "float"
+                except (TypeError, ValueError):
+                    # non-numeric literal ⇒ keep as text
+                    pass
+
+            new_cols[col] = base
+
+        normalized_schema[tbl_lower] = new_cols
+
+    # Replace schema_map with normalized version
     schema_map = normalized_schema
 
     dataset: Dict[str, pd.DataFrame] = {}
@@ -426,7 +464,7 @@ def generate_synthetic_dataset(
                 if "float" in t or "real" in t:
                     return random.random() * 10
                 if "date" in t:
-                    return "2005-01-01"
+                    return f"19{random.randint(70,99)}-{random.randint(1,12):02d}-{random.randint(1,28):02d}"
                 return _random_string("v")
 
             # Utility: join key value retrieval

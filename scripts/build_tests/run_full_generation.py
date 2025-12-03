@@ -74,4 +74,4 @@ def run_all_queries(limit: int):
 
 
 if __name__ == "__main__":
-    run_all_queries(limit=10)
+    run_all_queries(limit=50)

@@ -3,6 +3,37 @@ import numpy as np
 import random
 import math
 
+def safe_assign(df, idx, col, val):
+    dt = df[col].dtype
+    import pandas as pd
+    import numpy as np
+
+    # Handle null inputs explicitly
+    if val is None or (isinstance(val, float) and np.isnan(val)):
+        # For integer columns, pandas cannot store NaN
+        if pd.api.types.is_integer_dtype(dt):
+            df.at[idx, col] = None
+        else:
+            df.at[idx, col] = np.nan
+        return
+
+    # INT columns
+    if pd.api.types.is_integer_dtype(dt):
+        df.at[idx, col] = int(val)
+        return
+
+    # FLOAT columns
+    if pd.api.types.is_float_dtype(dt):
+        df.at[idx, col] = float(val)
+        return
+
+    # DATE / DATETIME columns
+    if pd.api.types.is_datetime64_any_dtype(dt):
+        df.at[idx, col] = pd.to_datetime(val)
+        return
+
+    # TEXT / CATEGORICAL / OBJECT
+    df.at[idx, col] = str(val)
 
 # -------------------------------------------------------------
 # A. NUMERIC EDGE CASES
@@ -34,7 +65,17 @@ def mutate_extreme_outliers(df):
     for col in df:
         if pd.api.types.is_numeric_dtype(df[col]):
             idx = random.randint(0, len(df) - 1)
-            df.at[idx, col] = df[col].mean() * random.randint(1000, 5000)
+            value = df[col].mean() * random.randint(1000, 5000)
+
+            # Cast before assigning
+            if pd.api.types.is_integer_dtype(df[col].dtype):
+                value = int(value)
+            elif pd.api.types.is_float_dtype(df[col].dtype):
+                value = float(value)
+            else:
+                value = str(value)
+
+            safe_assign(df, idx, col, value)
     return df
 
 
@@ -87,7 +128,7 @@ def mutate_nan_infinity(df):
     for col in df:
         if pd.api.types.is_numeric_dtype(df[col]):
             idx = random.randint(0, len(df) - 1)
-            df.at[idx, col] = np.inf
+            safe_assign(df, idx, col, np.inf)
     return df
 
 
@@ -95,7 +136,7 @@ def mutate_nan_negative_infinity(df):
     for col in df:
         if pd.api.types.is_numeric_dtype(df[col]):
             idx = random.randint(0, len(df) - 1)
-            df.at[idx, col] = -np.inf
+            safe_assign(df, idx, col, -np.inf)
     return df
 
 
@@ -103,7 +144,7 @@ def mutate_nan_values(df):
     for col in df:
         if pd.api.types.is_numeric_dtype(df[col]):
             idx = random.randint(0, len(df) - 1)
-            df.at[idx, col] = np.nan
+            safe_assign(df, idx, col, np.nan)
     return df
 
 

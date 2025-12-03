@@ -8,6 +8,27 @@ from typing import Dict, Any, List
 
 import duckdb
 import pandas as pd
+import datetime
+
+def _json_safe(o):
+    # Convert datetime/date → ISO string
+    if isinstance(o, (datetime.date, datetime.datetime)):
+        return o.isoformat()
+
+    # Convert numpy types
+    try:
+        import numpy as np
+        if isinstance(o, (np.integer,)):
+            return int(o)
+        if isinstance(o, (np.floating,)):
+            return float(o)
+        if isinstance(o, (np.bool_)):
+            return bool(o)
+    except:
+        pass
+
+    # Fallback: string conversion
+    return str(o)
 
 
 @dataclass
@@ -51,7 +72,7 @@ class SQLUnitTest:
         with open(path, "w", encoding="utf-8") as f:
             import json
 
-            json.dump(payload, f, indent=2)
+            json.dump(payload, f, indent=2, default=_json_safe)
 
     @staticmethod
     def from_json(path: Path) -> "SQLUnitTest":

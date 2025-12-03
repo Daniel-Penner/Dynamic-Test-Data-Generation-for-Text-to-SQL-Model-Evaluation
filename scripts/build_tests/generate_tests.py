@@ -3,12 +3,32 @@
 from pathlib import Path
 import duckdb
 import pandas as pd
+import re
 
 from scripts.build_tests.unit_test import SQLUnitTest
 from scripts.build_tests.extract_sql_constraints import parse_constraints
 from scripts.build_tests.synthetic_data_generator import generate_synthetic_dataset
 from scripts.build_tests.scenario_definitions import build_scenarios
 from scripts.build_tests.parse_order_limit import parse_order_limit
+
+def _rewrite_mysql_limit(sql):
+    # Matches: LIMIT 9, 2   OR LIMIT 9 ,2  etc.
+    m = re.search(r"LIMIT\s+(\d+)\s*,\s*(\d+)", sql, flags=re.IGNORECASE)
+    if not m:
+        return sql
+    offset, count = m.group(1), m.group(2)
+    return re.sub(r"LIMIT\s+\d+\s*,\s*\d+",
+                  f"LIMIT {count} OFFSET {offset}",
+                  sql,
+                  flags=re.IGNORECASE)
+
+def _fix_strftime(sql):
+    # Rewrites: strftime('%Y', OpenDate) → strftime(OpenDate, '%Y')
+    return re.sub(
+        r"strftime\(\s*'([^']+)'\s*,\s*([A-Za-z0-9_]+)\s*\)",
+        r"strftime(\2, '\1')",
+        sql
+    )
 
 def generate_tests_for_query(
     db_id: str,
@@ -70,52 +90,42 @@ def run_gold_on_data(dataset: dict, gold_sql: str):
     Returns a pandas DataFrame or None.
     """
 
-    import re
+    # Pre-rewrites required for DuckDB compatibility
+    gold_sql = _rewrite_mysql_limit(gold_sql)
+    gold_sql = _fix_strftime(gold_sql)
 
-    # Make a new DuckDB connection
+    # Create connection
     con = duckdb.connect()
 
-    # Register each synthetic table
+    # Register base tables
     for table_name, df in dataset.items():
         try:
             con.register(table_name.lower(), df)
         except Exception as e:
             print(f"[run_gold_on_data] Failed to register table {table_name}: {e}")
+            con.close()
             return None
 
-    # Replace BIRD-style backticks with DuckDB double quotes
+    # Replace backticks with double quotes
     sql_clean = gold_sql.replace("`", '"')
 
-    # ================================================================
-    # NEW: Register SQL aliases so that "frpm AS T1" and "schools T2"
-    #      correctly map back to the underlying tables.
-    # ================================================================
-
-    # Pattern matches:
-    #   frpm AS T1
-    #   frpm T1
-    #   schools AS T2
-    #   schools T2
+    # ============================================================
+    # Register aliases (T1, T2) so joins work the same way as real DBs
+    # ============================================================
     alias_pattern = r'\b([a-zA-Z0-9_]+)\s+(?:AS\s+)?([a-zA-Z0-9_]+)\b'
-
     for base, alias in re.findall(alias_pattern, sql_clean, flags=re.IGNORECASE):
         base_l = base.lower()
         alias_l = alias.lower()
 
-        # Only create alias if:
-        #  - base table exists in dataset
-        #  - alias is not already registered
         if base_l in dataset and alias_l not in dataset:
             try:
                 con.register(alias_l, dataset[base_l])
-                # Debug:
-                # print(f"[run_gold_on_data] Registered alias {alias_l} -> {base_l}")
             except Exception as e:
                 print(f"[run_gold_on_data] Failed to register alias {alias_l} for base {base_l}: {e}")
 
-    # =================================================================
-    # Now execute the SQL
-    # =================================================================
+    # ============================================================
+    # Execute
+    # ============================================================
     try:
         result = con.execute(sql_clean).df()
         con.close()
