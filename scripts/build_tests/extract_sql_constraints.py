@@ -32,6 +32,7 @@ def parse_constraints(sql: str, schema_map: dict):
         "required_is_null": set(),
         "required_not_null": set(),
         "join_keys": set(),
+        "range_constraints": [],
         "order_by": None,
         "limit": None,
         "used_tables": set(),
@@ -136,11 +137,12 @@ def parse_constraints(sql: str, schema_map: dict):
 
     pred_pattern = re.compile(
         r'(?P<table>[a-zA-Z0-9_]+)?\.?'
-        r'(?P<column>`[^`]+`|[a-zA-Z0-9_]+)'
-        r'\s*(?P<op>=|!=|<>|IS\s+NOT|IS)\s*'
+        r'(?P<column>`[^`]+`|[a-zA-Z0-9_]+)\s*'
+        r'(?P<op>=|!=|<>|<=|>=|<|>|IS\s+NOT|IS)\s*'
         r'(?P<value>.+)$',
         re.IGNORECASE
     )
+
 
     for pred in predicates:
         m = pred_pattern.search(pred)
@@ -173,6 +175,10 @@ def parse_constraints(sql: str, schema_map: dict):
             constraints["required_equals"][key] = val
         elif op in ("!=", "<>"):
             constraints["required_not_equals"][key] = val
+        elif op in (">", "<", ">=", "<="):
+            constraints["range_constraints"].append(
+            (table, col, op, val)
+            )
         elif op == "IS":
             if val.upper() == "NULL":
                 constraints["required_is_null"].add(key)
@@ -200,5 +206,6 @@ def parse_constraints(sql: str, schema_map: dict):
 
         if real1 in schema_map and real2 in schema_map:
             constraints["join_keys"].add((real1, c1, real2, c2))
+    print("[parse_constraints][ranges]", constraints["range_constraints"])
 
     return constraints

@@ -52,7 +52,7 @@ def run_all_queries(limit: int):
         question = q.get("question", "<no question>")
 
         print("\n==============================")
-        print(f"Query #{i+1}")
+        print(f"Query #{i+41}")
         print(f"DB: {db_id}")
         print(f"Question: {question}")
         print(f"Gold SQL: {sql}")
@@ -66,7 +66,7 @@ def run_all_queries(limit: int):
         db_output_dir = OUTPUT_DIR / db_id
         generate_tests_for_query(
             db_id=db_id,
-            query_index=i,
+            query_index=i+40,
             gold_query=sql,
             schema_map=build_schema_map(schema_entry),
             output_dir=db_output_dir,
@@ -74,4 +74,4 @@ def run_all_queries(limit: int):
 
 
 if __name__ == "__main__":
-    run_all_queries(limit=50)
+    run_all_queries(limit=10)

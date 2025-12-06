@@ -7,6 +7,9 @@ import string
 import re
 from dataclasses import dataclass, field
 from typing import Any, Dict, Tuple, Set, List, Optional
+from scripts.build_tests.witness_planner import plan_witness_assignments
+from datetime import date, timedelta
+
 
 import pandas as pd
 
@@ -62,11 +65,15 @@ def _deterministic_value(col: str, dtype: str, row_idx: int | None):
         return random.randint(1, 5000)
     
     if dtype == "date":
-        # Deterministic date based on row index
         if row_idx is None:
-            # used only in edge-case overrides
-            return f"19{random.randint(70,99)}-{random.randint(1,12):02d}-{random.randint(1,28):02d}"
-        return f"1980-{(row_idx % 12) + 1:02d}-{(row_idx % 28) + 1:02d}"
+            return date(
+                random.randint(1970, 2030),
+                random.randint(1, 12),
+                random.randint(1, 28),
+            )
+
+        base = date(1995, 1, 1)
+        return base + timedelta(days=row_idx * 400)
 
     # text-like fallback
     if row_idx is None:
@@ -156,6 +163,7 @@ class Constraints:
     required_join_keys: Set[str] = field(default_factory=set)
 
     def __post_init__(self):
+        self.range_constraints = []
         for table, info in self.per_table.items():
             rqeq = info.get("required_equals", {}) or {}
             rqneq = info.get("required_not_equals", {}) or {}
@@ -239,6 +247,35 @@ def generate_synthetic_dataset(
                 df = dataset[tname]
                 df.loc[: n - 1, col] = keys
 
+            for i, witness in enumerate(witnesses):
+                for (tbl, col), val in witness.items():
+                    df = dataset.get(tbl)
+                    if df is None:
+                        continue
+                    if col not in df.columns:
+                        continue
+                    if i < len(df):
+                        series = df[col]
+                        # Numeric column
+                        if series.dtype.kind in ("i", "u", "f"):
+                            if isinstance(val, (int, float)):
+                                df.loc[i, col] = val
+                            else:
+                                # generate safe numeric fallback
+                                df.loc[i, col] = series.iloc[i] if not pd.isna(series.iloc[i]) else 1.0
+
+                        # Datetime column
+                        elif series.dtype.kind == "M":
+                            if isinstance(val, (str, date)):
+                                df.loc[i, col] = val
+                            else:
+                                df.loc[i, col] = pd.Timestamp("2001-01-01")
+
+                        # Otherwise treat as string
+                        else:
+                            df.loc[i, col] = str(val)
+
+
         return dataset
 
 
@@ -291,6 +328,12 @@ def generate_synthetic_dataset(
         constraints = Constraints(per_table)
 
     c = constraints
+
+    # =============================================================
+    # NEW — Construct global witness assignments (query-satisfying rows)
+    # =============================================================
+    WITNESS_COUNT = 3
+    witnesses = plan_witness_assignments(c, k=WITNESS_COUNT)
 
     used_tables: set[str] = set()
     if sql:
@@ -442,7 +485,31 @@ def generate_synthetic_dataset(
             continue
 
         table_required_eq = required_eq_by_table.get(table_name, {})
+        
         rows: List[Dict[str, Any]] = []
+
+        for w in witnesses:
+            row = {}
+            for col, dtype in columns.items():
+                key = (table_name, col)
+
+                if key in w:
+                    row[col] = _coerce_value_for_dtype(w[key], dtype)
+                else:
+                    row[col] = _coerce_value_for_dtype(
+                        _deterministic_value(col, dtype, row_idx=None),
+                        dtype
+                    )
+            rows.append(row)
+            if order_info and order_info["expr"]:
+                order_col = order_info["expr"].split(".")[-1].replace("`", "")
+                direction = order_info["direction"]
+
+                if order_col in row:
+                    row[order_col] = (
+                        10_000 if direction == "DESC" else -10_000
+                    )
+
 
         # ============================================================
         # Scenario handler (scenario-overrides normal generation)
@@ -724,5 +791,10 @@ def generate_synthetic_dataset(
                 df[col] = df[col].apply(fix_date)
 
     dataset = enforce_join_alignment(dataset)
+
+    for col in df.columns:
+        if df[col].apply(lambda x: isinstance(x, (date, pd.Timestamp))).any():
+            df[col] = pd.to_datetime(df[col], errors="coerce")
+        
 
     return dataset
