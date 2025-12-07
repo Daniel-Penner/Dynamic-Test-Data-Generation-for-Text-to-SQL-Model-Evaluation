@@ -1,3 +1,4 @@
 .env
 dev_databases
 bird_duckdb_databases
+tests

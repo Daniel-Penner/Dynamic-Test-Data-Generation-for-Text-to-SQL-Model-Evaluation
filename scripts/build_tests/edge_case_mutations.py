@@ -216,7 +216,13 @@ def mutate_unicode_strings(df):
     chars = "你好안녕こんにちはمرحبا"
     for col in df:
         if df[col].dtype == object:
-            df[col] = df[col].apply(lambda x: x + random.choice(chars))
+            df[col] = df[col].apply(
+                lambda x: (
+                    str(x) + random.choice(chars)
+                    if isinstance(x, str)
+                    else x
+                )
+            )
     return df
 
 
@@ -224,7 +230,13 @@ def mutate_special_characters(df):
     chars = "!@#$%^&*()_+-=[]{}|;:'\",.<>/?"
     for col in df:
         if df[col].dtype == object:
-            df[col] = df[col].apply(lambda x: x + random.choice(chars))
+            df[col] = df[col].apply(
+                lambda x: (
+                    str(x) + random.choice(chars)
+                    if isinstance(x, str)
+                    else x
+                )
+            )
     return df
 
 

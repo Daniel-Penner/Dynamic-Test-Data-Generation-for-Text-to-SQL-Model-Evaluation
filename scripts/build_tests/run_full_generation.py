@@ -43,16 +43,16 @@ def find_schema_entry(tables_meta, db_id: str):
     return None
 
 
-def run_all_queries(limit: int):
+def run_all_queries(limit: int, start: int = 0):
     queries, tables_meta = load_bird()
 
-    for i, q in enumerate(queries[:limit]):
+    for i, q in enumerate(queries[start:limit], start=start):
         db_id = q["db_id"]
         sql = q.get("query") or q.get("SQL") or q.get("sql")
         question = q.get("question", "<no question>")
 
         print("\n==============================")
-        print(f"Query #{i+41}")
+        print(f"Query #{i}")
         print(f"DB: {db_id}")
         print(f"Question: {question}")
         print(f"Gold SQL: {sql}")
@@ -64,14 +64,19 @@ def run_all_queries(limit: int):
             continue
 
         db_output_dir = OUTPUT_DIR / db_id
-        generate_tests_for_query(
+        empty, non_empty = generate_tests_for_query(
             db_id=db_id,
-            query_index=i+40,
+            query_index=i,
             gold_query=sql,
             schema_map=build_schema_map(schema_entry),
             output_dir=db_output_dir,
         )
 
+        total = non_empty + empty
+
+        print(f"✅ Tests with non-empty expected output: {non_empty} / {total}")
+        print(f"❌ Tests with empty expected output:     {empty} / {total}")
+
 
 if __name__ == "__main__":
-    run_all_queries(limit=10)
+    run_all_queries(limit = 1600, start = 1308)

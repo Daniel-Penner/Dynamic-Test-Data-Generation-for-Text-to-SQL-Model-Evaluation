@@ -124,7 +124,7 @@ def run_synthetic_eval(tests_dir, pred_file):
     with open(pred_file, "r", encoding="utf8") as f:
         preds_raw = json.load(f)
 
-    test_files = sorted(tests_dir.glob("*.json"))
+    test_files = sorted(tests_dir.rglob("*.json"))
     results = []
 
     for tf in test_files:

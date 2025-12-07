@@ -19,6 +19,11 @@ import pandas as pd
 
 import re
 
+def canonical_join_value(col: str, idx: int = 0) -> str:
+    # stable, identical across tables
+    return f"JOINVAL_{idx}"
+
+
 def _infer_dtype(col_name, example_values=None):
     """
     Infer a coarse dtype: 'int', 'float', 'date', or 'text'
@@ -81,15 +86,108 @@ def _deterministic_value(col: str, dtype: str, row_idx: int | None):
     suffix = f"{row_idx:05d}"
     return f"{col}_{suffix}"
 
+def enforce_winner_constraints(
+    dataset: Dict[str, pd.DataFrame],
+    constraints: Constraints,
+    winner_idx: int = 0,
+    allow_joins: bool = True,
+    allow_scalar_subqueries: bool = True,
+    order_winner_idx: Optional[Dict[str, int]] = None,
+):
+    """
+    Enforce constraints on the *winner row only*.
 
-def _override_row(base_row: dict, overrides: dict) -> dict:
+    - WHERE predicates always apply
+    - JOIN constraints apply if allow_joins=True
+    - Scalar subqueries apply if allow_scalar_subqueries=True
     """
-    Return a *new* row with overrides applied (correctly overriding deterministic values).
-    """
-    out = dict(base_row)
-    for k, v in overrides.items():
-        out[k] = v
-    return out
+
+    # --------------------------------------------------
+    # 1) WHERE col = value
+    # --------------------------------------------------
+    for (tbl, col), val in constraints.required_equals.items():
+        if tbl in dataset and col in dataset[tbl].columns:
+            df = dataset[tbl]
+            if winner_idx < len(df):
+                df.loc[winner_idx, col] = val
+
+    # --------------------------------------------------
+    # 2) WHERE col IS NOT NULL
+    # --------------------------------------------------
+    for (tbl, col) in constraints.required_not_null:
+        if tbl in dataset and col in dataset[tbl].columns:
+            df = dataset[tbl]
+            if winner_idx < len(df):
+                if pd.isna(dataset[tbl].loc[winner_idx, col]):
+                    dataset[tbl].loc[winner_idx, col] = 1
+
+    # --------------------------------------------------
+    # 3) JOIN constraints (same-table join map)
+    # --------------------------------------------------
+    if allow_joins:
+        for tbl, join_defs in constraints.join_keys_by_table.items():
+            if tbl not in dataset:
+                continue
+            df = dataset[tbl]
+            if winner_idx >= len(df):
+                continue
+
+            for col, other_tbl, other_col in join_defs:
+                if (
+                    other_tbl not in dataset
+                    or col not in df.columns
+                    or other_col not in dataset[other_tbl].columns
+                ):
+                    continue
+
+                other_df = dataset[other_tbl]
+                if winner_idx >= len(other_df):
+                    continue
+
+                # Take a non-null value from either side, propagate to both.
+                val = df.loc[winner_idx, col]
+                if pd.isna(val):
+                    val = other_df.loc[winner_idx, other_col]
+
+                if pd.isna(val):
+                    # fall back to a deterministic join key
+                    val = f"WINNER_JOIN_{tbl}_{col}"
+
+                df.loc[winner_idx, col] = val
+                other_df.loc[winner_idx, other_col] = val
+
+    # --------------------------------------------------
+    # 4) Scalar subqueries: outer.col = (SELECT inner.col ...)
+    # --------------------------------------------------
+    if allow_scalar_subqueries and getattr(constraints, "scalar_subqueries", None):
+        for (outer_tbl, outer_col, inner_tbl, inner_col) in constraints.scalar_subqueries:
+            if outer_tbl not in dataset or inner_tbl not in dataset:
+                continue
+
+            odf = dataset[outer_tbl]
+            idf = dataset[inner_tbl]
+
+            if (
+                outer_col not in odf.columns
+                or inner_col not in idf.columns
+                or winner_idx >= len(odf)
+                or winner_idx >= len(idf)
+            ):
+                continue
+
+            outer_val = odf.loc[winner_idx, outer_col]
+            inner_val = idf.loc[winner_idx, inner_col]
+
+            # Prefer any existing non-null value
+            if pd.notna(outer_val):
+                shared = outer_val
+            elif pd.notna(inner_val):
+                shared = inner_val
+            else:
+                shared = f"SCALAR_WINNER_{outer_tbl}_{outer_col}"
+
+            odf.loc[winner_idx, outer_col] = shared
+            idf.loc[winner_idx, inner_col] = shared
 
 
 
@@ -145,6 +243,44 @@ def generate_join_keys(n: int, prefix: str = "jk") -> list[str]:
     """Generate join keys that match across tables but vary by row."""
     return [f"{prefix}_{i:05d}" for i in range(n)]
 
+def _enforce_or_branch(dataset, schema_map, or_groups, alias_map=None):
+    """
+    Enforce exactly ONE OR branch on winner row (row 0).
+    """
+    if not or_groups:
+        return
+
+    chosen = or_groups[0]  # deterministic choice
+
+    pred_pattern = re.compile(
+        r"(?:(?P<table>[a-zA-Z0-9_]+)\.)?(?P<column>[a-zA-Z0-9_`]+)\s*=\s*'?(?P<value>[^']+)'?",
+        re.IGNORECASE,
+    )
+
+    for pred in chosen:
+        m = pred_pattern.search(pred)
+        if not m:
+            continue
+
+        tbl = m.group("table")
+        col = m.group("column").strip("`")
+        val = m.group("value")
+
+        if tbl is None:
+            # try resolve by schema
+            matches = []
+            for t, cols in schema_map.items():
+                if col in cols:
+                    matches.append(t)
+            if len(matches) != 1:
+                continue
+            tbl = matches[0]
+        else:
+            tbl = tbl.lower()
+
+        if tbl in dataset and col in dataset[tbl].columns:
+            dataset[tbl].loc[0, col] = val
+
 # =====================================================================
 # Constraints wrapper
 # =====================================================================
@@ -161,6 +297,8 @@ class Constraints:
     join_keys_by_table: Dict[str, Set[Tuple[str, str, str]]] = field(default_factory=dict)
 
     required_join_keys: Set[str] = field(default_factory=set)
+
+    scalar_subqueries: Set[Tuple[str, str, str, str]] = field(default_factory=set)
 
     def __post_init__(self):
         self.range_constraints = []
@@ -203,80 +341,12 @@ def generate_synthetic_dataset(
     scenario: Optional[Dict[str, Any]] = None,
     match_ratio: float = 0.25,
 ) -> Dict[str, pd.DataFrame]:
-    
+    WINNER_IDX = 0
+    order_winner_idx: Dict[str, int] = {}
+
     def is_numeric_dtype(dtype: str) -> bool:
         t = dtype.lower()
         return ("int" in t) or ("real" in t) or ("float" in t) or ("double" in t)
-
-    def enforce_join_alignment(dataset: Dict[str, pd.DataFrame]) -> Dict[str, pd.DataFrame]:
-        """
-        Heuristic join alignment:
-        - Look for groups of columns that represent the same logical key
-          (e.g., ['CDSCode', 'cdscode', 'cds']).
-        - For each group, if at least two tables have a column from that group,
-          force those columns to share the same row-wise join keys.
-        """
-
-        # Each set = synonyms that should represent the same join key
-        join_groups = [
-            {"CDSCode", "cdscode", "cds"},
-            {"id", "ID", "Id"},
-        ]
-
-        for group in join_groups:
-            # Collect (table_name, column_name) pairs that belong to this group
-            members: List[Tuple[str, str]] = []
-            for tname, df in dataset.items():
-                for col in df.columns:
-                    if col in group:
-                        members.append((tname, col))
-                        break  # only one column per table per group
-
-            # Need at least 2 tables involved to bother aligning
-            if len(members) < 2:
-                continue
-
-            # Align first n rows across the participating tables
-            n = min(len(dataset[t]) for t, _ in members)
-            if n == 0:
-                continue
-
-            keys = [f"JOINKEY_{i}" for i in range(n)]
-
-            for tname, col in members:
-                df = dataset[tname]
-                df.loc[: n - 1, col] = keys
-
-            for i, witness in enumerate(witnesses):
-                for (tbl, col), val in witness.items():
-                    df = dataset.get(tbl)
-                    if df is None:
-                        continue
-                    if col not in df.columns:
-                        continue
-                    if i < len(df):
-                        series = df[col]
-                        # Numeric column
-                        if series.dtype.kind in ("i", "u", "f"):
-                            if isinstance(val, (int, float)):
-                                df.loc[i, col] = val
-                            else:
-                                # generate safe numeric fallback
-                                df.loc[i, col] = series.iloc[i] if not pd.isna(series.iloc[i]) else 1.0
-
-                        # Datetime column
-                        elif series.dtype.kind == "M":
-                            if isinstance(val, (str, date)):
-                                df.loc[i, col] = val
-                            else:
-                                df.loc[i, col] = pd.Timestamp("2001-01-01")
-
-                        # Otherwise treat as string
-                        else:
-                            df.loc[i, col] = str(val)
-
-
-        return dataset
 
 
     # NEW — detect whether this scenario is deterministic (no mutation fn)
@@ -292,9 +362,9 @@ def generate_synthetic_dataset(
     # or as a Constraints object
     # =============================================================
     if not isinstance(constraints, Constraints):
-        # Build per-table constraint layout
+        # Build per-table constraint layout using **lowercased** table names
         per_table = {
-            tbl: {
+            tbl.lower(): {
                 "required_equals": {},
                 "required_not_equals": {},
                 "required_is_null": set(),
@@ -306,26 +376,46 @@ def generate_synthetic_dataset(
 
         # required_equals
         for (tbl, col), val in constraints.get("required_equals", {}).items():
-            per_table[tbl]["required_equals"][col] = val
+            tbl_l = tbl.lower()
+            if tbl_l in per_table:
+                per_table[tbl_l]["required_equals"][col] = val
 
         # required_not_equals
         for (tbl, col), val in constraints.get("required_not_equals", {}).items():
-            per_table[tbl]["required_not_equals"][col] = val
+            tbl_l = tbl.lower()
+            if tbl_l in per_table:
+                per_table[tbl_l]["required_not_equals"][col] = val
 
         # is null
         for (tbl, col) in constraints.get("required_is_null", set()):
-            per_table[tbl]["required_is_null"].add(col)
+            tbl_l = tbl.lower()
+            if tbl_l in per_table:
+                per_table[tbl_l]["required_is_null"].add(col)
 
         # not null
         for (tbl, col) in constraints.get("required_not_null", set()):
-            per_table[tbl]["required_not_null"].add(col)
+            tbl_l = tbl.lower()
+            if tbl_l in per_table:
+                per_table[tbl_l]["required_not_null"].add(col)
 
-        # join keys come as 4-tuples: (t1,c1,t2,c2)
+        # join keys: (t1, c1, t2, c2)
         for (t1, c1, t2, c2) in constraints.get("join_keys", set()):
-            per_table[t1]["join_keys"].add((c1, t2, c2))
-            per_table[t2]["join_keys"].add((c2, t1, c1))
+            t1_l = t1.lower()
+            t2_l = t2.lower()
+            if t1_l in per_table:
+                per_table[t1_l]["join_keys"].add((c1, t2_l, c2))
+            if t2_l in per_table:
+                per_table[t2_l]["join_keys"].add((c2, t1_l, c1))
 
-        constraints = Constraints(per_table)
+        # carry over range_constraints + scalar_subqueries
+        range_constraints = constraints.get("range_constraints", [])
+        scalar_subqueries = constraints.get("scalar_subqueries", set())
+
+        constraints_obj = Constraints(per_table)
+        constraints_obj.range_constraints = list(range_constraints)
+        constraints_obj.scalar_subqueries = set(scalar_subqueries)
+
+        constraints = constraints_obj
 
     c = constraints
 
@@ -334,6 +424,7 @@ def generate_synthetic_dataset(
     # =============================================================
     WITNESS_COUNT = 3
     witnesses = plan_witness_assignments(c, k=WITNESS_COUNT)
+    winner = witnesses[0]
 
     used_tables: set[str] = set()
     if sql:
@@ -364,12 +455,6 @@ def generate_synthetic_dataset(
     # Resolve all join edges into canonical pairs
     # =============================================================
     join_edges = set()
-    for table, join_set in c.join_keys_by_table.items():
-        for (col, other_table, other_col) in join_set:
-            edge = tuple(sorted([(table, col), (other_table, other_col)]))
-            if len(edge) == 2:
-                (t1, c1), (t2, c2) = edge
-                join_edges.add((t1, c1, t2, c2))
 
     # =============================================================
     # STEP 1: Identify which table has WHERE constraints
@@ -377,19 +462,14 @@ def generate_synthetic_dataset(
     # =============================================================
     forced_join_values: Dict[Tuple[str, str], Any] = {}
 
+    join_counter = 0
     for (t1, c1, t2, c2) in join_edges:
-        left_has_constraints = bool(required_eq_by_table.get(t1, {}))
+        shared_val = canonical_join_value(c1, join_counter)
+        join_counter += 1
 
-        if left_has_constraints:
-            shared_val = _random_string("join")
-            forced_join_values[(t1, c1)] = shared_val
-            forced_join_values[(t2, c2)] = shared_val
+        forced_join_values[(t1, c1)] = shared_val
+        forced_join_values[(t2, c2)] = shared_val
 
-        right_has_constraints = bool(required_eq_by_table.get(t2, {}))
-        if right_has_constraints:
-            shared_val = _random_string("join")
-            forced_join_values[(t1, c1)] = shared_val
-            forced_join_values[(t2, c2)] = shared_val
 
     # =============================================================
     # STEP 2: Build normal global join propagation map
@@ -439,7 +519,8 @@ def generate_synthetic_dataset(
         for col, raw_dtype in cols.items():
             raw = (raw_dtype or "").lower()
 
-            # First, collapse DB types into coarse kinds (int / float / date / text)
+
+            # First infer base type from schema / column name
             if any(tok in raw for tok in ("int", "integer")):
                 base = "int"
             elif any(tok in raw for tok in ("real", "float", "double", "numeric", "decimal")):
@@ -447,23 +528,21 @@ def generate_synthetic_dataset(
             elif "date" in raw or "time" in raw:
                 base = "date"
             else:
-                # VARCHAR/TEXT/CHAR or unknown ⇒ infer by column name
                 base = _infer_dtype(col)
 
-            # Now refine using WHERE literals if we have them
-            # e.g., Low Grade = 9, High Grade = 12, DOC = 31
+            # ✅ OVERRIDE using required_equals
             val = required_eq_by_table.get(tbl_lower, {}).get(col)
-            if base == "text" and val is not None:
-                # If the literal is numeric, upgrade the type
-                try:
-                    as_float = float(val)
-                    if as_float.is_integer():
-                        base = "int"
+            if val is not None:
+                if isinstance(val, int):
+                    base = "int"
+                elif isinstance(val, float):
+                    base = "float"
+                elif isinstance(val, str):
+                    # Detect YYYY or YYYY-MM-DD
+                    if re.match(r"\d{4}(-\d{2}-\d{2})?", val):
+                        base = "int" if len(val) == 4 else "date"
                     else:
-                        base = "float"
-                except (TypeError, ValueError):
-                    # non-numeric literal ⇒ keep as text
-                    pass
+                        base = "text"
 
             new_cols[col] = base
 
@@ -488,27 +567,37 @@ def generate_synthetic_dataset(
         
         rows: List[Dict[str, Any]] = []
 
-        for w in witnesses:
+        for wi, w in enumerate(witnesses):
             row = {}
             for col, dtype in columns.items():
                 key = (table_name, col)
 
                 if key in w:
+                    # witness-assigned value (WHERE, GROUP BY, etc.)
                     row[col] = _coerce_value_for_dtype(w[key], dtype)
+
+                elif key in forced_join_values:
+                    # 🔑 CRITICAL: enforce matching join/subquery keys
+                    row[col] = _coerce_value_for_dtype(forced_join_values[key], dtype)
+
                 else:
                     row[col] = _coerce_value_for_dtype(
                         _deterministic_value(col, dtype, row_idx=None),
                         dtype
                     )
+
             rows.append(row)
             if order_info and order_info["expr"]:
                 order_col = order_info["expr"].split(".")[-1].replace("`", "")
                 direction = order_info["direction"]
 
                 if order_col in row:
-                    row[order_col] = (
-                        10_000 if direction == "DESC" else -10_000
-                    )
+                    if wi == 0:
+                        order_winner_idx[table_name] = wi
+                        row[order_col] = 10_000 if direction == "DESC" else -10_000
+                    else:
+                        row[order_col] = -10_000 if direction == "DESC" else 10_000
+
 
 
         # ============================================================
@@ -564,24 +653,38 @@ def generate_synthetic_dataset(
                 r = {}
                 for col, dtype in columns.items():
                     key = (table_name, col)
+
+                    # JOIN KEYS
                     if key in forced_join_values or key in global_join_values:
                         r[col] = _coerce_value_for_dtype(
                             forced_join_values.get(key, global_join_values.get(key)),
                             dtype
                         )
-                    elif col in table_required_eq:
-                        r[col] = _coerce_value_for_dtype(table_required_eq[col], dtype)
-                    else:
-                        r[col] = det(col, dtype, 0) if is_deterministic else rnd(col, dtype)
-                out.append(r)
+                        continue
 
-                # rest non-matching
-                for idx in range(1, n_rows_per_table):
-                    r = {}
-                    for col, dtype in columns.items():
-                        r[col] = det(col, dtype, idx) if is_deterministic else rnd(col, dtype)
-                    out.append(r)
-                return out
+                    # REQUIRED EQUALS
+                    if col in table_required_eq:
+                        r[col] = _coerce_value_for_dtype(table_required_eq[col], dtype)
+                        continue
+
+                    # ✅ RANGE CONSTRAINTS (THIS WAS MISSING)
+                    for (tbl, c, op, val) in constraints.range_constraints:
+                        if tbl == table_name and c == col:
+                            if dtype == "date":
+                                base = pd.to_datetime(val)
+                                r[col] = (base + pd.Timedelta(days=1)).date()
+                            elif is_numeric_dtype(dtype):
+                                if isinstance(val, str) and "SELECT" in val.upper():
+                                    continue
+                                else:
+                                    r[col] = float(val) + 1
+                            else:
+                                r[col] = val
+                            break
+                    else:
+                        # fallback
+                        r[col] = det(col, dtype, 0)
+
 
             # ----------------------------------------------------------
             # SCENARIO: multi_match → create several aligned matches
@@ -790,11 +893,70 @@ def generate_synthetic_dataset(
 
                 df[col] = df[col].apply(fix_date)
 
-    dataset = enforce_join_alignment(dataset)
+    # --------------------------------------------------
+    # ✅ FIX: enforce scalar-subquery equality
+    # outer.col == inner.col for winner row
+    # --------------------------------------------------
+    for (outer_tbl, outer_col, inner_tbl, inner_col) in constraints.scalar_subqueries:
+        if (
+            outer_tbl in dataset and
+            inner_tbl in dataset and
+            outer_col in dataset[outer_tbl].columns and
+            inner_col in dataset[inner_tbl].columns
+        ):
+            shared_val = f"SCALAR_WINNER"
+            dataset[outer_tbl].loc[0, outer_col] = shared_val
+            dataset[inner_tbl].loc[0, inner_col] = shared_val
 
-    for col in df.columns:
-        if df[col].apply(lambda x: isinstance(x, (date, pd.Timestamp))).any():
-            df[col] = pd.to_datetime(df[col], errors="coerce")
-        
+    offset = getattr(constraints, "offset", None)
+
+    if offset is not None and order_info:
+        order_col = order_info["expr"].split(".")[-1].replace("`", "")
+        direction = order_info["direction"]
+
+        PAD = offset  # number of dummy rows needed
+
+        for tbl, df in dataset.items():
+            if order_col not in df.columns:
+                continue
+            
+            # Build padding rows
+            padding_rows = []
+            for i in range(PAD):
+                row = {}
+                for col in df.columns:
+                    if col == order_col:
+                        # Make these beat the winner in ordering
+                        val = 1_000_000 + i if direction == "DESC" else -1_000_000 - i
+                    else:
+                        # junk but type-safe
+                        val = df[col].iloc[0]
+                    row[col] = val
+                padding_rows.append(row)
+
+            dataset[tbl] = pd.concat(
+                [pd.DataFrame(padding_rows), df],
+                ignore_index=True
+            )
+
+    if hasattr(constraints, "or_groups") and constraints.or_groups:
+        _enforce_or_branch(dataset, schema_map, constraints.or_groups)
+
+    # =============================================================
+    # ✅ FINAL ENFORCEMENT: force at least ONE satisfying row
+    # =============================================================
+    if not scenario or scenario.get("name") != "no_match":
+        enforce_winner_constraints(
+            dataset,
+            constraints,
+            winner_idx=0,
+            allow_joins=True,
+            allow_scalar_subqueries=True,
+            order_winner_idx=order_winner_idx,
+        )
+
+
+
+
 
     return dataset
