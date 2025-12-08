@@ -1,9 +1,9 @@
 import json
 from pathlib import Path
 
-SQL_FILE = Path("prediction_queries/CSC-SQL+Qwen_predictions_7b.sql")
+SQL_FILE = Path("prediction_queries/RSL-SQL+deepseek.sql")
 BIRD_JSON = Path("bird_input_data/dev.json")
-OUT_FILE = Path("prediction_queries/CSC-SQL+Qwen_predictions_7b.json")
+OUT_FILE = Path("prediction_queries/RSL-SQL+deepseek_predictions.json")
 
 SEPARATOR = "\t----- bird -----\t"
 
