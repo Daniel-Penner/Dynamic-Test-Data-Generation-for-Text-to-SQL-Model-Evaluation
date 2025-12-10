@@ -4,9 +4,9 @@ from pathlib import Path
 # -----------------------------
 # Paths
 # -----------------------------
-PRED_JSON = Path("prediction_queries/OmniSQL_7b_greedy.json")
+PRED_JSON = Path("prediction_queries/BIRD/OmniSQL_7b_greedy.json")
 BIRD_JSON = Path("bird_input_data/dev.json")
-OUT_FILE = Path("prediction_queries/OmniSQL_7b_greedy_predictions.json")
+OUT_FILE = Path("prediction_queries/BIRD/OmniSQL_7b_greedy_predictions.json")
 
 SEPARATOR = "\t----- bird -----\t"
 

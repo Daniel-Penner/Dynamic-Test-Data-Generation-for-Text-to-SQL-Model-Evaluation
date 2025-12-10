@@ -1,4 +1,6 @@
 .env
 dev_databases
 bird_duckdb_databases
-tests
+tests_BIRD
+tests_spider
+spider_input_data/database

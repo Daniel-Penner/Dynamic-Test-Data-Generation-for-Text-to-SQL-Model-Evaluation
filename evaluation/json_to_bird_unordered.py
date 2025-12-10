@@ -4,9 +4,9 @@ from pathlib import Path
 # -----------------------------
 # Paths
 # -----------------------------
-PRED_JSON = Path("prediction_queries/Alpha-SQL+Qwen_32b.json")  # input
+PRED_JSON = Path("prediction_queries/BIRD/Alpha-SQL+Qwen_32b.json")  # input
 BIRD_JSON = Path("bird_input_data/dev.json")
-OUT_FILE = Path("prediction_queries/Alpha-SQL+Qwen_32b_predictions.json")
+OUT_FILE = Path("prediction_queries/BIRD/Alpha-SQL+Qwen_32b_predictions.json")
 
 SEPARATOR = "\t----- bird -----\t"
 
