@@ -14,8 +14,7 @@ from statsmodels.stats.contingency_tables import mcnemar
 # CONFIG
 # ============================================================
 
-RESULTS_DIR = Path("outputs")
-PREDS_DIR = RESULTS_DIR / "BIRD"
+RESULTS_DIR = Path("outputs/BIRD")
 LATEX_OUT = RESULTS_DIR / "latex_tables"
 PLOTS_OUT = RESULTS_DIR / "plots"
 
@@ -86,70 +85,121 @@ summary = df.groupby("model").agg(
     combined_time=("combined_ms", "mean"),
 )
 
-summary = summary.sort_index()
-print(summary)
+table_df = pd.DataFrame({
+    "Model": summary.index,
+    "EX(A)": (summary["bird_acc"] * 100).round(2),
+    "EX(B)": (summary["synthetic_acc"] * 100).round(2),
+    "EX(C)": (summary["combined_acc"] * 100).round(2),
 
-summary.round(4).to_latex(
-    LATEX_OUT / "accuracy_runtime_summary.tex",
-    caption="Accuracy and runtime comparison for Bird, Synthetic, and Combined evaluation.",
-    label="tab:accuracy_runtime",
-)
+    "Time(A)": summary["bird_time"].round(2).astype(str) + "ms",
+    "Time(B)": summary["synthetic_time"].round(2).astype(str) + "ms",
+    "Time(C)": summary["combined_time"].round(2).astype(str) + "ms",
+})
+
+latex_str = r"""
+\begin{table}
+\small
+\resizebox{\columnwidth}{!}{
+\begin{tabular}{lrrrrrr}
+\toprule
+\textbf{Model} & \textbf{EX(A)} & \textbf{EX(B)} & \textbf{EX(C)} &
+\textbf{Time(A)} & \textbf{Time(B)} & \textbf{Time(C)} \\
+\midrule
+"""
+
+for _, row in table_df.iterrows():
+    latex_str += (
+        f"{row['Model']} & "
+        f"{row['EX(A)']:.2f} & {row['EX(B)']:.2f} & {row['EX(C)']:.2f} & "
+        f"{row['Time(A)']} & {row['Time(B)']} & {row['Time(C)']} \\\\\n"
+    )
+
+latex_str += r"""\bottomrule
+\end{tabular}
+}
+\caption{Accuracy and runtime comparison on Spider dataset (A), synthetic tests (B), and combined evaluation (C).}
+\label{tab:accuracy_runtime_spider}
+\end{table}
+"""
+
+with open(LATEX_OUT / "accuracy_runtime_pretty.tex", "w", encoding="utf8") as f:
+    f.write(latex_str)
+
+print("[INFO] Pretty Spider LaTeX table written!")
 
 
 # ============================================================
-# STATISTICAL TESTS
+# STATISTICAL TESTS — BIRD (A vs C) WITH Δ AND P-VALUE ONLY
 # ============================================================
 
-stats = []
+from statsmodels.stats.contingency_tables import mcnemar
+
+stats_rows = []
 
 for model, g in df.groupby("model"):
     bird = np.array(g["bird_ex"])
-    synthetic = np.array(g["synthetic_ex"])
     combined = np.array(g["combined_ex"])
 
-    def mcnemar_stats(a, b):
-        n11 = np.sum((a == 1) & (b == 1))
-        n10 = np.sum((a == 1) & (b == 0))
-        n01 = np.sum((a == 0) & (b == 1))
-        n00 = np.sum((a == 0) & (b == 0))
+    # 2×2 contingency table
+    n11 = np.sum((bird == 1) & (combined == 1))
+    n10 = np.sum((bird == 1) & (combined == 0))
+    n01 = np.sum((bird == 0) & (combined == 1))
+    n00 = np.sum((bird == 0) & (combined == 0))
 
-        table = [[n11, n10], [n01, n00]]
-        result = mcnemar(table, exact=False, correction=True)
+    table = [[n11, n10], [n01, n00]]
+    p_val = mcnemar(table, exact=False, correction=True).pvalue
 
-        extra_reject_rate = n10 / (n10 + n01) if (n10 + n01) > 0 else 0.0
-        return result.pvalue, extra_reject_rate
+    # Δ accuracy (percentage points)
+    delta = (combined.mean() - bird.mean()) * 100
 
-    p_syn, extra_syn = mcnemar_stats(bird, synthetic)
-    p_comb, extra_comb = mcnemar_stats(bird, combined)
-
-    stats.append({
-        "model": model,
-
-        "bird_acc": bird.mean(),
-        "synthetic_acc": synthetic.mean(),
-        "combined_acc": combined.mean(),
-
-        "risk_diff_bird_vs_synthetic": synthetic.mean() - bird.mean(),
-        "risk_diff_bird_vs_combined": combined.mean() - bird.mean(),
-
-        "cohens_h_bird_vs_synthetic": cohens_h(bird.mean(), synthetic.mean()),
-        "cohens_h_bird_vs_combined": cohens_h(bird.mean(), combined.mean()),
-
-        "mcnemar_p_bird_vs_synthetic": p_syn,
-        "mcnemar_p_bird_vs_combined": p_comb,
-
-        "extra_reject_rate_synthetic": extra_syn,
-        "extra_reject_rate_combined": extra_comb,
+    stats_rows.append({
+        "Model": model,
+        "EX(A)": bird.mean() * 100,
+        "EX(B)": g["synthetic_ex"].mean() * 100,
+        "EX(C)": combined.mean() * 100,
+        "Δ(A→C)": delta,
+        "p(A vs C)": p_val
     })
 
-stats_df = pd.DataFrame(stats).sort_values("model")
-print(stats_df)
+stats_df = pd.DataFrame(stats_rows).sort_values("Model")
 
-stats_df.round(4).to_latex(
-    LATEX_OUT / "statistical_tests.tex",
-    caption="Paired statistical comparison between Bird, Synthetic, and Combined evaluation results.",
-    label="tab:stats",
-)
+# Format columns
+stats_df["EX(A)"] = stats_df["EX(A)"].round(2)
+stats_df["EX(B)"] = stats_df["EX(B)"].round(2)
+stats_df["EX(C)"] = stats_df["EX(C)"].round(2)
+stats_df["Δ(A→C)"] = stats_df["Δ(A→C)"].round(2)
+stats_df["p(A vs C)"] = stats_df["p(A vs C)"].apply(lambda p: f"{p:.2e}")
+
+# Write LaTeX
+latex = []
+latex.append("\\begin{table}")
+latex.append("\\small")
+latex.append("\\resizebox{\\columnwidth}{!}{")
+latex.append("\\begin{tabular}{lrrrrr}")
+latex.append("\\toprule")
+latex.append("\\textbf{Model} & \\textbf{EX(A)} & \\textbf{EX(B)} & \\textbf{EX(C)} & "
+             "\\textbf{$\\Delta$(A→C)} & \\textbf{$p$-value} \\\\")
+latex.append("\\midrule")
+
+for _, row in stats_df.iterrows():
+    latex.append(
+        f"{row['Model']} & "
+        f"{row['EX(A)']:.2f} & "
+        f"{row['EX(B)']:.2f} & "
+        f"{row['EX(C)']:.2f} & "
+        f"{row['Δ(A→C)']:.2f} & "
+        f"{row['p(A vs C)']} \\\\"
+    )
+
+latex.append("\\bottomrule")
+latex.append("\\end{tabular}")
+latex.append("}")
+latex.append("\\caption{Statistical comparison for BIRD: Δ accuracy (A→C) and McNemar $p$-value.}")
+latex.append("\\label{tab:bird_stats}")
+latex.append("\\end{table}")
+
+(LATEX_OUT / "bird_stat_tests.tex").write_text("\n".join(latex), encoding="utf8")
+print("[INFO] Wrote BIRD statistical tests table → bird_stat_tests.tex")
 
 
 # ============================================================
