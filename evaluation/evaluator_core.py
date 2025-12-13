@@ -1,14 +1,11 @@
-# evaluator_core.py
 import sqlite3
 import time
 from typing import List, Dict, Tuple, Union
 
-SQLITE_TIMEOUT_MS = 1000  # 1 second timeout
+SQLITE_TIMEOUT_MS = 1000
 
+#Shared execution and evaluation file for BIRD, Spider, and Unit Tests to ensure comparison results are fair. 
 
-# -------------------------------
-# Helpers
-# -------------------------------
 def rows_equal_value_only(gold_rows, pred_rows) -> bool:
     if len(gold_rows) != len(pred_rows):
         return False
@@ -19,10 +16,6 @@ def rows_equal_value_only(gold_rows, pred_rows) -> bool:
 
 
 def normalize_rows(rows):
-    """
-    Convert row tuples/dicts into a canonical list of dicts.
-    (You probably don't need this if you always use sqlite3.Row + dict())
-    """
     if isinstance(rows, dict):
         raise ValueError("normalize_rows should not receive error dicts.")
     if isinstance(rows, str):
@@ -40,22 +33,14 @@ def normalize_rows(rows):
     return out
 
 
-# -------------------------------
-# Core SQLite execution
-# -------------------------------
+#SQLite Execution
 def _execute_with_timeout(conn: sqlite3.Connection, sql: str) -> Union[List[Dict], Dict]:
-    """
-    Internal helper: executes SQL on an existing connection with a timeout.
-    Returns:
-      - list[dict] on success
-      - {"error": "..."} on failure / timeout
-    """
     start = time.time()
 
     def timeout_checker():
         elapsed_ms = (time.time() - start) * 1000
         if elapsed_ms >= SQLITE_TIMEOUT_MS:
-            return 1  # abort query
+            return 1
         return 0
 
     conn.set_progress_handler(timeout_checker, 1000)
@@ -72,10 +57,6 @@ def _execute_with_timeout(conn: sqlite3.Connection, sql: str) -> Union[List[Dict
 
 
 def execute_sqlite_query(db_path: str, sql: str) -> Union[List[Dict], Dict]:
-    """
-    Open a fresh connection to `db_path`, run the query with timeout,
-    then close the connection.
-    """
     try:
         conn = sqlite3.connect(db_path)
         conn.row_factory = sqlite3.Row
@@ -89,37 +70,19 @@ def execute_sqlite_query(db_path: str, sql: str) -> Union[List[Dict], Dict]:
 
 
 def execute_sqlite_query_conn(conn: sqlite3.Connection, sql: str) -> Union[List[Dict], Dict]:
-    """
-    Run SQL on an existing SQLite connection with timeout.
-    Returns list[dict] or {"error": "..."}.
-    """
     return _execute_with_timeout(conn, sql)
 
 
-# -------------------------------
-# Compare row sets for EX, F1, VES
-# -------------------------------
+#Compare data results between gold and predictions
 def compare_results(pred, gold) -> Tuple[int, float, float]:
-    """
-    Return (EX, F1, VES)
-    Using value-only comparison so column-name differences don't matter.
-    Errors produce EX=0, F1=0, VES=0.
-
-    - pred, gold: either list[dict] of rows, or {"error": "..."}.
-    """
-
-    # If either side is an error dict or not a list, treat as full failure
     if not isinstance(pred, list) or not isinstance(gold, list):
         return 0, 0.0, 0.0
 
-    # Convert rows to tuples of values, ignoring column names
     gold_set = {tuple(row.values()) for row in gold}
     pred_set = {tuple(row.values()) for row in pred}
 
-    # EX (exact match of sets)
     ex = int(pred_set == gold_set)
 
-    # F1
     tp = len(gold_set & pred_set)
     fp = len(pred_set - gold_set)
     fn = len(gold_set - pred_set)
@@ -128,7 +91,6 @@ def compare_results(pred, gold) -> Tuple[int, float, float]:
     recall = tp / (tp + fn) if tp + fn > 0 else 0.0
     f1 = (2 * precision * recall) / (precision + recall) if precision + recall else 0.0
 
-    # VES = (tp - fp - fn) / |gold|
     ves = (tp - fp - fn) / len(gold_set) if gold_set else 0.0
 
     return ex, f1, ves

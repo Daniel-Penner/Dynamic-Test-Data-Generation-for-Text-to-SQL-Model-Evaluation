@@ -3,41 +3,33 @@ import numpy as np
 import random
 import math
 
+#EDGE CASE MUTATIONS DICTIONARY
+
 def safe_assign(df, idx, col, val):
     dt = df[col].dtype
     import pandas as pd
     import numpy as np
 
-    # Handle null inputs explicitly
     if val is None or (isinstance(val, float) and np.isnan(val)):
-        # For integer columns, pandas cannot store NaN
         if pd.api.types.is_integer_dtype(dt):
             df.at[idx, col] = None
         else:
             df.at[idx, col] = np.nan
         return
 
-    # INT columns
     if pd.api.types.is_integer_dtype(dt):
         df.at[idx, col] = int(val)
         return
 
-    # FLOAT columns
     if pd.api.types.is_float_dtype(dt):
         df.at[idx, col] = float(val)
         return
-
-    # DATE / DATETIME columns
+    
     if pd.api.types.is_datetime64_any_dtype(dt):
         df.at[idx, col] = pd.to_datetime(val)
         return
 
-    # TEXT / CATEGORICAL / OBJECT
     df.at[idx, col] = str(val)
-
-# -------------------------------------------------------------
-# A. NUMERIC EDGE CASES
-# -------------------------------------------------------------
 
 def mutate_large_numbers(df):
     for col in df:
@@ -67,7 +59,6 @@ def mutate_extreme_outliers(df):
             idx = random.randint(0, len(df) - 1)
             value = df[col].mean() * random.randint(1000, 5000)
 
-            # Cast before assigning
             if pd.api.types.is_integer_dtype(df[col].dtype):
                 value = int(value)
             elif pd.api.types.is_float_dtype(df[col].dtype):
@@ -163,7 +154,6 @@ def mutate_repeating_decimals(df):
 
 
 def mutate_extreme_ratios(df):
-    # replace pairs with extreme division results
     num_cols = [c for c in df.columns if pd.api.types.is_numeric_dtype(df[c])]
     if len(num_cols) >= 2:
         a, b = num_cols[:2]
@@ -184,10 +174,6 @@ def mutate_skewed_distribution(df):
         if pd.api.types.is_numeric_dtype(df[col]):
             df[col] = np.random.exponential(scale=2, size=len(df))
     return df
-
-# -------------------------------------------------------------
-# B. STRING / TEXT EDGE CASES
-# -------------------------------------------------------------
 
 def mutate_empty_strings(df):
     for col in df:
@@ -324,10 +310,6 @@ def mutate_random_emoji(df):
             df[col] = df[col].apply(lambda x: x + random.choice(emojis))
     return df
 
-# -------------------------------------------------------------
-# C. STRUCTURAL EDGE CASES
-# -------------------------------------------------------------
-
 def mutate_duplicate_rows(df):
     if len(df) > 0:
         dup = df.sample(frac=0.1, replace=True)
@@ -395,10 +377,6 @@ def mutate_high_cardinality_strings(df):
             df[col] = [f"unique_{i}_{random.randint(1,9999)}" for i in range(len(df))]
     return df
 
-# -------------------------------------------------------------
-# D. DATE / TIME EDGE CASES
-# -------------------------------------------------------------
-
 def mutate_invalid_dates(df):
     for col in df:
         if "date" in col.lower():
@@ -455,10 +433,6 @@ def mutate_timezone_dates(df):
             df[col] = ["2024-01-01T12:00:00Z"] * len(df)
     return df
 
-# -------------------------------------------------------------
-# E. LOGICAL / ENUM EDGE CASES
-# -------------------------------------------------------------
-
 def mutate_boolean_flip(df):
     for col in df:
         if df[col].dtype == bool:
@@ -501,13 +475,7 @@ def mutate_enum_misspellings(df):
             df[col] = df[col].apply(lambda x: x + random.choice(["_typo", "_miss"]))
     return df
 
-# -------------------------------------------------------------
-# F. RELATIONAL EDGE CASES
-# -------------------------------------------------------------
-
 def mutate_join_key_collisions(df):
-    # not truly relational — will be applied table-by-table
-    # but encourages repeated join key patterns
     if "id" in df.columns:
         df["id"] = df["id"].apply(lambda x: random.choice([x, random.randint(1, 3)]))
     return df
@@ -529,7 +497,6 @@ def mutate_duplicate_join_keys(df):
 
 
 def mutate_mixed_join_types(df):
-    # turns join key into strings sometimes
     if "id" in df.columns:
         mask = np.random.rand(len(df)) < 0.50
         df.loc[mask, "id"] = df.loc[mask, "id"].astype(str)
@@ -538,9 +505,8 @@ def mutate_mixed_join_types(df):
 
 SCENARIO_REGISTRY = {
 
-    # ================================
-    # A. NUMERIC EDGE CASES
-    # ================================
+    #Numeric cases
+
     "large_numbers": {
         "desc": "Numeric columns contain extremely large values.",
         "mutate": mutate_large_numbers,
@@ -614,9 +580,8 @@ SCENARIO_REGISTRY = {
         "mutate": mutate_skewed_distribution,
     },
 
-    # ================================
-    # B. STRING / TEXT EDGE CASES
-    # ================================
+    #String cases
+
     "empty_strings": {
         "desc": "Text fields contain empty strings.",
         "mutate": mutate_empty_strings,
@@ -682,9 +647,8 @@ SCENARIO_REGISTRY = {
         "mutate": mutate_random_emoji,
     },
 
-    # ================================
-    # C. STRUCTURAL EDGE CASES
-    # ================================
+    #Structural cases
+
     "duplicate_rows": {
         "desc": "Duplicate a subset of rows.",
         "mutate": mutate_duplicate_rows,
@@ -726,9 +690,8 @@ SCENARIO_REGISTRY = {
         "mutate": mutate_high_cardinality_strings,
     },
 
-    # ================================
-    # D. DATE/TIME EDGE CASES
-    # ================================
+    #Date/time cases
+
     "invalid_dates": {
         "desc": "Assign impossible dates like 2023-99-99.",
         "mutate": mutate_invalid_dates,
@@ -762,9 +725,8 @@ SCENARIO_REGISTRY = {
         "mutate": mutate_timezone_dates,
     },
 
-    # ================================
-    # E. LOGICAL / ENUM EDGE CASES
-    # ================================
+    #Logical cases
+
     "boolean_flip": {
         "desc": "Flip boolean values.",
         "mutate": mutate_boolean_flip,
@@ -790,9 +752,8 @@ SCENARIO_REGISTRY = {
         "mutate": mutate_enum_misspellings,
     },
 
-    # ================================
-    # F. RELATIONAL EDGE CASES
-    # ================================
+    #Relational cases
+
     "join_key_collisions": {
         "desc": "Repeated ID values that cause collisions.",
         "mutate": mutate_join_key_collisions,

@@ -6,6 +6,8 @@ from pathlib import Path
 from scripts.build_tests.generate_tests_Spider import generate_tests_for_query
 from scripts.build_tests.build_schema_map import build_schema_map
 
+#CENTRAL GENERATION SCRIPT
+
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 while PROJECT_ROOT.name != "Dynamic-Test-Data-Generation-for-Text-to-SQL-Model-Evaluation":
     PROJECT_ROOT = PROJECT_ROOT.parent
@@ -16,7 +18,7 @@ if str(PROJECT_ROOT) not in sys.path:
 SPIDER_PATH = PROJECT_ROOT / "spider_input_data"
 SPIDER_DIR = SPIDER_PATH / "database"
 GOLD_PATH = SPIDER_PATH / "dev_gold.sql"
-SCHEMA_META = SPIDER_PATH / "tables.json"   # standard Spider schema metadata
+SCHEMA_META = SPIDER_PATH / "tables.json"
 OUTPUT_DIR = PROJECT_ROOT / "tests_SPIDER"
 
 
@@ -54,7 +56,7 @@ def run_all_queries(start=0, limit=None):
 
         schema = find_schema_entry(tables_meta, db_id)
         if not schema:
-            print(f"❌ No schema found for {db_id}")
+            print(f"No schema found for {db_id}")
             continue
 
         out_dir = OUTPUT_DIR / db_id
@@ -68,8 +70,8 @@ def run_all_queries(start=0, limit=None):
         )
 
         total = empty + non_empty
-        print(f"✅ valid tests: {non_empty}/{total}")
-        print(f"❌ empty tests: {empty}/{total}")
+        print(f"valid tests: {non_empty}/{total}")
+        print(f"empty tests: {empty}/{total}")
 
 
 if __name__ == "__main__":

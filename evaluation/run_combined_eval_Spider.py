@@ -11,16 +11,13 @@ from evaluation.evaluator_core import (
     compare_results
 )
 
-# ---------------------------------------------------------
-# Synthetic DB builder
-# ---------------------------------------------------------
+#EVALUATION FILE FOR COMPARISON OF SPIDER-DEV AND UNIT TEST SETS
 def build_synthetic_sqlite(tables_dict):
     conn = sqlite3.connect(":memory:")
     conn.row_factory = sqlite3.Row
     cur = conn.cursor()
 
     for table_name, rows in tables_dict.items():
-        # ✅ Skip SQLite internal tables
         if table_name.lower().startswith("sqlite_"):
             continue
 
@@ -50,9 +47,6 @@ def build_synthetic_sqlite(tables_dict):
     return conn
 
 
-# ---------------------------------------------------------
-# Loaders
-# ---------------------------------------------------------
 def load_raw_predictions(pred_sql_file):
     """
     One SQL query per line.
@@ -94,9 +88,7 @@ def load_synthetic_tests(tests_dir):
     return tests
 
 
-# ---------------------------------------------------------
-# Core combined evaluation (Spider)
-# ---------------------------------------------------------
+#Core evaluation used to evaluate both queries on both sets of data
 def run_spider_combined_eval(pred_path, spider_gold_path, tests_dir, out_json):
 
     runtime_totals = {
@@ -136,7 +128,7 @@ def run_spider_combined_eval(pred_path, spider_gold_path, tests_dir, out_json):
             "combined": {}
         }
 
-        # ---------------- SPIDER ----------------
+        #Spider
         db_path = (
             Path("spider_input_data/database")
             / gold["db_id"]
@@ -157,7 +149,7 @@ def run_spider_combined_eval(pred_path, spider_gold_path, tests_dir, out_json):
             "runtime_ms": spider_runtime
         }
 
-        # ---------------- SYNTHETIC ----------------
+        #Unit tests
         synth_start = time.perf_counter()
 
         ex_all = 1
@@ -199,7 +191,7 @@ def run_spider_combined_eval(pred_path, spider_gold_path, tests_dir, out_json):
             "tests": test_outputs
         }
 
-        # ---------------- COMBINED ----------------
+        #Combined of both methods
         combined_ex = int(spider_ex == 1 and ex_all == 1)
         combined_f1 = (spider_f1 + record["synthetic"]["f1_avg"]) / 2
         combined_ves = (spider_ves + record["synthetic"]["ves_avg"]) / 2
@@ -281,9 +273,6 @@ def run_spider_combined_eval(pred_path, spider_gold_path, tests_dir, out_json):
     print(f"\n[INFO] Output written to: {out_json}")
 
 
-# ---------------------------------------------------------
-# Entrypoint
-# ---------------------------------------------------------
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--pred", required=True, help="Raw SQL file (1 query per line)")

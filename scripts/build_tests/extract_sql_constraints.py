@@ -1,39 +1,15 @@
-# scripts/build_tests/parse_constraints.py
-
 import re
 from collections import defaultdict
 
+#CONSTRAINT EXTRACTION AND HANDLING
 
 def parse_constraints(sql: str, schema_map: dict):
-    """
-    Extract constraints from SQL, resolving aliases, JOIN keys,
-    WHERE predicates, ORDER BY, LIMIT, and used tables (including subqueries).
-
-    Returns dictionary:
-        {
-            "required_equals": { (table, col): value },
-            "required_not_equals": { (table, col): value },
-            "required_is_null": set((table, col)),
-            "required_not_null": set((table, col)),
-            "join_keys": set((t1, c1, t2, c2)),
-            "required_join_keys": set((t1, c1, t2, c2)),
-            "range_constraints": [(table, col, op, val), ...],
-            "order_by": (colname, direction) or None,
-            "limit": N or None,
-            "used_tables": set([table1, table2, ...]),
-            "scalar_subqueries": set((outer_tbl, outer_col, inner_tbl, inner_col)),
-        }
-    """
 
     set_ops = [
         s.upper()
         for s in re.findall(r"\b(INTERSECT|UNION|EXCEPT)\b", sql)
     ]
     global_set_op = set_ops[0] if set_ops else None
-
-# ============================================================
-# PRE-STEP — split on set operators (INTERSECT / UNION / EXCEPT)
-# ============================================================
 
     set_split = re.split(
         r"\b(INTERSECT|UNION|EXCEPT)\b",
@@ -82,9 +58,7 @@ def parse_constraints(sql: str, schema_map: dict):
                 )
             constraints_part["projected_cols"] = cols
 
-        # ============================================================
-        # STEP 1 — Extract aliases
-        # ============================================================
+        #STEP 1: Extract aliases
         alias_map = {}
 
 
@@ -105,9 +79,7 @@ def parse_constraints(sql: str, schema_map: dict):
         for tbl in schema_map:
             alias_map.setdefault(tbl.lower(), tbl.lower())
 
-        # ============================================================
-        # STEP 2 — Extract tables from subqueries
-        # ============================================================
+        #STEP 2: Extract tables from subqueries
 
         subquery_from_pattern = re.compile(
             r"\(\s*SELECT.*?\bFROM\s+([a-zA-Z0-9_\.]+)",
@@ -118,9 +90,7 @@ def parse_constraints(sql: str, schema_map: dict):
             tbl = tbl.split(".")[-1].lower()
             constraints_part["used_tables"].add(tbl)
 
-        # ============================================================
-        # STEP 3 — ORDER BY and LIMIT
-        # ============================================================
+        #STEP 3: ORDER BY and LIMIT
 
         order_by_pattern = re.compile(
             r"ORDER\s+BY\s+([a-zA-Z0-9_\.`]+)\s*(ASC|DESC)?",
@@ -137,9 +107,7 @@ def parse_constraints(sql: str, schema_map: dict):
         if m:
             constraints_part["limit"] = int(m.group(1))
 
-        # ============================================================
-        # STEP 4 — WHERE clause
-        # ============================================================
+        #STEP 4: WHERE clause
 
         where_index = s_upper.find(" WHERE ")
         if where_index != -1:
@@ -166,11 +134,7 @@ def parse_constraints(sql: str, schema_map: dict):
                     or_groups.append(preds)
                 constraints_part["or_groups"] = or_groups
 
-
-
-        # ============================================================
-        # STEP 5 — helper: resolve unqualified columns
-        # ============================================================
+        #STEP 5: resolve unqualified columns
 
         def resolve_unqualified(col):
             col_l = col.lower()
@@ -181,9 +145,7 @@ def parse_constraints(sql: str, schema_map: dict):
                         matches.append((t.lower(), c))
             return matches
 
-        # ============================================================
-        # STEP 4.5 — scalar subquery equality detection
-        # ============================================================
+        #STEP 4.5: scalar subquery equality detection
 
         scalar_subq_pattern = re.compile(
             r'(?:(?P<t1>[a-zA-Z0-9_]+)\.)?(?P<c1>[a-zA-Z0-9_]+)\s*=\s*\(\s*SELECT\s+'
@@ -227,9 +189,7 @@ def parse_constraints(sql: str, schema_map: dict):
                     (outer_tbl, outer_col, inner_tbl, inner_col)
                 )
 
-        # ============================================================
-        # STEP 6 — WHERE predicates (including LIKE)
-        # ============================================================
+        #STEP 6: WHERE/LIKE predicates
 
         pred_pattern = re.compile(
             r"(?P<table>[a-zA-Z0-9_]+)?\.?"
@@ -266,7 +226,6 @@ def parse_constraints(sql: str, schema_map: dict):
             key = (table, col)
 
             if op == "=":
-                # normal equality
                 if val.isdigit():
                     val_conv = int(val)
                 else:
@@ -278,7 +237,6 @@ def parse_constraints(sql: str, schema_map: dict):
                 constraints_part["required_equals"][key] = val_conv
 
             elif op == "LIKE":
-                # store LIKE constraints separately (do NOT treat as equality)
                 constraints_part.setdefault("like_constraints", []).append(
                     (table, col, val)
                 )
@@ -304,9 +262,7 @@ def parse_constraints(sql: str, schema_map: dict):
                 if val.upper() == "NULL":
                     constraints_part["required_not_null"].add(key)
 
-        # ============================================================
-        # STEP 6.5 — BETWEEN range constraints
-        # ============================================================
+        #STEP 6.5: BETWEEN range constraints
 
         between_pattern = re.compile(
             r"""
@@ -344,10 +300,7 @@ def parse_constraints(sql: str, schema_map: dict):
                 (table, col, "BETWEEN", (lo, hi))
             )
 
-
-        # ============================================================
-        # STEP 7 — Extract JOIN keys
-        # ============================================================
+        #STEP 7: Extract JOIN keys
 
         join_pattern = re.compile(
             r"([a-zA-Z0-9_]+)\.([`a-zA-Z0-9_]+)\s*=\s*([a-zA-Z0-9_]+)\.([`a-zA-Z0-9_]+)",
@@ -366,12 +319,11 @@ def parse_constraints(sql: str, schema_map: dict):
             real1 = real1.lower()
             real2 = real2.lower()
 
-            # ✅ map SQL column → real schema column (case-safe)
             def resolve_col(table, col):
                 for real_col in schema_map.get(table, {}):
                     if real_col.lower() == col.lower():
                         return real_col
-                return col  # fallback
+                return col
 
             c1_real = resolve_col(real1, c1_raw)
             c2_real = resolve_col(real2, c2_raw)
@@ -394,9 +346,7 @@ def parse_constraints(sql: str, schema_map: dict):
 
         all_constraints.append(constraints_part)
 
-    # ============================================================
-    # FINAL — merge constraints from set operators conservatively
-    # ============================================================
+    #STEP 8: merge constraints from set operators
 
     constraints = all_constraints[0]
     constraints.setdefault("like_constraints", [])
@@ -418,7 +368,6 @@ def parse_constraints(sql: str, schema_map: dict):
 
         constraints["scalar_subqueries"] |= other["scalar_subqueries"]
 
-        # ✅ MERGE LIKE CONSTRAINTS
         if "like_constraints" in other:
             constraints.setdefault("like_constraints", [])
             constraints["like_constraints"].extend(other["like_constraints"])
@@ -428,7 +377,6 @@ def parse_constraints(sql: str, schema_map: dict):
                 if k not in other["required_equals"] or other["required_equals"][k] != v:
                     del constraints["required_equals"][k]
 
-        # ✅ FINAL FIX FOR INTERSECT: shared projected columns
         if constraints.get("set_op") == "INTERSECT":
             common_cols = set(all_constraints[0].get("projected_cols", []))
 

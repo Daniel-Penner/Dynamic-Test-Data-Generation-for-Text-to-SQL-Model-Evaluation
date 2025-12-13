@@ -9,11 +9,6 @@ import matplotlib.pyplot as plt
 from scipy.stats import wilcoxon
 from statsmodels.stats.contingency_tables import mcnemar
 
-
-# ============================================================
-# CONFIG
-# ============================================================
-
 RESULTS_DIR = Path("outputs/BIRD")
 LATEX_OUT = RESULTS_DIR / "latex_tables"
 PLOTS_OUT = RESULTS_DIR / "plots"
@@ -21,18 +16,8 @@ PLOTS_OUT = RESULTS_DIR / "plots"
 LATEX_OUT.mkdir(parents=True, exist_ok=True)
 PLOTS_OUT.mkdir(parents=True, exist_ok=True)
 
-
-# ============================================================
-# STATISTICS
-# ============================================================
-
 def cohens_h(p1, p2):
     return 2 * (math.asin(math.sqrt(p2)) - math.asin(math.sqrt(p1)))
-
-
-# ============================================================
-# LOAD ALL RESULTS
-# ============================================================
 
 records = []
 
@@ -61,19 +46,12 @@ df = pd.DataFrame(records)
 
 print(f"[INFO] Loaded {len(df)} per-query records")
 
-
-# ============================================================
-# DERIVED METRICS
-# ============================================================
-
 df["bird_reject"] = 1 - df["bird_ex"]
 df["synthetic_reject"] = 1 - df["synthetic_ex"]
 df["combined_reject"] = 1 - df["combined_ex"]
 
 
-# ============================================================
-# SUMMARY TABLE
-# ============================================================
+#LaTeX tables
 
 summary = df.groupby("model").agg(
     bird_acc=("bird_ex", "mean"),
@@ -128,9 +106,7 @@ with open(LATEX_OUT / "accuracy_runtime_pretty.tex", "w", encoding="utf8") as f:
 print("[INFO] Pretty Spider LaTeX table written!")
 
 
-# ============================================================
-# STATISTICAL TESTS — BIRD (A vs C) WITH Δ AND P-VALUE ONLY
-# ============================================================
+#Statistical tests
 
 from statsmodels.stats.contingency_tables import mcnemar
 
@@ -140,7 +116,6 @@ for model, g in df.groupby("model"):
     bird = np.array(g["bird_ex"])
     combined = np.array(g["combined_ex"])
 
-    # 2×2 contingency table
     n11 = np.sum((bird == 1) & (combined == 1))
     n10 = np.sum((bird == 1) & (combined == 0))
     n01 = np.sum((bird == 0) & (combined == 1))
@@ -149,7 +124,6 @@ for model, g in df.groupby("model"):
     table = [[n11, n10], [n01, n00]]
     p_val = mcnemar(table, exact=False, correction=True).pvalue
 
-    # Δ accuracy (percentage points)
     delta = (combined.mean() - bird.mean()) * 100
 
     stats_rows.append({
@@ -163,14 +137,12 @@ for model, g in df.groupby("model"):
 
 stats_df = pd.DataFrame(stats_rows).sort_values("Model")
 
-# Format columns
 stats_df["EX(A)"] = stats_df["EX(A)"].round(2)
 stats_df["EX(B)"] = stats_df["EX(B)"].round(2)
 stats_df["EX(C)"] = stats_df["EX(C)"].round(2)
 stats_df["Δ(A→C)"] = stats_df["Δ(A→C)"].round(2)
 stats_df["p(A vs C)"] = stats_df["p(A vs C)"].apply(lambda p: f"{p:.2e}")
 
-# Write LaTeX
 latex = []
 latex.append("\\begin{table}")
 latex.append("\\small")
@@ -202,9 +174,7 @@ latex.append("\\end{table}")
 print("[INFO] Wrote BIRD statistical tests table → bird_stat_tests.tex")
 
 
-# ============================================================
-# BOXPLOT — REJECTED QUERIES
-# ============================================================
+#Rejection rate boxplots
 
 reject_rates = df.groupby("model").agg(
     bird_reject=("bird_reject", "mean"),
@@ -243,18 +213,13 @@ plt.tight_layout()
 plt.savefig(PLOTS_OUT / "rejection_rate_per_model.png", dpi=300)
 plt.close()
 
-# ============================================================
-# BOXPLOT — REJECTION RATE ACROSS MODELS (CORRECT)
-# ============================================================
 
-# Compute model-level rejection rates
 reject_rates = df.groupby("model").agg(
     Bird=("bird_reject", "mean"),
     Synthetic=("synthetic_reject", "mean"),
     Combined=("combined_reject", "mean"),
 )
 
-# Prepare data for boxplot: 9 values per dataset
 data = [
     reject_rates["Bird"].values,
     reject_rates["Synthetic"].values,
@@ -269,7 +234,6 @@ plt.boxplot(
     showfliers=True,
 )
 
-# Overlay individual model points
 for i, vals in enumerate(data, start=1):
     x = np.random.normal(i, 0.04, size=len(vals))  # jitter
     plt.scatter(x, vals, alpha=0.8, s=40)
@@ -291,7 +255,7 @@ reject_rates = df.groupby("model").agg(
 
 
 x = np.arange(len(reject_rates))
-width = 0.18  # thinner bars
+width = 0.18
 
 plt.figure(figsize=(10, 4))
 
@@ -308,9 +272,7 @@ plt.savefig(PLOTS_OUT / "rejection_rate_barplot.png", dpi=300)
 plt.close()
 
 
-# ============================================================
-# BOXPLOT — RUNTIME PER QUERY
-# ============================================================
+#Runtime boxplot
 
 avg_time = df.groupby("model").agg(
     bird=("bird_ms", "mean"),
@@ -319,8 +281,7 @@ avg_time = df.groupby("model").agg(
 )
 
 x = np.arange(len(avg_time))
-width = 0.18   # thinner bars → more spacing
-
+width = 0.18
 plt.figure(figsize=(10.5, 4))
 
 plt.bar(x - width, avg_time["bird"], width, label="Bird")
@@ -331,7 +292,6 @@ plt.xticks(x, avg_time.index, rotation=45, ha="right")
 plt.ylabel("Time per query (ms)")
 plt.title("Average runtime per model")
 
-# create visual space for legend
 plt.legend(loc="upper left")
 
 plt.tight_layout()
@@ -341,9 +301,7 @@ plt.close()
 
 
 
-# ============================================================
-# BAR PLOT — RUNTIME BEFORE / AFTER
-# ============================================================
+#Runtime barplot
 
 avg_time = df.groupby("model").agg(
     bird=("bird_ms", "mean"),

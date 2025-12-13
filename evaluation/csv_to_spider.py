@@ -1,7 +1,8 @@
 import csv
 from pathlib import Path
 
-INPUT_CSV = Path("prediction_queries/Spider/DIN-SQL+CodeX.csv")
+#ONE OF MANY CONVERSION FILES FOR PREDICTION SQL WHICH DIFFERENT MODELS HAVE PRESENTED IN DIFFERENT FORMS
+INPUT_CSV = Path("prediction_queries/Spider/DIN-SQL+CodeX.csv") #Input manually set to one of the evaluated model prediction files
 OUTPUT_SQL = Path("prediction_queries/Spider/DIN-SQL+CodeX_predictions.sql")
 
 def normalize_sql(sql: str) -> str:

@@ -1,5 +1,3 @@
-# scripts/build_tests/run_full_generation.py
-
 from __future__ import annotations
 
 import json
@@ -9,9 +7,8 @@ from pathlib import Path
 from scripts.build_tests.generate_tests_BIRD import generate_tests_for_query
 from scripts.build_tests.build_schema_map import build_schema_map
 
+#CENTRAL GENERATION SCRIPT
 
-# Ensure project root is on sys.path
-# Always set project root to the repository root containing THIS script
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 while PROJECT_ROOT.name not in {
     "Dynamic-Test-Data-Generation-for-Text-to-SQL-Model-Evaluation"
@@ -60,7 +57,7 @@ def run_all_queries(limit: int, start: int = 0):
 
         schema_entry = find_schema_entry(tables_meta, db_id)
         if not schema_entry:
-            print(f"  ❌ No schema found for DB {db_id}, skipping.")
+            print(f"No schema found for DB {db_id}, skipping.")
             continue
 
         db_output_dir = OUTPUT_DIR / db_id
@@ -74,8 +71,8 @@ def run_all_queries(limit: int, start: int = 0):
 
         total = non_empty + empty
 
-        print(f"✅ Tests with non-empty expected output: {non_empty} / {total}")
-        print(f"❌ Tests with empty expected output:     {empty} / {total}")
+        print(f"Tests with non-empty expected output: {non_empty} / {total}")
+        print(f"Tests with empty expected output:     {empty} / {total}")
 
 
 if __name__ == "__main__":

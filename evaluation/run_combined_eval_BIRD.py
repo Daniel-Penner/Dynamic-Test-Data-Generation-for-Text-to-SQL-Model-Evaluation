@@ -11,9 +11,8 @@ from evaluation.evaluator_core import (
     compare_results
 )
 
-# ---------------------------------------------------------
-# Synthetic DB builder (copied explicitly για clarity)
-# ---------------------------------------------------------
+#EVALUATION FILE FOR COMPARISON OF BIRD-DEV AND UNIT TEST SETS
+
 def build_synthetic_sqlite(tables_dict):
     conn = sqlite3.connect(":memory:")
     conn.row_factory = sqlite3.Row
@@ -38,10 +37,6 @@ def build_synthetic_sqlite(tables_dict):
     conn.commit()
     return conn
 
-
-# ---------------------------------------------------------
-# Loaders
-# ---------------------------------------------------------
 def load_predictions(pred_path):
     with open(pred_path, "r", encoding="utf8") as f:
         raw = json.load(f)
@@ -84,9 +79,7 @@ def load_synthetic_tests(tests_dir):
     return tests
 
 
-# ---------------------------------------------------------
-# Core combined evaluation
-# ---------------------------------------------------------
+#Core evaluation used to evaluate both queries on both sets of data
 def run_combined_eval(pred_path, bird_gold_path, tests_dir, out_json):
 
     runtime_totals = {
@@ -129,7 +122,7 @@ def run_combined_eval(pred_path, bird_gold_path, tests_dir, out_json):
             "combined": {}
         }
 
-        # ---------------- BIRD ----------------
+        #BIRD
         db_path = (
             Path("bird_input_data/dev_databases")
             / gold["db_id"]
@@ -150,7 +143,7 @@ def run_combined_eval(pred_path, bird_gold_path, tests_dir, out_json):
             "runtime_ms": bird_runtime
         }
 
-        # ---------------- SYNTHETIC ----------------
+        #Unit Tests
         synth_start = time.perf_counter()
 
         ex_all = 1
@@ -193,7 +186,7 @@ def run_combined_eval(pred_path, bird_gold_path, tests_dir, out_json):
             "tests": test_outputs
         }
 
-        # ---------------- COMBINED ----------------
+        #Combined of both methods
         combined_ex = int(bird_ex == 1 and ex_all == 1)
         combined_f1 = (bird_f1 + record["synthetic"]["f1_avg"]) / 2
         combined_ves = (bird_ves + record["synthetic"]["ves_avg"]) / 2
@@ -234,7 +227,6 @@ def run_combined_eval(pred_path, bird_gold_path, tests_dir, out_json):
         "synthetic_avg_ms": runtime_totals["synthetic_ms"] / n if n else 0.0,
         "combined_avg_ms": runtime_totals["combined_ms"] / n if n else 0.0,
 
-        # optional, but useful to keep
         "wall_clock_ms": wall_clock_ms
     }
 
@@ -285,9 +277,7 @@ def run_combined_eval(pred_path, bird_gold_path, tests_dir, out_json):
     print(f"\n[INFO] Output written to: {out_json}")
 
 
-# ---------------------------------------------------------
-# Entrypoint
-# ---------------------------------------------------------
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--pred", required=True)

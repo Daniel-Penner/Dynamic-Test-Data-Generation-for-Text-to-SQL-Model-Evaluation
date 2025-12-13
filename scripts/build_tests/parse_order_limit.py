@@ -1,37 +1,17 @@
-# scripts/parse_order_limit.py
 import re
 
+#HANDLES ORDER AND LIMIT QUERIES SPECIFICALLY
+
 def parse_order_limit(sql: str):
-    """
-    Extract ORDER BY expression, direction (ASC/DESC), and LIMIT N
-    from an SQL query.
 
-    Returns:
-        {
-            "expr": "<ORDER BY expression>",
-            "direction": "ASC" or "DESC",
-            "limit": <int>
-        }
-    or None if LIMIT is not present.
-    """
-
-    # Normalize whitespace
     s = " ".join(sql.replace("\n", " ").split())
 
-    # ---------------------------------------
-    # Extract LIMIT N
-    # ---------------------------------------
     limit_match = re.search(r"LIMIT\s+(\d+)", s, re.IGNORECASE)
     if not limit_match:
-        return None  # no LIMIT → no ORDER/LIMIT shaping needed
+        return None
 
     limit_val = int(limit_match.group(1))
 
-    # ---------------------------------------
-    # Extract ORDER BY <expr> [ASC|DESC]
-    # ---------------------------------------
-    # Pattern:
-    #   ORDER BY <anything up to whitespace or LIMIT> [ASC|DESC]
     order_match = re.search(
         r"ORDER BY\s+(.+?)(?:\s+(ASC|DESC))?\s+LIMIT",
         s,
@@ -39,7 +19,6 @@ def parse_order_limit(sql: str):
     )
 
     if not order_match:
-        # LIMIT but no explicit ORDER BY (unusual but possible)
         return {
             "expr": None,
             "direction": "ASC",

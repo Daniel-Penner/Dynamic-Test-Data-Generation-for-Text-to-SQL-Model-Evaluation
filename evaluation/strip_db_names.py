@@ -1,12 +1,12 @@
 from pathlib import Path
 
-INPUT_FILE = Path("prediction_queries\Spider\Graphix-3B+PICARD.sql")
+INPUT_FILE = Path("prediction_queries\Spider\Graphix-3B+PICARD.sql") #Input manually set to one of the evaluated model prediction files
 OUTPUT_FILE = Path("prediction_queries\Spider\Graphix-3B+PICARD_predictions.sql")
 
+#ONE OF MANY CONVERSION FILES FOR PREDICTION SQL WHICH DIFFERENT MODELS HAVE PRESENTED IN DIFFERENT FORMS
 def strip_database_suffix(line: str) -> str:
     line = line.rstrip()
 
-    # Split on whitespace; last token is DB name
     parts = line.split()
     if len(parts) <= 1:
         return line

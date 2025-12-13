@@ -8,11 +8,6 @@ RESULTS_DIR = Path("outputs/Spider")
 LATEX_OUT = RESULTS_DIR / "latex_tables"
 LATEX_OUT.mkdir(parents=True, exist_ok=True)
 
-
-# ============================================================
-# LOAD RESULTS
-# ============================================================
-
 records = []
 
 for f in RESULTS_DIR.glob("*.json"):
@@ -39,11 +34,6 @@ for f in RESULTS_DIR.glob("*.json"):
 df = pd.DataFrame(records)
 print(f"[INFO] Loaded {len(df)} per-query records")
 
-
-# ============================================================
-# SUMMARY
-# ============================================================
-
 summary = df.groupby("model").agg(
     spider_acc=("spider_ex", "mean"),
     synthetic_acc=("synthetic_ex", "mean"),
@@ -54,25 +44,18 @@ summary = df.groupby("model").agg(
     combined_time=("combined_ms", "mean"),
 ).sort_index()
 
-# --- Do NOT convert accuracy to string ---
 summary["spider_acc"] = summary["spider_acc"] * 100
 summary["synthetic_acc"] = summary["synthetic_acc"] * 100
 summary["combined_acc"] = summary["combined_acc"] * 100
 
-# Round to 2 decimals (still numeric)
 summary["spider_acc"] = summary["spider_acc"].round(2)
 summary["synthetic_acc"] = summary["synthetic_acc"].round(2)
 summary["combined_acc"] = summary["combined_acc"].round(2)
 
-# --- Times CAN be strings because they never get numeric formatting ---
 summary["spider_time"] = summary["spider_time"].round(2).astype(str) + "ms"
 summary["synthetic_time"] = summary["synthetic_time"].round(2).astype(str) + "ms"
 summary["combined_time"] = summary["combined_time"].round(2).astype(str) + "ms"
 
-
-# ============================================================
-# STATISTICAL TESTS FOR SPIDER
-# ============================================================
 
 from statsmodels.stats.contingency_tables import mcnemar
 
@@ -98,11 +81,9 @@ for model, g in df.groupby("model"):
     synthetic = np.array(g["synthetic_ex"])
     combined = np.array(g["combined_ex"])
 
-    # p-values
     p_syn = mcnemar_stats(spider, synthetic)
     p_comb = mcnemar_stats(spider, combined)
 
-    # Cohen's h
     h_syn = cohens_h(spider.mean(), synthetic.mean())
     h_comb = cohens_h(spider.mean(), combined.mean())
 
@@ -123,18 +104,12 @@ for model, g in df.groupby("model"):
 stats_df = pd.DataFrame(stats_rows).sort_values("Model")
 
 
-# Convert p-values → scientific notation string
 stats_df["p(A vs B)"] = stats_df["p(A vs B)"].apply(lambda p: f"{p:.2e}")
 stats_df["p(A vs C)"] = stats_df["p(A vs C)"].apply(lambda p: f"{p:.2e}")
 
-# Round Cohen's h
 stats_df["h(A vs B)"] = stats_df["h(A vs B)"].round(4)
 stats_df["h(A vs C)"] = stats_df["h(A vs C)"].round(4)
 
-
-# ============================================================
-# STATISTICAL TESTS (SPIDER A vs COMBINED C)
-# ============================================================
 
 from statsmodels.stats.contingency_tables import mcnemar
 import math
@@ -170,24 +145,15 @@ for model, g in df.groupby("model"):
 
 stats_df = pd.DataFrame(stats_rows).sort_values("Model")
 
-# Round EX columns
 stats_df["EX(A)"] = stats_df["EX(A)"].round(2)
 stats_df["EX(C)"] = stats_df["EX(C)"].round(2)
 
-# Format p-values in scientific notation
 stats_df["p(A vs C)"] = stats_df["p(A vs C)"].apply(lambda p: f"{p:.2e}")
 
-# Round Cohen's h
 stats_df["h(A vs C)"] = stats_df["h(A vs C)"].round(4)
 
 
-# ============================================================
-# WRITE LATEX TABLE — Spider Statistical Tests
-# ============================================================
-
-# ============================================================
-# STATISTICAL TESTS — DELTAS + P-VALUES ONLY
-# ============================================================
+#LaTeX Table
 
 from statsmodels.stats.contingency_tables import mcnemar
 
@@ -212,11 +178,9 @@ for model, g in df.groupby("model"):
     exB = synthetic.mean() * 100
     exC = combined.mean() * 100
 
-    # deltas
     dAB = exB - exA
     dAC = exC - exA
 
-    # McNemar p-values
     pAB = mcnemar_p(spider, synthetic)
     pAC = mcnemar_p(spider, combined)
 
@@ -234,11 +198,6 @@ for model, g in df.groupby("model"):
     })
 
 stats_df = pd.DataFrame(stats_rows).sort_values("Model")
-
-
-# ============================================================
-# WRITE LATEX TABLE — DELTAS + P-VALUES ONLY
-# ============================================================
 
 latex = []
 latex.append("\\begin{table}")
@@ -275,11 +234,6 @@ latex.append("\\end{table}")
 (LATEX_OUT / "spider_stat_tests_deltas.tex").write_text("\n".join(latex), encoding="utf8")
 
 print("[INFO] Wrote Spider Δ + p-value statistical table → spider_stat_tests_deltas.tex")
-
-
-# ============================================================
-# BUILD LATEX TABLE (EXACT STYLE REQUESTED)
-# ============================================================
 
 latex_lines = []
 latex_lines.append("\\begin{table}")

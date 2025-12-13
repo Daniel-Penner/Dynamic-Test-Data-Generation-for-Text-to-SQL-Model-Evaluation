@@ -1,5 +1,3 @@
-# scripts/build_tests/synthetic_data_generator.py
-
 from __future__ import annotations
 
 import random
@@ -13,56 +11,38 @@ from datetime import date, timedelta
 
 import pandas as pd
 
-# =====================================================================
-# Helper random generators
-# =====================================================================
+#ALGORITHMIC GENERATION OF SYNTHETIC DATA
 
 import re
 
 def canonical_join_value(col: str, idx: int = 0) -> str:
-    # stable, identical across tables
     return f"JOINVAL_{idx}"
 
 
 def _infer_dtype(col_name, example_values=None):
-    """
-    Infer a coarse dtype: 'int', 'float', 'date', or 'text'
-    based on the column name (and optionally example values).
-    """
 
     name = col_name.lower()
-    # split into tokens: ["low", "grade"], ["free", "meal", "count", "k", "12"], etc.
     tokens = [t for t in re.split(r"[^a-z0-9]+", name) if t]
 
-    # 1) grade-like stuff → integers
     if "grade" in tokens:
         return "int"
 
-    # 2) clearly numeric aggregate tokens
     numeric_tokens = {"count", "num", "number", "total", "enrollment", "sum"}
     if any(t in numeric_tokens for t in tokens):
         return "int"
 
-    # 3) rates / percents → float
     if "%" in col_name or "percent" in tokens or "ratio" in tokens or "rate" in tokens:
         return "float"
 
-    # 4) latitude / longitude → float
     if "latitude" in tokens or "longitude" in tokens:
         return "float"
 
-    # 5) dates
     if "date" in tokens:
         return "date"
 
-    # 6) fallback
     return "text"
 
 def _deterministic_value(col: str, dtype: str, row_idx: int | None):
-    """
-    Produce deterministic but *varying* values.
-    If row_idx is None (edge-case override), generate a random suffix.
-    """
     if dtype in ("float", "real", "double"):
         return round(random.uniform(1, 5000), 3)
 
@@ -80,7 +60,6 @@ def _deterministic_value(col: str, dtype: str, row_idx: int | None):
         base = date(1995, 1, 1)
         return base + timedelta(days=row_idx * 400)
 
-    # text-like fallback
     if row_idx is None:
         row_idx = random.randint(1, 99999)
     suffix = f"{row_idx:05d}"
@@ -94,26 +73,13 @@ def enforce_winner_constraints(
     allow_scalar_subqueries: bool = True,
     order_winner_idx: Optional[Dict[str, int]] = None,
 ):
-    """
-    Enforce constraints on the *winner row only*.
 
-    - WHERE predicates always apply
-    - JOIN constraints apply if allow_joins=True
-    - Scalar subqueries apply if allow_scalar_subqueries=True
-    """
-
-    # --------------------------------------------------
-    # 1) WHERE col = value
-    # --------------------------------------------------
     for (tbl, col), val in constraints.required_equals.items():
         if tbl in dataset and col in dataset[tbl].columns:
             df = dataset[tbl]
             if winner_idx < len(df):
                 df.loc[winner_idx, col] = val
 
-    # --------------------------------------------------
-    # 2) WHERE col IS NOT NULL
-    # --------------------------------------------------
     for (tbl, col) in constraints.required_not_null:
         if tbl in dataset and col in dataset[tbl].columns:
             df = dataset[tbl]
@@ -121,9 +87,6 @@ def enforce_winner_constraints(
                 if pd.isna(dataset[tbl].loc[winner_idx, col]):
                     dataset[tbl].loc[winner_idx, col] = 1
 
-    # --------------------------------------------------
-    # 3) JOIN constraints (same-table join map)
-    # --------------------------------------------------
     if allow_joins:
         for tbl, join_defs in constraints.join_keys_by_table.items():
             if tbl not in dataset:
@@ -144,21 +107,16 @@ def enforce_winner_constraints(
                 if winner_idx >= len(other_df):
                     continue
 
-                # Take a non-null value from either side, propagate to both.
                 val = df.loc[winner_idx, col]
                 if pd.isna(val):
                     val = other_df.loc[winner_idx, other_col]
 
                 if pd.isna(val):
-                    # fall back to a deterministic join key
                     val = f"WINNER_JOIN_{tbl}_{col}"
 
                 df.loc[winner_idx, col] = val
                 other_df.loc[winner_idx, other_col] = val
 
-    # --------------------------------------------------
-    # 4) Scalar subqueries: outer.col = (SELECT inner.col ...)
-    # --------------------------------------------------
     if allow_scalar_subqueries and getattr(constraints, "scalar_subqueries", None):
         for (outer_tbl, outer_col, inner_tbl, inner_col) in constraints.scalar_subqueries:
             if outer_tbl not in dataset or inner_tbl not in dataset:
@@ -178,7 +136,6 @@ def enforce_winner_constraints(
             outer_val = odf.loc[winner_idx, outer_col]
             inner_val = idf.loc[winner_idx, inner_col]
 
-            # Prefer any existing non-null value
             if pd.notna(outer_val):
                 shared = outer_val
             elif pd.notna(inner_val):
@@ -196,7 +153,6 @@ def _random_string(prefix: str, length: int = 6) -> str:
     return f"{prefix}_{suffix}"
 
 
-    # Utility: normal fallback numeric/string generator
 def rnd(col, dtype):
     t = dtype.lower()
     if "int" in t:
@@ -240,17 +196,13 @@ def _coerce_value_for_dtype(val: Any, dtype: str) -> Any:
     return val
 
 def generate_join_keys(n: int, prefix: str = "jk") -> list[str]:
-    """Generate join keys that match across tables but vary by row."""
     return [f"{prefix}_{i:05d}" for i in range(n)]
 
 def _enforce_or_branch(dataset, schema_map, or_groups, alias_map=None):
-    """
-    Enforce exactly ONE OR branch on winner row (row 0).
-    """
     if not or_groups:
         return
 
-    chosen = or_groups[0]  # deterministic choice
+    chosen = or_groups[0]
 
     pred_pattern = re.compile(
         r"(?:(?P<table>[a-zA-Z0-9_]+)\.)?(?P<column>[a-zA-Z0-9_`]+)\s*=\s*'?(?P<value>[^']+)'?",
@@ -267,7 +219,6 @@ def _enforce_or_branch(dataset, schema_map, or_groups, alias_map=None):
         val = m.group("value")
 
         if tbl is None:
-            # try resolve by schema
             matches = []
             for t, cols in schema_map.items():
                 if col in cols:
@@ -281,9 +232,7 @@ def _enforce_or_branch(dataset, schema_map, or_groups, alias_map=None):
         if tbl in dataset and col in dataset[tbl].columns:
             dataset[tbl].loc[0, col] = val
 
-# =====================================================================
-# Constraints wrapper
-# =====================================================================
+#Constraints
 
 @dataclass
 class Constraints:
@@ -327,10 +276,7 @@ class Constraints:
                 self.required_join_keys.add(col)
                 self.required_join_keys.add(other_col)
 
-
-# =====================================================================
-# Main generator
-# =====================================================================
+#Generation process
 
 def generate_synthetic_dataset(
     schema_map: Dict[str, Dict[str, str]],
@@ -348,21 +294,13 @@ def generate_synthetic_dataset(
         t = dtype.lower()
         return ("int" in t) or ("real" in t) or ("float" in t) or ("double" in t)
 
-
-    # NEW — detect whether this scenario is deterministic (no mutation fn)
     is_deterministic = not scenario or ("inject" not in scenario or scenario["inject"] is None)
 
-    # NEW — if deterministic, try to preserve REAL values from schema_map
     original_examples = {
         tbl: list(cols.keys()) for tbl, cols in schema_map.items()
     }
 
-    # =============================================================
-    # Normalize input: constraints comes as {required_equals,...}
-    # or as a Constraints object
-    # =============================================================
     if not isinstance(constraints, Constraints):
-        # Build per-table constraint layout using **lowercased** table names
         per_table = {
             tbl.lower(): {
                 "required_equals": {},
@@ -374,31 +312,26 @@ def generate_synthetic_dataset(
             for tbl in schema_map.keys()
         }
 
-        # required_equals
         for (tbl, col), val in constraints.get("required_equals", {}).items():
             tbl_l = tbl.lower()
             if tbl_l in per_table:
                 per_table[tbl_l]["required_equals"][col] = val
 
-        # required_not_equals
         for (tbl, col), val in constraints.get("required_not_equals", {}).items():
             tbl_l = tbl.lower()
             if tbl_l in per_table:
                 per_table[tbl_l]["required_not_equals"][col] = val
 
-        # is null
         for (tbl, col) in constraints.get("required_is_null", set()):
             tbl_l = tbl.lower()
             if tbl_l in per_table:
                 per_table[tbl_l]["required_is_null"].add(col)
 
-        # not null
         for (tbl, col) in constraints.get("required_not_null", set()):
             tbl_l = tbl.lower()
             if tbl_l in per_table:
                 per_table[tbl_l]["required_not_null"].add(col)
 
-        # join keys: (t1, c1, t2, c2)
         for (t1, c1, t2, c2) in constraints.get("join_keys", set()):
             t1_l = t1.lower()
             t2_l = t2.lower()
@@ -407,7 +340,6 @@ def generate_synthetic_dataset(
             if t2_l in per_table:
                 per_table[t2_l]["join_keys"].add((c2, t1_l, c1))
 
-        # carry over range_constraints + scalar_subqueries
         range_constraints = constraints.get("range_constraints", [])
         scalar_subqueries = constraints.get("scalar_subqueries", set())
 
@@ -419,47 +351,31 @@ def generate_synthetic_dataset(
 
     c = constraints
 
-    # =============================================================
-    # NEW — Construct global witness assignments (query-satisfying rows)
-    # =============================================================
+    #Witness assignment for ensuring passing rows
     WITNESS_COUNT = 3
     witnesses = plan_witness_assignments(c, k=WITNESS_COUNT)
     winner = witnesses[0]
 
     used_tables: set[str] = set()
     if sql:
-        # Normalize whitespace and strip backticks so `frpm` → frpm
         s = " ".join(sql.replace("\n", " ").split())
         s = s.replace("`", "")
 
-        # FROM <table>
         for m in re.finditer(r"\bFROM\s+([a-zA-Z0-9_]+)", s, re.IGNORECASE):
             used_tables.add(m.group(1).strip().lower())
 
-        # JOIN <table>
         for m in re.finditer(r"\bJOIN\s+([a-zA-Z0-9_]+)", s, re.IGNORECASE):
             used_tables.add(m.group(1).strip().lower())
 
-    # If parsing somehow failed, fall back to "all tables"
     if not used_tables:
         used_tables = set(schema_map.keys())
 
-    # =============================================================
-    # Extract direct required-equals for easy lookup
-    # =============================================================
     required_eq_by_table: Dict[str, Dict[str, Any]] = {}
     for (tbl, col), val in c.required_equals.items():
         required_eq_by_table.setdefault(tbl, {})[col] = val
 
-    # =============================================================
-    # Resolve all join edges into canonical pairs
-    # =============================================================
     join_edges = set()
 
-    # =============================================================
-    # STEP 1: Identify which table has WHERE constraints
-    #         and create forced join rows to guarantee matches
-    # =============================================================
     forced_join_values: Dict[Tuple[str, str], Any] = {}
 
     join_counter = 0
@@ -470,11 +386,6 @@ def generate_synthetic_dataset(
         forced_join_values[(t1, c1)] = shared_val
         forced_join_values[(t2, c2)] = shared_val
 
-
-    # =============================================================
-    # STEP 2: Build normal global join propagation map
-    #         (for rows NOT used in forced join pairs)
-    # =============================================================
     global_join_values: Dict[Tuple[str, str], Any] = {}
 
     for (t1, c1, t2, c2) in join_edges:
@@ -491,7 +402,6 @@ def generate_synthetic_dataset(
             global_join_values[k1] = val
             continue
 
-        # Otherwise: free random join cluster
         if k1 in global_join_values:
             v = global_join_values[k1]
             global_join_values[k2] = v
@@ -503,13 +413,6 @@ def generate_synthetic_dataset(
             global_join_values[k1] = v
             global_join_values[k2] = v
 
-
-    # =============================================================
-    # STEP 3: Generate data table-by-table
-    # =============================================================
-    # absolute dtype normalization as fallback
-    # DO NOT GUESS TYPES — trust the schema provided by BIRD
-    # Just normalize to lowercase table names
     normalized_schema: Dict[str, Dict[str, str]] = {}
 
     for tbl, cols in schema_map.items():
@@ -520,7 +423,6 @@ def generate_synthetic_dataset(
             raw = (raw_dtype or "").lower()
 
 
-            # First infer base type from schema / column name
             if any(tok in raw for tok in ("int", "integer")):
                 base = "int"
             elif any(tok in raw for tok in ("real", "float", "double", "numeric", "decimal")):
@@ -530,7 +432,6 @@ def generate_synthetic_dataset(
             else:
                 base = _infer_dtype(col)
 
-            # ✅ OVERRIDE using required_equals
             val = required_eq_by_table.get(tbl_lower, {}).get(col)
             if val is not None:
                 if isinstance(val, int):
@@ -538,7 +439,6 @@ def generate_synthetic_dataset(
                 elif isinstance(val, float):
                     base = "float"
                 elif isinstance(val, str):
-                    # Detect YYYY or YYYY-MM-DD
                     if re.match(r"\d{4}(-\d{2}-\d{2})?", val):
                         base = "int" if len(val) == 4 else "date"
                     else:
@@ -548,14 +448,12 @@ def generate_synthetic_dataset(
 
         normalized_schema[tbl_lower] = new_cols
 
-    # Replace schema_map with normalized version
     schema_map = normalized_schema
 
     dataset: Dict[str, pd.DataFrame] = {}
 
     for table_name, columns in schema_map.items():
 
-        # Skip unused tables but preserve schema
         if table_name.lower() not in used_tables:
             if columns:
                 dataset[table_name] = pd.DataFrame([{col: None for col in columns}])
@@ -573,11 +471,9 @@ def generate_synthetic_dataset(
                 key = (table_name, col)
 
                 if key in w:
-                    # witness-assigned value (WHERE, GROUP BY, etc.)
                     row[col] = _coerce_value_for_dtype(w[key], dtype)
 
                 elif key in forced_join_values:
-                    # 🔑 CRITICAL: enforce matching join/subquery keys
                     row[col] = _coerce_value_for_dtype(forced_join_values[key], dtype)
 
                 else:
@@ -600,19 +496,14 @@ def generate_synthetic_dataset(
 
 
 
-        # ============================================================
-        # Scenario handler (scenario-overrides normal generation)
-        # ============================================================
-
+        #Scenario (test case) handling
         def scenario_rows(scn_name: str) -> List[Dict[str, Any]]:
             """Return rows for special edge-case scenarios."""
             out = []
 
-            # Utility: deterministic with row index
             def det(col, dtype, idx):
                 return _coerce_value_for_dtype(_deterministic_value(col, dtype, row_idx=idx), dtype)
 
-            # Utility: normal fallback numeric/string
             def rnd(col, dtype):
                 t = dtype.lower()
                 if "int" in t:
@@ -623,20 +514,15 @@ def generate_synthetic_dataset(
                     return f"19{random.randint(70,99)}-{random.randint(1,12):02d}-{random.randint(1,28):02d}"
                 return _random_string("v")
 
-            # Utility: join key value retrieval
             def join_val(col):
                 key = (table_name, col)
                 return global_join_values.get(key, None)
 
-            # ----------------------------------------------------------
-            # SCENARIO: no_match → produce rows guaranteed to NOT match
-            # ----------------------------------------------------------
             if scn_name == "no_match":
                 for idx in range(n_rows_per_table):
                     r = {}
                     for col, dtype in columns.items():
                         r[col] = det(col, dtype, idx) if is_deterministic else rnd(col, dtype)
-                    # break forced join by injecting unique keys
                     for (t1, c1, t2, c2) in join_edges:
                         if t1 == table_name:
                             r[c1] = _random_string("noj")
@@ -645,16 +531,11 @@ def generate_synthetic_dataset(
                     out.append(r)
                 return out
 
-            # ----------------------------------------------------------
-            # SCENARIO: single_match → exactly 1 matching row
-            # ----------------------------------------------------------
             if scn_name == "single_match":
-                # create one matching row
                 r = {}
                 for col, dtype in columns.items():
                     key = (table_name, col)
 
-                    # JOIN KEYS
                     if key in forced_join_values or key in global_join_values:
                         r[col] = _coerce_value_for_dtype(
                             forced_join_values.get(key, global_join_values.get(key)),
@@ -662,12 +543,10 @@ def generate_synthetic_dataset(
                         )
                         continue
 
-                    # REQUIRED EQUALS
                     if col in table_required_eq:
                         r[col] = _coerce_value_for_dtype(table_required_eq[col], dtype)
                         continue
 
-                    # ✅ RANGE CONSTRAINTS (THIS WAS MISSING)
                     for (tbl, c, op, val) in constraints.range_constraints:
                         if tbl == table_name and c == col:
                             if dtype == "date":
@@ -682,13 +561,8 @@ def generate_synthetic_dataset(
                                 r[col] = val
                             break
                     else:
-                        # fallback
                         r[col] = det(col, dtype, 0)
 
-
-            # ----------------------------------------------------------
-            # SCENARIO: multi_match → create several aligned matches
-            # ----------------------------------------------------------
             if scn_name == "multi_match":
                 count = max(3, int(n_rows_per_table * 0.3))
                 shared_key = _random_string("mj")
@@ -706,7 +580,6 @@ def generate_synthetic_dataset(
                             r[col] = det(col, dtype, idx) if is_deterministic else rnd(col, dtype)
                     out.append(r)
 
-                # remaining rows non-match
                 for idx in range(count, n_rows_per_table):
                     r = {}
                     for col, dtype in columns.items():
@@ -715,9 +588,6 @@ def generate_synthetic_dataset(
 
                 return out
 
-            # ----------------------------------------------------------
-            # SCENARIO: duplicate_join_keys → repeat the SAME join key
-            # ----------------------------------------------------------
             if scn_name == "duplicate_join_keys":
                 dup_val = _random_string("dup")
 
@@ -732,9 +602,6 @@ def generate_synthetic_dataset(
                     out.append(r)
                 return out
 
-            # ----------------------------------------------------------
-            # SCENARIO: join_key_nulls → nullify join keys in some rows
-            # ----------------------------------------------------------
             if scn_name == "join_key_nulls":
                 for idx in range(n_rows_per_table):
                     r = {}
@@ -754,9 +621,6 @@ def generate_synthetic_dataset(
                     out.append(r)
                 return out
 
-            # ----------------------------------------------------------
-            # SCENARIO: inconsistent_categories → break category cols
-            # ----------------------------------------------------------
             if scn_name == "inconsistent_categories":
                 for idx in range(n_rows_per_table):
                     r = {}
@@ -768,9 +632,6 @@ def generate_synthetic_dataset(
                     out.append(r)
                 return out
 
-            # ----------------------------------------------------------
-            # SCENARIO: join_only → only join keys matter; everything else noise
-            # ----------------------------------------------------------
             if scn_name == "join_only":
                 for idx in range(n_rows_per_table):
                     r = {}
@@ -788,26 +649,17 @@ def generate_synthetic_dataset(
 
             return None
 
-        # ============================================================
-        # Scenario override (if scenario has structured meaning)
-        # ============================================================
         if scenario and scenario.get("name"):
             custom = scenario_rows(scenario["name"])
             if custom is not None:
                 df = pd.DataFrame(custom)
 
-                # Scenario inject (mutation)
                 if scenario.get("inject"):
                     df = scenario["inject"](df)
 
                 dataset[table_name] = df
                 continue
 
-        # ============================================================
-        # FALLBACK: ORIGINAL DEFAULT GENERATION LOGIC
-        # ============================================================
-
-        # forced row?
         must_force = (
             bool(table_required_eq)
             or any((table_name, col) in forced_join_values for col in columns)
@@ -834,7 +686,7 @@ def generate_synthetic_dataset(
             rows.append(forced_row)
             row_idx += 1
 
-        # matching rows
+        #matching rows
         match_count = scenario.get("positive_count") if (scenario and "positive_count" in scenario) else max(1, int(n_rows_per_table * match_ratio))
 
         for _ in range(match_count):
@@ -854,7 +706,7 @@ def generate_synthetic_dataset(
             rows.append(r)
             row_idx += 1
 
-        # non-matching rows
+        #non-matching rows
         for _ in range(n_rows_per_table - match_count):
             r = {}
             for col, dtype in columns.items():
@@ -876,10 +728,6 @@ def generate_synthetic_dataset(
 
         dataset[table_name] = df
 
-    # =============================================================
-    # FINAL PATCH: sanitize all DATE columns to ensure valid values
-    # =============================================================
-
     for tbl, df in dataset.items():
         for col, dtype in schema_map[tbl].items():
             if dtype == "date":
@@ -893,10 +741,6 @@ def generate_synthetic_dataset(
 
                 df[col] = df[col].apply(fix_date)
 
-    # --------------------------------------------------
-    # ✅ FIX: enforce scalar-subquery equality
-    # outer.col == inner.col for winner row
-    # --------------------------------------------------
     for (outer_tbl, outer_col, inner_tbl, inner_col) in constraints.scalar_subqueries:
         if (
             outer_tbl in dataset and
@@ -914,22 +758,19 @@ def generate_synthetic_dataset(
         order_col = order_info["expr"].split(".")[-1].replace("`", "")
         direction = order_info["direction"]
 
-        PAD = offset  # number of dummy rows needed
+        PAD = offset
 
         for tbl, df in dataset.items():
             if order_col not in df.columns:
                 continue
             
-            # Build padding rows
             padding_rows = []
             for i in range(PAD):
                 row = {}
                 for col in df.columns:
                     if col == order_col:
-                        # Make these beat the winner in ordering
                         val = 1_000_000 + i if direction == "DESC" else -1_000_000 - i
                     else:
-                        # junk but type-safe
                         val = df[col].iloc[0]
                     row[col] = val
                 padding_rows.append(row)
@@ -942,9 +783,7 @@ def generate_synthetic_dataset(
     if hasattr(constraints, "or_groups") and constraints.or_groups:
         _enforce_or_branch(dataset, schema_map, constraints.or_groups)
 
-    # =============================================================
-    # ✅ FINAL ENFORCEMENT: force at least ONE satisfying row
-    # =============================================================
+
     if not scenario or scenario.get("name") != "no_match":
         enforce_winner_constraints(
             dataset,
